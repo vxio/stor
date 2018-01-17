@@ -6,6 +6,7 @@ const navigationItems = props => (
     <NavigationItem link="/" exact>
       Home
     </NavigationItem>
+    <NavigationItem link="/cart">Cart</NavigationItem>
   </ul>
 );
 

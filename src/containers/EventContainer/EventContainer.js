@@ -18,9 +18,9 @@ class EventContainer extends Component {
   }
 
   onScroll = () => {
-    this.setState({
-      position: window.scrollY || window.scrollTop || document.getElementsByTagName("html")[0].scrollTop
-    });
+    // this.setState({
+    //   position: window.scrollY || window.scrollTop || document.getElementsByTagName("html")[0].scrollTop
+    // });
     // console.log(this.state.position);
   };
 
