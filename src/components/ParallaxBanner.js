@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import backgroundImage from "../../images/bird-bg.jpg";
+import backgroundImage from "images/bird-bg.jpg";
 import logo from "images/black-bird-logo.svg";
 import foregroundImage from "images/fore-bird.png";
 import midgroundImage_2 from "images/back-bird.png";
 
-const ParallaxHeader = props => {
+const ParallaxBanner = props => {
   return (
     <HeaderContainer>
       <MidgroundImg style={{ transform: `translateY(${props.position / 2}%)` }} />
@@ -61,4 +61,4 @@ const ForegroundImg = styled.div`
   /* transform: translateY(${props => props.position / -40}%); */
 `;
 
-export default ParallaxHeader;
+export default ParallaxBanner;

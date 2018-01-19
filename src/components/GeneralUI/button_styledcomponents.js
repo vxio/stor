@@ -5,6 +5,7 @@ const Button = styled.button`
   border-radius: ${props => props.theme.baseRadius};
   cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
   display: inline-block;
+  
   font-size: ${props => {
     const { baseFontSize } = props.theme;
     const baseFontSizeParsed = parseInt(baseFontSize, 10);

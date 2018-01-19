@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import ParallaxHeader from "components/parallaxHeader/parallaxHeader";
-import TextContent from "components/TextContent/TextContent";
-import ItemGrid from "containers/ItemGrid/ItemGrid";
+import ParallaxBanner from "./ParallaxBanner";
+import TextContent from "./TextContent";
+import ItemGrid from "./ItemGrid";
 import styled from "styled-components";
 
 class EventContainer extends Component {
@@ -25,10 +25,9 @@ class EventContainer extends Component {
   };
 
   render() {
-    console.log(this.props);
     return (
       <div>
-        {/* <ParallaxHeader position={this.state.position} /> */}
+        {/* <ParallaxBanner position={this.state.position} /> */}
         <HomeContentBox>
           <TextContent title="Unique Style">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et

@@ -1,13 +1,11 @@
 import React, { Component } from "react";
 
 class RadioInput extends Component {
-  //inputValues: [{value: 'orange', displayValue: 'Orange' }, etc...]
   state = {
     selected: null
   };
 
   onChangeHandler = e => {
-    console.log("clicked");
     this.setState({ selected: e.target.value });
     this.props.changed(e.target.value);
   };
@@ -21,7 +19,7 @@ class RadioInput extends Component {
           value={input.value}
           onChange={this.onChangeHandler}
           checked={this.state.selected === input.value}
-          data-displayvalue={input.displayValue}
+          // data-displayvalue={input.displayValue}
         />
         {input.displayValue}
       </label>

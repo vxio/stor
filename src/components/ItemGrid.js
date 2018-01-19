@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ProductCard from "components/ProductCard/ProductCard";
+import ProductCard from "./ProductCard";
 import styled from "styled-components";
 
 export default class ItemGrid extends Component {
