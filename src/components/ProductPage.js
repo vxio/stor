@@ -8,10 +8,12 @@ import ReactImageMagnify from "react-image-magnify";
 class ProductPage extends Component {
   constructor(props) {
     super(props);
-    const { products, match } = props;
+    const { products, match, productLimit, sizeOptions } = props;
     this.product = products.filter(product => match.params.productName === product.name)[0];
-    this.sizeOptions = props.sizeOptions;
-    this.productLimit = props.productLimit;
+    // this.sizeOptions = props.sizeOptions;
+    // this.productLimit = props.productLimit;
+
+    Object.assign(this, { productLimit, sizeOptions });
 
     this.state = {
       selectedSize: null,
@@ -20,13 +22,17 @@ class ProductPage extends Component {
   }
 
   getProductInCart() {
-    return this.props.cart.find(product => this.product.id === product.id && this.product.size === product.size);
+    return this.props.cart.find(product => {
+      return this.product.id === product.id && this.product.size === product.size
+    });
   }
 
   checkQuantityLimit() {
     const product = this.getProductInCart();
-    if (!product) return;
+    console.log('checking quantity limit')
+    if (!product) return console.log('returned');
     if (product.quantity === this.productLimit && !this.state.quantityLimitReached) {
+      console.log('setting limit reached to true')
       this.setState({
         quantityLimitReached: true
       });
@@ -35,8 +41,8 @@ class ProductPage extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    this.checkQuantityLimit();
-    console.log(this.state.quantityLimitReached);
+    // this.checkQuantityLimit();
+    // console.log(this.state.quantityLimitReached);
   }
 
   componentDidUpdate() {
@@ -44,23 +50,27 @@ class ProductPage extends Component {
   }
 
   updateProduct = eventValue => {
-    this.setState({ selectedSize: eventValue });
-    this.product.size = eventValue;
-    this.checkQuantityLimit();
-    //if quantity is not reached, reset state
-    const product = this.getProductInCart();
-    if (!product || product.quantity < this.productLimit) {
-      this.setState({
-        quantityLimitReached: false
-      });
-    }
+
+    this.setState({ selectedSize: eventValue }, function() {
+      this.product.size = eventValue;
+          console.log(this.product);
+      this.checkQuantityLimit();
+      //if quantity is not reached, reset state
+      const product = this.getProductInCart();
+      if (!product || product.quantity < this.productLimit) {
+        console.log('limit set to  false')
+        this.setState({
+          quantityLimitReached: false
+        });
+      }
+    });
   };
 
   render() {
+    console.log('Product', this.product)
+    console.log(process.env.PUBLIC_URL);
     const { selectedSize, quantityLimitReached } = this.state;
-    console.log(this.product);
-    return (
-      <Fragment>
+    return <Fragment>
         {selectedSize ? this.product.size : <WarningText>This is a warning bietcffh</WarningText>}
         <h1>This is the product page of {this.product.name}</h1>
         <h2>${this.product.price}</h2>
@@ -71,10 +81,8 @@ class ProductPage extends Component {
 
           <button disabled={!selectedSize || quantityLimitReached}>Add to Cart</button>
         </form>
-        <img src={this.product.img} alt="" height="500px"/>
-
-      </Fragment>
-    );
+        <img src={this.product.img} alt={this.product.img} height='500px'/>
+      </Fragment>;
   }
 }
 

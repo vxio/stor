@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 //used for homepage and store page
 const ProductCard = props => {
   const {product} = props  
+  console.log('card', product);
   return (
     <Link to={`/store/${product.name}`}>
       <StyledFigure>

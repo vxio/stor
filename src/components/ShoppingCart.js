@@ -5,8 +5,8 @@ import Input from "./GeneralUI/Input";
 import Select from "./GeneralUI/Select";
 
 const CartItem = props => {
-  const {product, index, removeItem, updateQuantity, userOptions} = props;
-  console.log(props)
+  const { product, index, removeItem, updateQuantity, userOptions } = props;
+  console.log(props);
   return (
     <div>
       <h1>name: {product.name}</h1>
@@ -14,15 +14,15 @@ const CartItem = props => {
       <h3>quantity: {product.quantity}</h3>
       <h3>totalPrice: {product.totalPrice}</h3>
 
-    {userOptions ? 
-      <Select
-        name={"quantity range"}
-        selectedOption={product.quantity}
-        min={1}
-        max={10}
-        controlFunc={e => props.updateQuantity(e, index)}
-      />
-      : null }
+      {userOptions ? (
+        <Select
+          name={"quantity range"}
+          selectedOption={product.quantity}
+          min={1}
+          max={10}
+          controlFunc={e => props.updateQuantity(e, index)}
+        />
+      ) : null}
 
       {userOptions ? <Button clicked={() => props.removeItem(index)}>Remove</Button> : null}
       <hr />
@@ -39,12 +39,12 @@ const ShoppingCart = props => {
   //     <CartItem key={index} item={item} removeItem={() => props.removeItem(index)} />
   //   ));
   console.log(props.cart);
-  const cartComponents = props.cart.map((product,i) => (
+  const cartComponents = props.cart.map((product, i) => (
     <CartItem
       key={i}
       product={product}
       index={i}
-      userOptions
+      userOptions={props.userOptions}
       removeItem={props.removeItem} //can put this in CartItem instead
       updateQuantity={props.updateQuantity}
     />

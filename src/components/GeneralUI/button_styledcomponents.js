@@ -9,7 +9,7 @@ const Button = styled.button`
   font-size: ${props => {
     const { baseFontSize } = props.theme;
     const baseFontSizeParsed = parseInt(baseFontSize, 10);
-    return (
+    return  (
       (props.small && `${baseFontSizeParsed * 0.875}px`) ||
       (props.large && `${baseFontSizeParsed * 1.375}px`) ||
       baseFontSize
