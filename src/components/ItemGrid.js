@@ -3,18 +3,24 @@ import ProductCard from "./ProductCard";
 import styled from "styled-components";
 
 class ItemGrid extends Component {
-  saveRef = ref => (this.containerNode = ref);
-  measure() {
-    const { clientWidth, clientHeight } = this.containerNode;
-    console.log(clientHeight);
+  state = {
+    items: this.props.products
   }
-  componentDidMount() {
-    this.measure();
-  }
+
+  sortItemsBy
+  // saveRef = ref => (this.containerNode = ref);
+  // measure() {
+  //   const { clientWidth, clientHeight } = this.containerNode;
+  //   console.log(clientHeight);
+  // }
+
+  // componentDidMount() {
+  //   this.measure();
+  // }
+
   render() {
-    const { position, products, displayText } = this.props;
-    const classes = [];
-    const bottomY = position + window.innerHeight;
+    const { position, items, displayText } = this.props;
+    // const bottomY = position + window.innerHeight;
 
     function handleScroll() {
       // if ($(".clothes-pics").offset().top < wScroll + $(window).height() * 0.8) {
@@ -30,10 +36,8 @@ class ItemGrid extends Component {
     }
     // window.addEventListener("scroll", handleScroll());
 
-    let productsArray = products.map((product, i) => (
-      <div className={classes.join(" ")}>
-        <ProductCard key={i} product={product} displayText={displayText} />
-      </div>
+    let productsArray = items.map((item, i) => (
+        <ProductCard key={i} product={item} displayText={displayText} />
     ));
 
     return <Grid innerRef={this.saveRef}>{productsArray}</Grid>;

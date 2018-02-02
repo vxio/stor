@@ -18,7 +18,7 @@ class StoreFront extends Component {
                 dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
                 ex ea commodo consequat.
               </TextContent>
-              <ItemGrid products={this.props.products} position={y} />
+              <ItemGrid items={this.props.products} position={y} />
               <TextContent title="Clothing Store">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
                 dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip

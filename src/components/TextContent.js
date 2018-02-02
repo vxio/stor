@@ -8,6 +8,7 @@ const TextContainer = styled.div`
   /* margin: 0 auto; */
   /* text-align: center; */
 
+
   grid-column: 2 /4; 
   display: flex;
 `;
@@ -15,6 +16,7 @@ const TextContainer = styled.div`
 const HeaderText = styled.h2`
   /* color: #ccc; */
   font-weight: 400;
+  font-family: "Montserrat";
   font-size: 4rem;
   /* margin-bottom: 0.2em; */
   white-space: nowrap;

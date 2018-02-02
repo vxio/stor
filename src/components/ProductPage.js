@@ -9,7 +9,9 @@ class ProductPage extends Component {
   constructor(props) {
     super(props);
     const { products, match, productLimit, sizeOptions } = props;
+    console.log(props);
     this.product = products.filter(product => match.params.productName === product.name)[0];
+    console.log(this.product);
 
     Object.assign(this, { productLimit, sizeOptions });
 

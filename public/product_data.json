@@ -1,0 +1,134 @@
+{
+  "tees": [
+    {
+      "id": 1,
+      "category": "Tees",
+      "name": "Arch Logo Tee",
+      "brand": "Billionaire Boys Club",
+      "color": "Black",
+      "price": 25,
+      "img": "/images/clothes/Tees/bb_black.png"
+    },
+    {
+      "id": 2,
+      "category": "Tees",
+      "name": "Arch Logo Tee",
+      "brand": "Billionaire Boys Club",
+      "color": "Red",
+      "price": 25,
+      "img": "/images/clothes/Tees/bb_red.png"
+    },
+    {
+      "id": 3,
+      "category": "Tees",
+      "name": "Logo Tee",
+      "brand": "Carhartt",
+      "color": "Black",
+      "price": 20,
+      "img": "/images/clothes/Tees/carhartt_logo_black.png"
+    },
+    {
+      "id": 4,
+      "category": "Tees",
+      "name": "Logo Tee",
+      "brand": "Carhartt",
+      "color": "Navy",
+      "price": 20,
+      "img": "/images/clothes/Tees/carhartt_logo_navy.png"
+    },
+    {
+      "id": 5,
+      "category": "Tees",
+      "name": "Logo Tee",
+      "brand": "Carhartt",
+      "color": "Pink",
+      "price": 20,
+      "img": "/images/clothes/Tees/carhartt_logo_pink.png"
+    },
+    {
+      "id": 6,
+      "category": "Tees",
+      "name": "Blank Tee",
+      "brand": "folk",
+      "color": "Blue",
+      "price": 15,
+      "img": "/images/clothes/Tees/folk_blue.png"
+    },
+    {
+      "id": 7,
+      "category": "Tees",
+      "name": "Blank Tee",
+      "brand": "folk",
+      "color": "Soft Grey",
+      "price": 15,
+      "img": "/images/clothes/Tees/folk_soft-grey.png"
+    },
+    {
+      "id": 8,
+      "category": "Tees",
+      "name": "Stripe Tee",
+      "brand": "folk",
+      "color": "Navy",
+      "price": 22,
+      "img": "/images/clothes/Tees/folk_stripe_navy.png"
+    },
+    {
+      "id": 9,
+      "category": "Tees",
+      "name": "Stripe Tee",
+      "brand": "folk",
+      "color": "Red",
+      "price": 22,
+      "img": "/images/clothes/Tees/folk_stripe_red.png"
+    },
+    {
+      "id": 10,
+      "category": "Tees",
+      "name": "Box Logo Tee",
+      "brand": "MKI",
+      "color": "Pink",
+      "price": 25,
+      "img": "/images/clothes/Tees/mki_box_pink.png"
+    },
+    {
+      "id": 11,
+      "category": "Tees",
+      "name": "Box Logo Tee",
+      "brand": "MKI",
+      "color": "White",
+      "price": 25,
+      "img": "/images/clothes/Tees/mki_box_white.png"
+    },
+    {
+      "id": 12,
+      "category": "Tees",
+      "name": "Blank Tee",
+      "brand": "MKI",
+      "color": "Light Blue",
+      "price": 15,
+      "img": "/images/clothes/Tees/mki_light-blue.png"
+    }
+  ],
+  "sizeOptions": [
+    {
+      "value": "extra small",
+      "displayValue": "XS"
+    },
+    {
+      "value": "small",
+      "displayValue": "S"
+    },
+    {
+      "value": "medium",
+      "displayValue": "M"
+    },
+    {
+      "value": "large",
+      "displayValue": "L"
+    },
+    {
+      "value": "extra large",
+      "displayValue": "XL"
+    }
+  ]
+}

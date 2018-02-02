@@ -55,22 +55,26 @@ class Store extends Component {
 
   getProducts() {
     //use this url for localhost. May need to use a different url in production
-    const url = "products.json";
+    // const url = "products.json";
+    const url = "product_data.json";
     console.log(url);
 
     axios.get(url).then(response => {
       console.log(response);
       this.setState({
-        products: response.data.products,
+        products: response.data.tees,
         sizeOptions: response.data.sizeOptions,
         loading: false
       });
     });
   }
 
+  sortProducts() {}
+
   componentWillMount() {
     axios.defaults.baseURL = "/";
     this.getProducts();
+    console.log('store is mounting')
   }
 
   componentDidUpdate() {
@@ -198,8 +202,7 @@ class Store extends Component {
     if (totalCartItems > 1) cartLink += "s";
 
     this.updateTotal();
-    return (
-      <Styled>
+    return <Styled>
         <NavItems>
           <NavItem to="/">Home</NavItem>
           <NavItem to="/shop">Shop</NavItem>
@@ -220,7 +223,8 @@ class Store extends Component {
           <div>Total price: ${this.total}</div>
         </div> */}
         <Switch>
-          <RouteWithProps
+          <RouteWithProps path="/shop/:brand?" exact products={this.state.products} component={Shop} />
+          {/* <RouteWithProps
             path="/shop/:productName"
             exact
             products={this.state.products}
@@ -230,33 +234,18 @@ class Store extends Component {
             changeSize={this.handleChangeSize}
             productLimit={this.productLimit}
             component={ProductPage}
-          />
-          <RouteWithProps path="/shop" exact products={this.state.products} component={Shop} />
-          <RouteWithProps
-            path="/cart"
-            exact
-            cart={this.state.cart}
-            orderData={this.handleGetOrderData()}
-            removeItem={this.removeItem}
-            userOptions
-            updateQuantity={this.handleUpdateQuantity}
-            component={ShoppingCart}
-          />
-          <RouteWithProps
-            path="/checkout"
-            clearCart={this.handleClearCart}
-            getOrderData={this.handleGetOrderData}
-            exact
-            cart={cart}
-            component={Checkout}
-          />
+          /> */}
+
+          {/* <RouteWithProps path="/shop/Tees/:brand" exact items={this.state.products} component={FilterItems} /> */}
+          <RouteWithProps path="/cart" exact cart={this.state.cart} orderData={this.handleGetOrderData()} removeItem={this.removeItem} userOptions updateQuantity={this.handleUpdateQuantity} component={ShoppingCart} />
+
+          <RouteWithProps path="/checkout" clearCart={this.handleClearCart} getOrderData={this.handleGetOrderData} exact cart={cart} component={Checkout} />
           <RouteWithProps path="/order-summary" exact component={OrderSummary} />
 
           <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
           <Redirect to="/" />
         </Switch>
-      </Styled>
-    );
+      </Styled>;
   }
 }
 
