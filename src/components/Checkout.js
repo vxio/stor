@@ -78,26 +78,6 @@ class Checkout extends React.Component {
     this.props.clearCart();
   };
 
-  handleBlur = () => {
-    console.log("[blur]");
-  };
-  handleChange = change => {
-    console.log("[change]", change);
-  };
-  handleClick = () => {
-    console.log("[click]");
-  };
-  handleFocus = () => {
-    console.log("[focus]");
-  };
-  handleReady = () => {
-    console.log("[ready]");
-  };
-  handleSubmit = ev => {
-    ev.preventDefault();
-    console.log("Form submitted!");
-    // this.props.stripe.createToken().then(payload => console.log(payload));
-  };
 
   componentDidUpdate() {}
 
@@ -108,20 +88,6 @@ class Checkout extends React.Component {
           onSubmit={this.onSubmit}
           render={({ handleSubmit, reset, submitting, pristine, values }) => (
             <form onSubmit={handleSubmit}>
-              {/* <Elements>
-                <label>
-                  Card details
-                  <CardElement
-                    onBlur={this.handleBlur}
-                    onChange={this.handleChange}
-                    onFocus={this.handleFocus}
-                    onReady={this.handleReady}
-                    {...createOptions(this.props.fontSize)}
-                  />
-                </label>
-                <button>Pay</button>
-              </Elements> */}
-              {/* Testing */}
               <TextInput name="firstName" id="hi" label="First Name" purpose="main" validate={required} />
               <TextInput name="lastName" label="Last Name" purpose="main" validate={required} />
               <TextInput name="email" label="Email" isEmail purpose="main" validate={required} />
@@ -136,16 +102,6 @@ class Checkout extends React.Component {
               />
 
               {this.state.sameAddress ? null : <AddressInputs purpose="shipping" />}
-
-              {/* <Field name="lastName" validate={required}>
-                {({ input, meta }) => {
-                  return <div>
-                      <label>Last Name</label>
-                      <input style={!(meta.error && meta.touched) ? {} : { border: "1px solid red" }} {...input} type="text" placeholder="Last Name" />
-                      {meta.error && meta.touched && <span>{meta.error}</span>}
-                    </div>;
-                }}
-              </Field> */}
 
               <div className="buttons">
                 <button type="submit" disabled={submitting}>

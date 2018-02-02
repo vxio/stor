@@ -1,31 +1,59 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
+import theme from "./theme";
 import Store from "./components/Store";
 // import { StripeProvider } from "react-stripe-elements";
 
 class App extends Component {
   render() {
     return (
-      <Container>
+      <UtilityContainer>
         <Store />
-      </Container>
+      </UtilityContainer>
     );
   }
 }
 
 export default withRouter(App);
 
-const Container = styled.div`
-  height: 4000px;
-  display: grid;
-  grid-template-rows: [nav_start] 5rem [nav_end] 80vh min-content 40vw repeat(3, min-content);
-  grid-template-columns:
-    [full_start] 1fr [center_start] repeat(8, [col_start] minmax(min-content, 14rem) [col_end])
-    [center_end] 1fr [full_end];
+const UtilityContainer = styled.div`
+  color: ${theme.black_custom};
 
-  & > * {
-    padding: 40px;
-    /* font-size: 3rem; */
+  a {
+    text-decoration: none;
+    &:hover {
+      color: ${theme.grey_dark_2};
+    }
+    &:not(:hover) {
+      color: inherit;
+    }
+  }
+
+  .u-center-text {
+    text-align: center !important;
+  }
+
+  .u-margin-bottom-small {
+    margin-bottom: 1.5rem !important;
+  }
+  .u-margin-bottom-medium {
+    margin-bottom: 4rem !important;
+    @include respond(tab-port) {
+      margin-bottom: 3rem !important;
+    }
+  }
+  .u-margin-bottom-big {
+    margin-bottom: 8rem !important;
+    @include respond(tab-port) {
+      margin-bottom: 5rem !important;
+    }
+  }
+
+  .u-margin-top-big {
+    margin-top: 8rem !important;
+  }
+  .u-margin-top-huge {
+    margin-top: 10rem !important;
   }
 `;

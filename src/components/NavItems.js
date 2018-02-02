@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import FontAwesome from 'react-fontawesome';
+import theme from "../theme";
 import styled from "styled-components";
 
 const activeClassName = "nav-item-active";
@@ -10,8 +10,6 @@ const StyledLink = styled(NavLink).attrs({
 })`
   background-color: white;
   text-align: center;
-  text-decoration: none;
-  color: black;
   font-size: 2rem;
 
   display: flex;
@@ -22,13 +20,12 @@ const StyledLink = styled(NavLink).attrs({
   // &.${activeClassName},
    &:hover,
   &:active {
-    color: teal;
+    color: ${theme.primary}!important;
   }
 `;
 
 export const NavItem = props => (
   <StyledLink {...props} exact>
-    <FontAwesome className={`icon ${props.iconName}`} />
     {props.children}
   </StyledLink>
 );
@@ -36,21 +33,20 @@ export const NavItem = props => (
 export const NavItems = props => <StyledNavItems>{props.children}</StyledNavItems>;
 
 const StyledNavItems = styled.div`
-  /* font-size: 100px; */
+  grid-column: center;
   display: grid;
-  grid-template-columns: repeat(3, max-content);
+  grid-template-columns: repeat(3, minmax(10rem, max-content));
   grid-column-gap: 5rem;
-  justify-content: center;
-  /* justify-items: center; */
+  justify-content: space-between;
   align-items: center;
-  margin: 0 auto;
+  /* margin: 0 auto; */
 
   & .icon {
     /* color: black; */
     font-size: 3rem;
     margin-right: 1rem;
+    margin-left: 3rem;
   }
-
 `;
 
 export default NavItems;

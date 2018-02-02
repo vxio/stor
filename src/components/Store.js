@@ -2,17 +2,18 @@ import React, { Component } from "react";
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import { NavItem, NavItems } from "./NavItems";
-import EventContainer from "./EventContainer";
+import StoreFront from "./StoreFront";
+import Shop from "./Shop";
 import ProductPage from "./ProductPage";
 import ShoppingCart from "./ShoppingCart";
 import Checkout from "./Checkout";
 import OrderSummary from "./OrderSummary";
 import querystring from "query-string";
 import axios from "axios";
-import FontAwesome from "react-fontawesome";
 import model_1 from "images/model1.jpg";
 import model_2 from "images/model2.jpg";
 import model_3 from "images/model3.jpg";
+import * as Icon from "react-feather";
 
 class Store extends Component {
   state = {
@@ -38,7 +39,8 @@ class Store extends Component {
         size: "large"
       }
     ],
-    subTotal: 35 * 2 + 40 * 3
+    subTotal: 35 * 2 + 40 * 3,
+    shouldBounce: false
   };
 
   shipping = 10;
@@ -46,6 +48,10 @@ class Store extends Component {
   tax = 0;
   total = 0;
   productLimit = 10;
+  formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD"
+  });
 
   getProducts() {
     //use this url for localhost. May need to use a different url in production
@@ -84,10 +90,10 @@ class Store extends Component {
     const { shipping, tax, total } = this;
     const orderInfo = {
       totalCartItems,
-      subTotal,
-      shipping,
-      tax,
-      total
+      subTotal: this.formatter.format(subTotal),
+      shipping: this.formatter.format(shipping),
+      tax: this.formatter.format(tax),
+      total: this.formatter.format(total)
     };
     return orderInfo;
   };
@@ -101,8 +107,18 @@ class Store extends Component {
     this.setState({ selectedProduct: updatedProduct });
   };
 
-  handleAddToCart = (e, product) => {
-    e.preventDefault();
+  handleAddToCart = product => {
+    // e.preventDefault();
+    console.log(product);
+    if (!product.size) {
+      return;
+    }
+    if (this.state.totalCartItems > 0) {
+      this.setState({ shouldBounce: true }, () => {
+        setTimeout(() => this.setState({ shouldBounce: false }), 300);
+      });
+    }
+
     //if id of productpage matches any id in shopping cart, increase quantity by 1,
     // else add the item as a new item
     const index = this.state.cart.findIndex(cartItem => cartItem.id === product.id && cartItem.size === product.size);
@@ -177,40 +193,70 @@ class Store extends Component {
 
   render() {
     if (this.state.loading) return <h1>Loading biitch</h1>;
-    const { cart, totalCartItems, subTotal } = this.state;
-    this.updateTotal();
-    return <Styled>
-        <NavItems>
-          <NavItem to="/" iconName="fa fa-home">
-            Home
-          </NavItem>
+    const { cart, totalCartItems, subTotal, shouldBounce } = this.state;
+    let cartLink = totalCartItems ? totalCartItems + " item" : undefined;
+    if (totalCartItems > 1) cartLink += "s";
 
-          <CountContainer count={totalCartItems}>
-            <span className="counter">{totalCartItems}</span>
-            <NavItem to="/cart" iconName="fa fa-shopping-bag">
-              Cart
+    this.updateTotal();
+    return (
+      <Styled>
+        <NavItems>
+          <NavItem to="/">Home</NavItem>
+          <NavItem to="/shop">Shop</NavItem>
+          <NavItem to="/checkout">Checkout</NavItem>
+          <CountContainer notEmpty={cartLink} shouldBounce={shouldBounce} totalCartItems={totalCartItems}>
+            <NavItem to="/cart">
+              <Icon.ShoppingBag />
+              <span>{cartLink}</span>
             </NavItem>
           </CountContainer>
-
-          <NavItem to="/checkout">Checkout</NavItem>
         </NavItems>
-        <div>Cart total: {totalCartItems}</div>
-        <div>unique products: {cart.length}</div>
-        <div>subtotal price: ${subTotal}</div>
-        <div>tax: ${this.tax}</div>
-
-        <div>Total price: ${this.total}</div>
-
+        {/* 
+        <div>
+          <div>Cart total: {totalCartItems}</div>
+          <div>unique products: {cart.length}</div>
+          <div>subtotal price: ${subTotal}</div>
+          <div>tax: ${this.tax}</div>
+          <div>Total price: ${this.total}</div>
+        </div> */}
         <Switch>
-          <RouteWithProps path="/store/:productName" exact products={this.state.products} cart={this.state.cart} sizeOptions={this.state.sizeOptions} addToCart={this.handleAddToCart} changeSize={this.handleChangeSize} productLimit={this.productLimit} component={ProductPage} />
-          <RouteWithProps path="/cart" exact cart={cart} removeItem={this.removeItem} userOptions updateQuantity={this.handleUpdateQuantity} component={ShoppingCart} />
-          <RouteWithProps path="/checkout" clearCart={this.handleClearCart} getOrderData={this.handleGetOrderData} exact cart={cart} component={Checkout} />
+          <RouteWithProps
+            path="/shop/:productName"
+            exact
+            products={this.state.products}
+            cart={this.state.cart}
+            sizeOptions={this.state.sizeOptions}
+            addToCart={this.handleAddToCart}
+            changeSize={this.handleChangeSize}
+            productLimit={this.productLimit}
+            component={ProductPage}
+          />
+          <RouteWithProps path="/shop" exact products={this.state.products} component={Shop} />
+          <RouteWithProps
+            path="/cart"
+            exact
+            cart={this.state.cart}
+            orderData={this.handleGetOrderData()}
+            removeItem={this.removeItem}
+            userOptions
+            updateQuantity={this.handleUpdateQuantity}
+            component={ShoppingCart}
+          />
+          <RouteWithProps
+            path="/checkout"
+            clearCart={this.handleClearCart}
+            getOrderData={this.handleGetOrderData}
+            exact
+            cart={cart}
+            component={Checkout}
+          />
           <RouteWithProps path="/order-summary" exact component={OrderSummary} />
 
-          <Route path="/" exact render={() => <EventContainer products={this.state.products} />} />
+          <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
           <Redirect to="/" />
         </Switch>
-      </Styled>;
+      </Styled>
+    );
   }
 }
 
@@ -227,37 +273,48 @@ const RouteWithProps = ({ path, exact, strict, component: Component, location, .
 );
 
 const Styled = styled.div`
-  /* display: grid; */
-  grid-column: center_start / center_end;
+  display: grid;
+  grid-template-rows: 5rem auto;
+  grid-template-columns:
+    [full-start] minmax(6rem, 1fr) [center-start] repeat(8, [col-start] minmax(min-content, 15rem) [col-end])
+    [center-end] minmax(6rem, 1fr)[full-end];
 `;
 
 const CountContainer = styled.div`
   position: relative;
 
-  & > .counter {
-    
-    /* font-size: 1.5rem; */
-    font-size: ${props => {
-      /* const { baseFontSize } = props.theme; */
-      const baseFontSize = '1.5rem';
-      const baseFontSizeParsed = parseFloat(baseFontSize, 10);
-      console.log(baseFontSizeParsed);
-      return  (
-        (props.count > 9 && `${baseFontSizeParsed * .875}rem`) ||
-        baseFontSize
-      );
-    }};
-    height: 2rem;
-    width: 2rem;
-    border-radius: 50%;
-    background-color: red;
-    color: #fff;
+  & * {
+    transition: transform 0.3s ease-in;
+  }
+  & svg {
+    /* transition: translation-duration .3s ease-in; */
+    /* transition-duration: .3s; */
+    transform: ${props => props.notEmpty && `translateX(-3rem)`};
+    animation: ${props => props.shouldBounce && `bounce .4s`};
+  }
+  & span {
     position: absolute;
-    top: 25%;
-    left: -15%;
+    animation: ${props => props.notEmpty && `color-me-in 0.3s cubic-bezier(1,.01,1,1)`};
+  }
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  @keyframes color-me-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes bounce {
+    0% {
+      transform: translate(-3rem, 0);
+    }
+    50% {
+      transform: translate(-3rem, -0.6rem);
+    }
+    100% {
+      transform: translate(-3rem, 0);
+    }
   }
 `;

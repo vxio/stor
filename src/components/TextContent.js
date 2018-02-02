@@ -1,31 +1,40 @@
 import React from "react";
 import styled from "styled-components";
+import theme from '../theme';
 
 const TextContainer = styled.div`
   padding: 100px 0;
   /* max-width: 640px; */
-  margin: 0 auto;
-  text-align: center;
+  /* margin: 0 auto; */
+  /* text-align: center; */
+
+  grid-column: 2 /4; 
+  display: flex;
 `;
 
 const HeaderText = styled.h2`
-  color: #ccc;
-  font-weight: 300;
-  font-size: 5rem;
-  margin-bottom: 0.2em;
+  /* color: #ccc; */
+  font-weight: 400;
+  font-size: 4rem;
+  /* margin-bottom: 0.2em; */
+  white-space: nowrap;
+  margin-right: 3.5rem;
+  line-height: 1;
 `;
 
 const BodyText = styled.p`
   font-size: 1.6rem;
-  margin: 2em;
+  width: 40rem;
+  /* text-align: justify; */
+  /* margin: 2em; */
 `;
 const TextContent = props => {
   return (
     <TextContainer>
       <HeaderText>{props.title}</HeaderText>
-      <hr />
+      {/* <hr /> */}
       <BodyText>{props.children}</BodyText>
-      <hr />
+      {/* <hr /> */}
     </TextContainer>
   );
 };

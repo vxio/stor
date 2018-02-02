@@ -4,12 +4,12 @@ import "./index.css";
 import App from "App";
 import registerServiceWorker from "./registerServiceWorker";
 import { ThemeProvider } from "styled-components";
-import theme from "theme";
+import {variables} from "theme";
 import styled from "styled-components";
 import { BrowserRouter } from "react-router-dom";
 
 const app = (
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={variables}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
