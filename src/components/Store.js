@@ -8,11 +8,9 @@ import ProductPage from "./ProductPage";
 import ShoppingCart from "./ShoppingCart";
 import Checkout from "./Checkout";
 import OrderSummary from "./OrderSummary";
-import querystring from "query-string";
 import axios from "axios";
 import model_1 from "images/model1.jpg";
 import model_2 from "images/model2.jpg";
-import model_3 from "images/model3.jpg";
 import * as Icon from "react-feather";
 
 class Store extends Component {
@@ -39,9 +37,11 @@ class Store extends Component {
         size: "large"
       }
     ],
-    subTotal: 35 * 2 + 40 * 3,
     shouldBounce: false
   };
+
+  products;
+  categorizedProducts = {};
 
   shipping = 10;
   taxRate = 0.1;
@@ -57,28 +57,37 @@ class Store extends Component {
     //use this url for localhost. May need to use a different url in production
     // const url = "products.json";
     const url = "product_data.json";
-    console.log(url);
 
     axios.get(url).then(response => {
       console.log(response);
+      this.products = response.data.productData;
+      this.sizeOptions = response.data.sizeOptions;
+      //attach links to products
+      this.products.map(
+        product => (product.link = `/shop/${product.category}/${product.brand}/${product.name}/${product.color}`)
+      );
+      const categories = [...new Set(this.products.map(product => product.category))];
+      categories.map(
+        category =>
+          (this.categorizedProducts[category] = this.products.filter(product => product.category === category))
+      );
+
+      // this.tees = products.filter(product => product.category === "Tees");
+      // this.sweatshirts = products.filter(product => product.category === "Sweatshirts");
       this.setState({
-        products: response.data.tees,
-        sizeOptions: response.data.sizeOptions,
         loading: false
       });
     });
   }
 
-  sortProducts() {}
-
   componentWillMount() {
     axios.defaults.baseURL = "/";
     this.getProducts();
-    console.log('store is mounting')
   }
 
+
   componentDidUpdate() {
-    console.log(this.state);
+    // console.log(this.state);
   }
 
   updateTotal() {
@@ -113,13 +122,12 @@ class Store extends Component {
 
   handleAddToCart = product => {
     // e.preventDefault();
-    console.log(product);
     if (!product.size) {
       return;
     }
     if (this.state.totalCartItems > 0) {
       this.setState({ shouldBounce: true }, () => {
-        setTimeout(() => this.setState({ shouldBounce: false }), 300);
+        setTimeout(() => this.setState({ shouldBounce: false }), 400);
       });
     }
 
@@ -202,17 +210,18 @@ class Store extends Component {
     if (totalCartItems > 1) cartLink += "s";
 
     this.updateTotal();
-    return <Styled>
+    return (
+      <Styled>
         <NavItems>
-          <NavItem to="/">Home</NavItem>
-          <NavItem to="/shop">Shop</NavItem>
-          <NavItem to="/checkout">Checkout</NavItem>
-          <CountContainer notEmpty={cartLink} shouldBounce={shouldBounce} totalCartItems={totalCartItems}>
-            <NavItem to="/cart">
+          <NavItem to="/">home</NavItem>
+          <NavItem to="/shop">shop</NavItem>
+          {/* <NavItem to="/checkout">Checkout</NavItem> */}
+          <NavItem to="/cart">
+            <CountContainer notEmpty={cartLink} shouldBounce={shouldBounce} totalCartItems={totalCartItems}>
               <Icon.ShoppingBag />
               <span>{cartLink}</span>
-            </NavItem>
-          </CountContainer>
+            </CountContainer>
+          </NavItem>
         </NavItems>
         {/* 
         <div>
@@ -223,29 +232,46 @@ class Store extends Component {
           <div>Total price: ${this.total}</div>
         </div> */}
         <Switch>
-          <RouteWithProps path="/shop/:brand?" exact products={this.state.products} component={Shop} />
-          {/* <RouteWithProps
-            path="/shop/:productName"
+          <RouteWithProps path="/shop/:category?/:brand?" exact products={this.categorizedProducts} component={Shop} />
+          <RouteWithProps
+            path="/shop/:category/:brand/:productName/:color"
             exact
-            products={this.state.products}
+            products={this.categorizedProducts}
             cart={this.state.cart}
-            sizeOptions={this.state.sizeOptions}
+            sizeOptions={this.sizeOptions}
             addToCart={this.handleAddToCart}
             changeSize={this.handleChangeSize}
             productLimit={this.productLimit}
             component={ProductPage}
-          /> */}
+          />
 
           {/* <RouteWithProps path="/shop/Tees/:brand" exact items={this.state.products} component={FilterItems} /> */}
-          <RouteWithProps path="/cart" exact cart={this.state.cart} orderData={this.handleGetOrderData()} removeItem={this.removeItem} userOptions updateQuantity={this.handleUpdateQuantity} component={ShoppingCart} />
+          <RouteWithProps
+            path="/cart"
+            exact
+            cart={this.state.cart}
+            orderData={this.handleGetOrderData()}
+            removeItem={this.removeItem}
+            userOptions
+            updateQuantity={this.handleUpdateQuantity}
+            component={ShoppingCart}
+          />
 
-          <RouteWithProps path="/checkout" clearCart={this.handleClearCart} getOrderData={this.handleGetOrderData} exact cart={cart} component={Checkout} />
+          <RouteWithProps
+            path="/checkout"
+            clearCart={this.handleClearCart}
+            getOrderData={this.handleGetOrderData}
+            exact
+            cart={cart}
+            component={Checkout}
+          />
           <RouteWithProps path="/order-summary" exact component={OrderSummary} />
 
           <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
           <Redirect to="/" />
         </Switch>
-      </Styled>;
+      </Styled>
+    );
   }
 }
 
@@ -263,27 +289,34 @@ const RouteWithProps = ({ path, exact, strict, component: Component, location, .
 
 const Styled = styled.div`
   display: grid;
-  grid-template-rows: 5rem auto;
+  /* grid-template-rows:auto; */
   grid-template-columns:
-    [full-start] minmax(6rem, 1fr) [center-start] repeat(8, [col-start] minmax(min-content, 15rem) [col-end])
-    [center-end] minmax(6rem, 1fr)[full-end];
+   [full-start] repeat(10, [col-start] minmax(min-content,30rem) [col-end])
+    [full-end] ;
+  justify-content: center;
+
 `;
 
 const CountContainer = styled.div`
   position: relative;
 
   & * {
-    transition: transform 0.3s ease-in;
+    transition: transform .4s ease-in;
   }
   & svg {
+    stroke-width: 1.5;
     /* transition: translation-duration .3s ease-in; */
     /* transition-duration: .3s; */
-    transform: ${props => props.notEmpty && `translateX(-3rem)`};
+    font-weight: 300;
+    transform: ${props => props.notEmpty && `translateX(-1rem)`};
     animation: ${props => props.shouldBounce && `bounce .4s`};
   }
   & span {
     position: absolute;
-    animation: ${props => props.notEmpty && `color-me-in 0.3s cubic-bezier(1,.01,1,1)`};
+    /* display: inline-block; */
+    margin-left: -.5rem;
+    white-space: nowrap;
+    animation: ${props => props.notEmpty && `color-me-in 0.4s cubic-bezier(1,.01,1,1)`};
   }
 
   @keyframes color-me-in {
@@ -297,13 +330,13 @@ const CountContainer = styled.div`
 
   @keyframes bounce {
     0% {
-      transform: translate(-3rem, 0);
+      transform: translate(-1rem, 0);
     }
     50% {
-      transform: translate(-3rem, -0.6rem);
+      transform: translate(-1rem, -0.6rem);
     }
     100% {
-      transform: translate(-3rem, 0);
+      transform: translate(-1rem, 0);
     }
   }
 `;

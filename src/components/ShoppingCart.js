@@ -159,7 +159,7 @@ const ShoppingCart = props => {
 export default ShoppingCart;
 
 const Container = styled.div`
-  grid-column: center;
+  grid-column: full;
   display: grid;
   grid-template-columns: max-content minmax(0, 12rem) max-content;
   /* grid-template-rows: auto-fit; */

@@ -7,7 +7,6 @@ class ItemGrid extends Component {
     items: this.props.products
   }
 
-  sortItemsBy
   // saveRef = ref => (this.containerNode = ref);
   // measure() {
   //   const { clientWidth, clientHeight } = this.containerNode;
@@ -40,7 +39,7 @@ class ItemGrid extends Component {
         <ProductCard key={i} product={item} displayText={displayText} />
     ));
 
-    return <Grid innerRef={this.saveRef}>{productsArray}</Grid>;
+    return <Grid className={this.props.className} innerRef={this.saveRef}>{productsArray}</Grid>;
   }
 }
 
@@ -50,8 +49,9 @@ const Grid = styled.div`
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 2rem;
-  grid-row-gap: 4rem;
+  grid-column-gap: 6rem;
+  grid-row-gap: 7rem;
+  /* margin-bottom: 4rem; */
 
   & > * {
     transform: translateX(-3rem);

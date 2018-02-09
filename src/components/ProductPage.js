@@ -1,207 +1,357 @@
 import React, { Component, Fragment } from "react";
 import styled from "styled-components";
+import theme from "../theme";
 import RadioInput from "./GeneralUI/RadioInput";
 import WarningText from "./WarningText";
 import ReactImageMagnify from "react-image-magnify";
 import { Form, Field } from "react-final-form";
+import { NavLink } from "react-router-dom";
+import Washer_svg from "../images/svgs/washer.svg";
+import Icon from "./Icon";
+import { ICONS } from "./constants";
+
+const RadioInputs = props => {
+  const { name, options, customOnChange, error } = props;
+  return (
+    <Inputs_Styled error={error}>
+      {options.map((option, i) => (
+        <Field key={i} name={name} component="input">
+          {({ input, meta }) => {
+            return (
+              <Fragment>
+                <input
+                  {...input}
+                  type="radio"
+                  onChange={value => {
+                    customOnChange(option.value);
+                    return input.onChange(value);
+                  }}
+                  id={i}
+                  value={option.value}
+                />
+                <label htmlFor={i}>{option.displayValue}</label>
+                {/* {meta.submitFailed && <span>{meta.error}</span>} */}
+              </Fragment>
+            );
+          }}
+        </Field>
+      ))}
+    </Inputs_Styled>
+  );
+};
 
 class ProductPage extends Component {
   constructor(props) {
     super(props);
     const { products, match, productLimit, sizeOptions } = props;
-    console.log(props);
-    this.product = products.filter(product => match.params.productName === product.name)[0];
-    console.log(this.product);
+    console.log("props", props);
+
+    this.sameProducts = products[match.params.category].filter(
+      product => match.params.productName === product.name && match.params.brand === product.brand
+    );
 
     Object.assign(this, { productLimit, sizeOptions });
 
     this.state = {
-      selectedSize: false,
-      warningText: "",
-      quantityLimitReached: false
+      issueWarning: "",
+      quantityLimitReached: false,
+      product: this.getProduct(match.params.color),
+      productInCart: null,
+      selectedSize: undefined
     };
   }
 
-  getProductInCart() {
-    return this.props.cart.find(product => {
-      return this.product.id === product.id && this.product.size === product.size;
+  getProduct(color) {
+    return this.sameProducts.filter(product => color === product.color)[0];
+  }
+
+  checkProductInCart() {
+    console.log(this.state);
+    console.log(this.props.cart);
+    const productInCart = this.props.cart.find(cartProduct => {
+      return cartProduct.id === this.state.product.id && cartProduct.size === this.state.product.size;
+    });
+    console.log("proudct", this.state.product);
+    console.log("product in cart", productInCart);
+
+    if (productInCart) {
+      this.setState(
+        {
+          productInCart: productInCart
+        },
+        function() {
+          console.log(this.state.productInCart);
+          this.checkQuantityLimit();
+        }
+      );
+      return true;
+    } else {
+      this.clearQuantityLimit();
+      return false;
+    }
+  }
+
+  clearQuantityLimit() {
+    //if quantity is not reached, reset state
+    this.setState({
+      quantityLimitReached: false,
+      issueWarning: ""
     });
   }
 
   checkQuantityLimit() {
-    const product = this.getProductInCart();
-    if (!product) return;
-    if (product.quantity === this.productLimit && !this.state.quantityLimitReached) {
+    const { productInCart } = this.state;
+    console.log("checking quantity limit");
+    if (productInCart.quantity === this.productLimit) {
       this.setState({
         quantityLimitReached: true,
-        warningText: "Limit of 10 per item in each size"
+        issueWarning: "Limit of 10 per item in each size"
       });
+    } else {
+      this.clearQuantityLimit();
     }
   }
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    console.log(this.sizeOptions);
+    console.log("mounted");
   }
 
-  componentDidUpdate() {
-    this.checkQuantityLimit();
+  componentWillReceiveProps(nextProps) {
+    if (this.props.match.params.color !== nextProps.match.params.color) {
+      this.setState(
+        {
+          product: { ...this.getProduct(nextProps.match.params.color), size: this.state.selectedSize }
+        },
+        function() {
+          this.checkProductInCart();
+        }
+      );
+    }
   }
+
+  componentDidUpdate() {}
 
   updateProduct = eventValue => {
+    const selectedProduct = { ...this.state.product, size: eventValue };
     this.setState(
       {
+        product: selectedProduct,
         selectedSize: eventValue,
-        warningText: ""
+        issueWarning: eventValue
       },
       function() {
-        this.product.size = eventValue;
-        this.checkQuantityLimit();
-        //if quantity is not reached, reset state
-        const product = this.getProductInCart();
-        if (!product || product.quantity < this.productLimit) {
-          this.setState({
-            quantityLimitReached: false
-          });
-        }
+        this.checkProductInCart();
       }
     );
   };
 
   onSubmit = values => {
-    this.props.addToCart(this.product);
-    if (!this.state.selectedSize) {
+    if (!this.state.product.size) {
+      console.log(this.state.product);
       this.setState({
-        warningText: "Please select a size"
+        issueWarning: "Please select a size*"
       });
+      return;
     }
+    this.props.addToCart(this.state.product);
+    this.checkProductInCart();
   };
 
   render() {
-    const { selectedSize, quantityLimitReached, warningText } = this.state;
-    return (
-      <Styled>
-        <img src={this.product.img} alt={this.product.img} height="500px" />
+    const { quantityLimitReached, issueWarning, product, selectedSize, productInCart } = this.state;
+    const colors = this.sameProducts.map(product => (
+      <StyledColor
+        key={product.color}
+        to={this.props.location.pathname.replace(this.props.match.params.color, product.color)}
+        replace
+      >
+        <Color colorCode={product.colorCode} />
+      </StyledColor>
+    ));
+
+    return <Styled>
+        <img className="image" src={product.img} alt={product.img} />
         <div className="product-info">
-          <h2 className="product-name">{this.product.name}</h2>
-          <h3 className="product-price">${this.product.price}</h3>
-          {/* <form
-            onSubmit={e => {
-              this.props.addToCart(e, this.product);
-              if (!selectedSize) {
-                this.setState({
-                  warningText: "Please select a size"
-                });
-              }
-            }}
-          >
-            {warningText && <WarningText>{warningText}</WarningText>}
-            <RadioInput inputValues={this.sizeOptions} changed={this.updateProduct} />
-            <button disabled={quantityLimitReached}>Add to Cart</button>
-          </form> */}
-          <Form
-            onSubmit={this.onSubmit}
-            render={({ handleSubmit, reset, submitting, pristine, values }) => {
-              return (
-                <form onSubmit={handleSubmit}>
-                  <div>
-                    <RadioInputs name="size" options={this.sizeOptions} customOnChange={this.updateProduct} />
-                    {warningText && <WarningText>{warningText}</WarningText>}
-                    <button disabled={quantityLimitReached}>Add to Cart</button>
-                  </div>
-                  <div />
-                  <pre>{JSON.stringify(values, 0, 2)}</pre>
-                </form>
-              );
-            }}
-          />
-          <div className="product-details">
-            <p>100% Cotton</p>
-            <p>Machine washable</p>
-            <p>Made in Omaha, NE</p>
+          <div>
+            <h2 className="brand">{product.brand}</h2>
+            <h2 className="name">{product.name}</h2>
           </div>
-          <div className="product-description">
-            <h3>Description</h3>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ad dolor iure similique magnam, totam
-              accusantium illo natus error. Dolore quidem dignissimos fugiat facere unde harum dolor dicta aliquid
-              quibusdam.
+          <h3 className="price">${product.price}</h3>
+          <div>
+            <h3 className="color-size-text">{product.color}</h3>
+            <StyledColorsContainer>{colors}</StyledColorsContainer>
+          </div>
+          <Form onSubmit={this.onSubmit} render={({ handleSubmit, reset, submitting, pristine, values }) => {
+              return <form onSubmit={handleSubmit}>
+                  <WarningText className="color-size-text" warn={!selectedSize && issueWarning} showUserInput={selectedSize} defaultText="Size">
+                    {issueWarning}
+                  </WarningText>
+                  <RadioInputs name="size" options={this.sizeOptions} customOnChange={this.updateProduct} error={!selectedSize && issueWarning} />
+                  <WarningText warn={quantityLimitReached}>{(selectedSize && issueWarning) || <br />}</WarningText>
+                  <button disabled={quantityLimitReached}>Add to Cart</button>
+                </form>;
+            }} />
+          <div className="details-container">
+            <div className="detail">
+              <span>
+                <Icon icon={ICONS.WASHING_MACHINE} />
+              </span>
+              <p>Machine washable</p>
+            </div>
+            <div className="detail">
+              <span>
+                <Icon icon={ICONS.THREAD_WHEEL} size="19" />
+              </span>
+              <p>Made in Omaha, NE</p>
+            </div>
+          </div>
+          <div className="description">
+            <h3 className="title">Description</h3>
+            <p className="content">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ad dolor iure similique magnam,
+              totam accusantium illo natus error. Fugiat facere unde harum dolor dicta aliquid quibusdam.
             </p>
           </div>
         </div>
-      </Styled>
-    );
+      </Styled>;
   }
 }
 
 export default ProductPage;
 
-const Styled = styled.div`
-  grid-column: center;
+const StyledColorsContainer = styled.div``;
 
-  display: flex;
+const activeClassName = "nav-item-active";
+const StyledColor = styled(NavLink).attrs({
+  activeClassName
+})`
+  display: inline-block;
+  margin-right: 1rem;
+  padding: 0.4rem;
+  border: 1.3px solid transparent;
+  border-radius: 50%;
+  transition: all 0.3s ease-out;
+  margin-bottom: 2rem;
+
+  &.${activeClassName}, &:hover,
+  &:active {
+    color: ${props => `${props.theme.primary} !important`};
+    border-color: ${theme.grey_5};
+  }
+`;
+
+const Color = styled.div`
+  background-color: ${props => props.colorCode};
+  display: inline-block;
+  border: ${props => props.colorCode === "#fff" && `1px solid #dfe0e1`};
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  /* padding: 5px 10px; */
+  justify-content: center;
+  vertical-align: middle;
+`;
+
+const Styled = styled.div`
+  grid-column: full;
+
+  display: grid;
+  grid-template-columns: 1fr minmax(33rem, 55rem) 5rem 30rem 1fr;
+
+  .image {
+    width: 100%;
+    grid-column: 2/3;
+  }
 
   .product-info {
-    .product-name {
-      font-size: 2rem;
+    grid-column: 4/5;
+
+    display: grid;
+
+    .name {
+      font-size: 3rem;
     }
-    .product-price {
-      font-size: 2rem;
+    .brand {
+      color: ${theme.grey_4};
+      font-size: 2.1rem;
+    }
+    .price {
+      font-size: 2.5rem;
+      font-weight: 500;
+      margin: 3rem 0 5rem;
+    }
+    .color-size-text {
+      font-size: 1.75rem;
+      color: ${theme.grey_4};
+      font-weight: 500;
+      margin-bottom: .9rem;
+    }
+    .details-container {
+      margin: 5rem 0 2rem;
+      font-size: 1.5rem;
+      line-height: 1.8;
+
+      .detail {
+        display: grid;
+        grid-template-columns: 2.5rem max-content;
+
+        p {
+          color: ${theme.grey_6};
+        }
+
+        svg {
+          fill: ${theme.grey_6};
+        }
+
+        .thread-wheel {
+          margin-left: 1px !important;
+        }
+      }
+    }
+    .description {
+      line-height: 1.5;
+      .title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: ${theme.grey_4};
+      }
+      .content {
+        font-size: 1.2rem;
+        color: ${theme.grey_6};
+      }
     }
   }
 `;
 
-const InputStyles = styled.div`
+const Inputs_Styled = styled.div`
   display: flex;
   justify-content: space-between;
   width: 20rem;
+  margin-top: -0.5rem;
+  padding: 0.3rem 0.4rem;
+  border: ${props => props.error && `1px solid #F15C5C`};
+  border-radius: 3px;
+  margin-bottom: 2rem;
+
   input {
     display: none;
+
     & + label:hover,
     &:checked + label {
-      border: 1px solid red;
+      border: 1px solid ${theme.grey_4};
+      border-radius: 2px;
+      color: ${theme.grey_4};
+      transition: all 0.3s ease-out;
     }
   }
   label {
     display: inline-block;
     cursor: pointer;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+    font-weight: 600;
     border: 1px solid transparent;
-    padding: 0.25rem 0.5rem;
+    padding: 0.4rem 0.7rem;
+    user-select: none;
   }
 `;
-
-const RadioInputs = props => {
-  const { name, options, customOnChange } = props;
-
-  function createRadioInputs(name, options) {
-    return (
-      <InputStyles>
-        {options.map((option, i) => (
-          <Field key={i} name={name} component="input">
-            {({ input, meta }) => {
-              return (
-                <Fragment>
-                  <input
-                    {...input}
-                    type="radio"
-                    onChange={value => {
-                      customOnChange(option.value);
-                      return input.onChange(value);
-                    }}
-                    id={i}
-                    value={option.value}
-                  />
-                  <label htmlFor={i}>{option.displayValue}</label>
-                  {/* {meta.submitFailed && <span>{meta.error}</span>} */}
-                </Fragment>
-              );
-            }}
-          </Field>
-        ))}
-      </InputStyles>
-    );
-  }
-
-  return <div>{createRadioInputs(name, options)}</div>;
-};

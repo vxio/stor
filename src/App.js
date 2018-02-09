@@ -18,13 +18,16 @@ class App extends Component {
 export default withRouter(App);
 
 const UtilityContainer = styled.div`
-  color: ${theme.black_custom};
+  color: ${theme.black};
+  margin-bottom: 8rem;
 
   a {
     text-decoration: none;
+
     &:hover {
-      color: ${theme.grey_dark_2};
+      color: ${theme.primary};
     }
+
     &:not(:hover) {
       color: inherit;
     }

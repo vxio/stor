@@ -9,18 +9,16 @@ const StyledLink = styled(NavLink).attrs({
   activeClassName
 })`
   background-color: white;
-  text-align: center;
-  font-size: 2rem;
+  font-size: 1.75rem;
 
-  display: flex;
-  align-items: flex-end;
-
+  transition: all .15s ease-in;
 
 
   // &.${activeClassName},
    &:hover,
   &:active {
     color: ${theme.primary}!important;
+    // border-bottom: 2px solid ${theme.primary};
   }
 `;
 
@@ -33,20 +31,26 @@ export const NavItem = props => (
 export const NavItems = props => <StyledNavItems>{props.children}</StyledNavItems>;
 
 const StyledNavItems = styled.div`
-  grid-column: center;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(10rem, max-content));
-  grid-column-gap: 5rem;
-  justify-content: space-between;
-  align-items: center;
-  /* margin: 0 auto; */
-
-  & .icon {
-    /* color: black; */
-    font-size: 3rem;
-    margin-right: 1rem;
-    margin-left: 3rem;
+  grid-column: full;
+  text-transform: capitalize;
+  /* margin-top: 1rem; */
+  /* margin: 1.8rem auto 4rem; */
+  /* margin-bottom: 6rem; */
+  width: 100%;
+  justify-content: center;
+  padding: 1.8rem 0 .8rem;
+  display: flex;
+  margin-bottom: 5rem; //adjusted margin on homepage 
+  & > * {
+    margin-right: 8rem;
   }
+  z-index: 100;
+
+  /* border-bottom: .5px solid${theme.grey_light_2}; */
+  /* box-shadow: 0px .5px 2px rggrey_light_2ba(0,0,0, .2); */
+  box-shadow: 0 1px 4px rgba(76,76,75,.15);
+  /* justify-content: space-between; */
+
 `;
 
 export default NavItems;

@@ -28,27 +28,24 @@ import createTheme from "styled-components-theme";
 // };
 
 export const variables = {
-  baseFontFamily: "Source Sans Pro",
-  /* Colors */
+  baseFontFamily: "Source Sans Pro" /* Colors */,
   primary: "#55c57a",
   primary_light: "#7ed56f",
   primary_dark: "#28b485",
-  grey_dark_1: "#999",
-  grey_dark_2: "#666",
-  grey_dark_3: "#333",
+  grey_1: "#cacbcf",
+  grey_2: "#b0b1b6",
+  grey_3: "#9EA0A6",
+  grey_4: "#8c8f96",
+  grey_5: "#7b7d85",
+  grey_6: "#6a6d74",
   white: "#fff",
-  black: "#000",
-  black_custom: "#282c37", //   secondary: #ffb900;
-  //   secondary_light: #ffb900;
-  // secondary_dark: #ff7730;
-
-  /* Fonts */
+  black: "#282c37" /* Fonts */,
   baseFontSize: "1.6rem",
   fontThin: 300,
   fontNormal: 400,
   fontSemibold: 600,
   fontBold: 700
-};
+}; // secondary_dark: #ff7730;
 
 const theme = createTheme(...Object.keys(variables));
 
