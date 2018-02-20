@@ -5,15 +5,15 @@ import Input from "./GeneralUI/Input";
 import Select from "./GeneralUI/Select";
 import styled from "styled-components";
 import theme from "../theme";
-
+import { spring, TransitionMotion, presets } from "react-motion";
 
 const CartItem = props => {
   const { product, index, removeItem, updateQuantity, userOptions } = props;
-  console.log(props);
+  
   return (
-    <CartItem_Styles>
+    <CartItem_Styles style={props.style}>
       <Link className="image" to={`/store/${product.name}`}>
-              <img src={product.img} alt={product.img} />
+        <img src={product.img} alt={product.img} />
       </Link>
 
       <div className="product-info">
@@ -38,7 +38,7 @@ const CartItem = props => {
           </div>
           <p>${product.totalPrice}</p>
         </div>
-        {userOptions && <X_Button onClick={() => props.removeItem(index)}>✖</X_Button>}
+        {userOptions && <X_Button onClick={() => props.removeItem(product)}>✖</X_Button>}
       </div>
     </CartItem_Styles>
   );
@@ -64,16 +64,16 @@ const CartItem_Styles = styled.div`
   grid-template-columns: 10rem 25rem;
   grid-column-gap: 2rem;
   font-size: 1.4rem;
-  height: 15rem;
-  /* margin-bottom: 3rem; */
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   padding: 2rem 0;
+  backface-visibility: hidden;
 
   & > .image {
     grid-column: 1/2;
 
     img {
       width: 100%;
+      /* height: 100%; */
       vertical-align: middle;
       &:hover {
         filter: brightness(95%);
@@ -114,19 +114,44 @@ const CartItem_Styles = styled.div`
 `;
 
 const ShoppingCart = props => {
-  console.log(props);
+  
   const { orderData, cart } = props;
 
-  const cartComponents = cart.map((product, i) => (
-    <CartItem
-      key={i}
-      product={product}
-      index={i}
-      userOptions={props.userOptions}
-      removeItem={props.removeItem} //can put this in CartItem instead
-      updateQuantity={props.updateQuantity}
-    />
-  ));
+  function willLeave() {
+    // triggered when c's gone. Keeping c until its width/height reach 0. ,
+    return { height: spring(0), opacity: spring(0, { stiffness: 210 }), padding: 0, border: 0 };
+  }
+
+  const cartComponents = (
+    <TransitionMotion
+      willLeave={willLeave}
+      styles={cart.map(cartItem => ({
+        key: cartItem.id + cartItem.size,
+        data: { product: cartItem },
+        style: { height: 160, opacity: 1 }
+      }))}
+    >
+      {interpolatedStyles => (
+        <div>
+          {interpolatedStyles.map((config, i) => {
+            return (
+              <CartItem
+                product={config.data.product}
+                key={config.key}
+                index={i}
+                userOptions={props.userOptions}
+                removeItem={props.removeItem}
+                updateQuantity={
+                  props.updateQuantity //can put this in CartItem instead
+                }
+                style={{ ...config.style }}
+              />
+            );
+          })}
+        </div>
+      )}
+    </TransitionMotion>
+  );
 
   return (
     <Container>
@@ -162,9 +187,6 @@ const Container = styled.div`
   grid-column: full;
   display: grid;
   grid-template-columns: max-content minmax(0, 12rem) max-content;
-  /* grid-template-rows: auto-fit; */
-  /* grid-column-gap: 10rem; */
-  /* grid-gap: 5rem; */
 
   & > .order-summary-container {
     grid-column: 3/4;

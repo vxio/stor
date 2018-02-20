@@ -24,6 +24,7 @@ const TextContent = props => {
   return (
     <div className={props.className}>
       <HeaderText>{props.title}</HeaderText>
+      
       <BodyText>{props.children}</BodyText>
     </div>
   );

@@ -38,6 +38,7 @@ class Shop extends React.Component {
   componentWillReceiveProps(nextProps) {
     console.log("will receive props");
     this.updateView(nextProps);
+    
     console.log(this.props);
     console.log(nextProps);
     if (this.props.match.url !== nextProps.match.url) {
@@ -155,11 +156,14 @@ const StyledLink = styled(NavLink).attrs({
   activeClassName
 })`
   font-size: 2rem;
-  margin-bottom: 1.6rem;
+  padding: .7rem 0;
+  width: 100%;
 
   &.${activeClassName}, &:hover,
   &:active {
+    transition: all .1s ease-out;
     color: ${props => !props.view_all && `${props.theme.primary} !important`};
+    
   }
 `;
 
@@ -168,7 +172,7 @@ const StyledSubLink = StyledLink.extend`
   /* margin-left: 2rem; */
   padding-left: 2rem;
 
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   font-size: 1.6rem;
   white-space: no-wrap;
   

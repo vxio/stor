@@ -85,7 +85,6 @@ class Store extends Component {
     this.getProducts();
   }
 
-
   componentDidUpdate() {
     // console.log(this.state);
   }
@@ -160,14 +159,20 @@ class Store extends Component {
     }
   };
 
-  removeItem = index => {
-    const product = this.state.cart[index];
-    const cartClone = [...this.state.cart.slice(0, index), ...this.state.cart.slice(index + 1)];
-    this.setState(prevState => ({
-      cart: cartClone,
-      totalCartItems: prevState.totalCartItems - product.quantity,
-      subTotal: prevState.subTotal - product.totalPrice
-    }));
+  removeItem = product => {
+    const { id, size, quantity, totalPrice } = product;
+    const cartClone = this.state.cart.filter(cartItem => cartItem.id !== id || cartItem.size !== size);
+
+    this.setState(
+      prevState => ({
+        cart: cartClone,
+        totalCartItems: prevState.totalCartItems - quantity,
+        subTotal: prevState.subTotal - totalPrice
+      }),
+      function() {
+        console.log(this.state.cart);
+      }
+    );
   };
 
   handleClearCart = () => {
@@ -291,17 +296,16 @@ const Styled = styled.div`
   display: grid;
   /* grid-template-rows:auto; */
   grid-template-columns:
-   [full-start] repeat(10, [col-start] minmax(min-content,30rem) [col-end])
-    [full-end] ;
+    [full-start] repeat(10, [col-start] minmax(min-content, 30rem) [col-end])
+    [full-end];
   justify-content: center;
-
 `;
 
 const CountContainer = styled.div`
   position: relative;
 
   & * {
-    transition: transform .4s ease-in;
+    transition: transform 0.4s ease-in;
   }
   & svg {
     stroke-width: 1.5;
@@ -314,7 +318,7 @@ const CountContainer = styled.div`
   & span {
     position: absolute;
     /* display: inline-block; */
-    margin-left: -.5rem;
+    margin-left: -0.5rem;
     white-space: nowrap;
     animation: ${props => props.notEmpty && `color-me-in 0.4s cubic-bezier(1,.01,1,1)`};
   }

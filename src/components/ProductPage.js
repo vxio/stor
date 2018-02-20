@@ -44,14 +44,14 @@ class ProductPage extends Component {
   constructor(props) {
     super(props);
     const { products, match, productLimit, sizeOptions } = props;
-    console.log("props", props);
 
     this.sameProducts = products[match.params.category].filter(
       product => match.params.productName === product.name && match.params.brand === product.brand
     );
 
     Object.assign(this, { productLimit, sizeOptions });
-
+    this.purchasedNotification = "Added to cart!";
+    this.timeoutIdStack = [];
     this.state = {
       issueWarning: "",
       quantityLimitReached: false,
@@ -66,13 +66,9 @@ class ProductPage extends Component {
   }
 
   checkProductInCart() {
-    console.log(this.state);
-    console.log(this.props.cart);
     const productInCart = this.props.cart.find(cartProduct => {
       return cartProduct.id === this.state.product.id && cartProduct.size === this.state.product.size;
     });
-    console.log("proudct", this.state.product);
-    console.log("product in cart", productInCart);
 
     if (productInCart) {
       this.setState(
@@ -80,7 +76,6 @@ class ProductPage extends Component {
           productInCart: productInCart
         },
         function() {
-          console.log(this.state.productInCart);
           this.checkQuantityLimit();
         }
       );
@@ -100,12 +95,11 @@ class ProductPage extends Component {
   }
 
   checkQuantityLimit() {
-    const { productInCart } = this.state;
-    console.log("checking quantity limit");
+    const { productInCart, quantityLimitReached } = this.state;
     if (productInCart.quantity === this.productLimit) {
       this.setState({
         quantityLimitReached: true,
-        issueWarning: "Limit of 10 per item in each size"
+        issueWarning: this.purchasedNotification + "\n (Limit of 10 for this item and size)"
       });
     } else {
       this.clearQuantityLimit();
@@ -114,7 +108,6 @@ class ProductPage extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    console.log("mounted");
   }
 
   componentWillReceiveProps(nextProps) {
@@ -125,6 +118,7 @@ class ProductPage extends Component {
         },
         function() {
           this.checkProductInCart();
+          this.clearNotificationStack();
         }
       );
     }
@@ -132,8 +126,18 @@ class ProductPage extends Component {
 
   componentDidUpdate() {}
 
+  clearTimeoutOnStack(stackArray) {
+    stackArray.map(id => clearTimeout(id));
+  }
+
+  clearNotificationStack() {
+    this.clearTimeoutOnStack(this.timeoutIdStack);
+    this.timeoutIdStack = [];
+  }
+
   updateProduct = eventValue => {
     const selectedProduct = { ...this.state.product, size: eventValue };
+    this.clearNotificationStack(); 
     this.setState(
       {
         product: selectedProduct,
@@ -155,6 +159,12 @@ class ProductPage extends Component {
       return;
     }
     this.props.addToCart(this.state.product);
+    // this.notificationStack.push(this.purchasedNotification);
+
+    this.timeoutIdStack.push(setTimeout(() => {
+      this.timeoutIdStack.pop();
+      this.forceUpdate();
+    }, 2000));
     this.checkProductInCart();
   };
 
@@ -170,7 +180,8 @@ class ProductPage extends Component {
       </StyledColor>
     ));
 
-    return <Styled>
+    return (
+      <Styled>
         <img className="image" src={product.img} alt={product.img} />
         <div className="product-info">
           <div>
@@ -182,16 +193,23 @@ class ProductPage extends Component {
             <h3 className="color-size-text">{product.color}</h3>
             <StyledColorsContainer>{colors}</StyledColorsContainer>
           </div>
-          <Form onSubmit={this.onSubmit} render={({ handleSubmit, reset, submitting, pristine, values }) => {
+          <Form
+            onSubmit={this.onSubmit}
+            render={({ handleSubmit, reset, submitting, pristine, values }) => {
               return <form onSubmit={handleSubmit}>
                   <WarningText className="color-size-text" warn={!selectedSize && issueWarning} showUserInput={selectedSize} defaultText="Size">
-                    {issueWarning}
+                    {selectedSize || issueWarning}
                   </WarningText>
                   <RadioInputs name="size" options={this.sizeOptions} customOnChange={this.updateProduct} error={!selectedSize && issueWarning} />
-                  <WarningText warn={quantityLimitReached}>{(selectedSize && issueWarning) || <br />}</WarningText>
-                  <button disabled={quantityLimitReached}>Add to Cart</button>
+                  <div>
+                    <WarningText success>
+                      {(quantityLimitReached && issueWarning) || this.timeoutIdStack.length > 0 && this.purchasedNotification}
+                    </WarningText>
+                    <button disabled={quantityLimitReached}>Add to Cart</button>
+                  </div>
                 </form>;
-            }} />
+            }}
+          />
           <div className="details-container">
             <div className="detail">
               <span>
@@ -209,12 +227,13 @@ class ProductPage extends Component {
           <div className="description">
             <h3 className="title">Description</h3>
             <p className="content">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ad dolor iure similique magnam,
-              totam accusantium illo natus error. Fugiat facere unde harum dolor dicta aliquid quibusdam.
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ad dolor iure similique magnam, totam
+              accusantium illo natus error. Fugiat facere unde harum dolor dicta aliquid quibusdam.
             </p>
           </div>
         </div>
-      </Styled>;
+      </Styled>
+    );
   }
 }
 
@@ -245,10 +264,9 @@ const Color = styled.div`
   background-color: ${props => props.colorCode};
   display: inline-block;
   border: ${props => props.colorCode === "#fff" && `1px solid #dfe0e1`};
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 50%;
-  /* padding: 5px 10px; */
   justify-content: center;
   vertical-align: middle;
 `;
@@ -285,7 +303,7 @@ const Styled = styled.div`
       font-size: 1.75rem;
       color: ${theme.grey_4};
       font-weight: 500;
-      margin-bottom: .9rem;
+      margin-bottom: 0.9rem;
     }
     .details-container {
       margin: 5rem 0 2rem;
