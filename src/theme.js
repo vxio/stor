@@ -38,7 +38,7 @@ export const variables = {
   grey_4: "#8c8f96",
   grey_5: "#7b7d85",
   grey_6: "#6a6d74",
-  white: "#fff",
+  white: "#F2F0EA",
   black: "#282c37" /* Fonts */,
   baseFontSize: "1.6rem",
   fontThin: 300,

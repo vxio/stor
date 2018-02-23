@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 import styled from "styled-components";
+import theme from '../theme';
 import { NavItem, NavItems } from "./NavItems";
 import StoreFront from "./StoreFront";
 import Shop from "./Shop";
@@ -9,39 +10,19 @@ import ShoppingCart from "./ShoppingCart";
 import Checkout from "./Checkout";
 import OrderSummary from "./OrderSummary";
 import axios from "axios";
-import model_1 from "images/model1.jpg";
-import model_2 from "images/model2.jpg";
 import * as Icon from "react-feather";
 
-class Store extends Component {
+export class Store extends Component {
   state = {
     loading: true,
-    totalCartItems: 5,
-    cart: [
-      {
-        name: "shirt",
-        id: 0,
-        price: 35,
-        img: model_1,
-        quantity: 2,
-        totalPrice: 70,
-        size: "medium"
-      },
-      {
-        name: "shirt2",
-        id: 1,
-        price: 40,
-        img: model_2,
-        quantity: 3,
-        totalPrice: 120,
-        size: "large"
-      }
-    ],
+    totalCartItems: 0,
+    cart: [],
     shouldBounce: false
   };
 
   products;
   categorizedProducts = {};
+  sizeOptions = {};
 
   shipping = 10;
   taxRate = 0.1;
@@ -53,13 +34,42 @@ class Store extends Component {
     currency: "USD"
   });
 
+  insertRandomCartItems(numOfCartItems) {
+    let cartItemsInserted = 0;
+    function generateRandom(number) {
+      return Math.floor(Math.random() * number);
+    }
+
+    const product_keys = Object.keys(this.categorizedProducts);
+    let newCart = [];
+    while (cartItemsInserted < numOfCartItems) {
+      const randomCategoryNum = generateRandom(product_keys.length);
+      const category = this.categorizedProducts[product_keys[randomCategoryNum]]; //array of products
+      // console.log(product_keys[randomCategoryNum]);
+      const product = category[generateRandom(category.length)];
+      const randomSize = this.sizeOptions[generateRandom(Object.keys(this.sizeOptions).length)].value;
+      const randomQuantity = generateRandom(this.productLimit);
+      const newProduct = {
+        ...product,
+        quantity: randomQuantity,
+        totalPrice: randomQuantity * product.price,
+        size: randomSize,
+        testing: true
+      };
+      this.handleAddToCart(newProduct);
+      cartItemsInserted++;
+    }
+    // this.setState({ cart: newCart });
+    // debugger;
+  }
+
   getProducts() {
     //use this url for localhost. May need to use a different url in production
     // const url = "products.json";
+    axios.defaults.baseURL = "/";
     const url = "product_data.json";
 
     axios.get(url).then(response => {
-      console.log(response);
       this.products = response.data.productData;
       this.sizeOptions = response.data.sizeOptions;
       //attach links to products
@@ -72,8 +82,8 @@ class Store extends Component {
           (this.categorizedProducts[category] = this.products.filter(product => product.category === category))
       );
 
-      // this.tees = products.filter(product => product.category === "Tees");
-      // this.sweatshirts = products.filter(product => product.category === "Sweatshirts");
+      this.insertRandomCartItems(5);
+
       this.setState({
         loading: false
       });
@@ -81,12 +91,13 @@ class Store extends Component {
   }
 
   componentWillMount() {
-    axios.defaults.baseURL = "/";
-    this.getProducts();
   }
+  
+  componentDidMount() {
+  this.getProducts();
+}
 
   componentDidUpdate() {
-    // console.log(this.state);
   }
 
   updateTotal() {
@@ -139,7 +150,7 @@ class Store extends Component {
       const productClone = { ...this.state.cart[index] };
       if (productClone.quantity === this.productLimit) return;
       productClone.quantity++;
-      productClone.totalPrice += product.price;
+      productClone.totalPrice = productClone.quantity * productClone.price;
       const cartClone = [...this.state.cart];
       cartClone[index] = productClone;
       this.setState(prevState => ({
@@ -149,11 +160,9 @@ class Store extends Component {
       }));
       //Add the new product
     } else {
-      product.quantity = 1; //introduce quantity
-      product.totalPrice = product.price; //introduct totalPrice
       this.setState(prevState => ({
         cart: [...this.state.cart, product],
-        totalCartItems: prevState.totalCartItems + 1,
+        totalCartItems: prevState.totalCartItems + product.quantity,
         subTotal: prevState.subTotal + product.price
       }));
     }
@@ -202,14 +211,10 @@ class Store extends Component {
     });
   };
 
-  componentWillUpdate() {
-    // console.log('compnent WILL UPDATE')
-    // this.updateTotal();
-    // console.log(this.total)
-  }
+
 
   render() {
-    if (this.state.loading) return <h1>Loading biitch</h1>;
+    if (this.state.loading) return <div>Loading sir</div>;
     const { cart, totalCartItems, subTotal, shouldBounce } = this.state;
     let cartLink = totalCartItems ? totalCartItems + " item" : undefined;
     if (totalCartItems > 1) cartLink += "s";
@@ -299,6 +304,8 @@ const Styled = styled.div`
     [full-start] repeat(10, [col-start] minmax(min-content, 30rem) [col-end])
     [full-end];
   justify-content: center;
+  /* border-top: 2.5px solid ${theme.primary_dark}; */
+  /* background-color: ${theme.white}; */
 `;
 
 const CountContainer = styled.div`

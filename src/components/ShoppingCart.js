@@ -9,38 +9,54 @@ import { spring, TransitionMotion, presets } from "react-motion";
 
 const CartItem = props => {
   const { product, index, removeItem, updateQuantity, userOptions } = props;
-  
+  let removeButton;
+
   return (
-    <CartItem_Styles style={props.style}>
-      <Link className="image" to={`/store/${product.name}`}>
-        <img src={product.img} alt={product.img} />
-      </Link>
-
-      <div className="product-info">
-        <Link className="product-name" to={`/store/${product.name}`}>
-          {product.name}
+    <div style={props.style}>
+      <CartItem_Styles>
+        <Link className="image" to={`/store/${product.name}`}>
+          <img src={product.img} alt={product.img} />
         </Link>
-        <p className="size-price">
-          size: {product.size} <br /> price: ${product.price}
-        </p>
 
-        <div className="quantity-totalPrice">
-          <div className="quantity">
-            quantity:{userOptions && (
-              <Select
-                name={"quantity range"}
-                selectedOption={product.quantity}
-                min={1}
-                max={10}
-                controlFunc={e => props.updateQuantity(e, index)}
-              />
-            )}
+        <div className="product-info">
+          <Link className="product-name" to={`/store/${product.name}`}>
+            {product.name}
+          </Link>
+          <p className="size-price">
+            size: {product.size} <br /> price: ${product.price}
+          </p>
+
+          <div className="quantity-totalPrice">
+            <div className="quantity">
+              quantity:{userOptions && (
+                <Select
+                  name={"quantity range"}
+                  selectedOption={product.quantity}
+                  min={1}
+                  max={10}
+                  controlFunc={e => props.updateQuantity(e, index)}
+                />
+              )}
+            </div>
+            <p>${product.totalPrice}</p>
           </div>
-          <p>${product.totalPrice}</p>
+          {userOptions && (
+            <X_Button
+              innerRef={ (buttonDOM) => {
+                removeButton = buttonDOM;
+              }}
+              onClick={() => {
+                props.removeItem(product);
+                removeButton.setAttribute("disabled", "disabled");
+                console.log(removeButton);
+              }}
+            >
+              ✖
+            </X_Button>
+          )}
         </div>
-        {userOptions && <X_Button onClick={() => props.removeItem(product)}>✖</X_Button>}
-      </div>
-    </CartItem_Styles>
+      </CartItem_Styles>
+    </div>
   );
 };
 
@@ -114,12 +130,12 @@ const CartItem_Styles = styled.div`
 `;
 
 const ShoppingCart = props => {
-  
   const { orderData, cart } = props;
 
   function willLeave() {
     // triggered when c's gone. Keeping c until its width/height reach 0. ,
-    return { height: spring(0), opacity: spring(0, { stiffness: 210 }), padding: 0, border: 0 };
+    // return { height: spring(0, {stiffness: 150, damping: 34}), opacity: spring(0, { stiffness: 210 }), paddingTop: spring(0, {stiffness: 210}), border: 0 };
+    return { height: spring(0, { stiffness: 150, damping: 34 }), opacity: spring(0, { stiffness: 210 }) };
   }
 
   const cartComponents = (

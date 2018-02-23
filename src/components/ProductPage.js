@@ -62,7 +62,10 @@ class ProductPage extends Component {
   }
 
   getProduct(color) {
-    return this.sameProducts.filter(product => color === product.color)[0];
+    const product = this.sameProducts.filter(product => color === product.color)[0];
+    product.quantity = 1;
+    product.totalPrice = product.price;
+    return product;
   }
 
   checkProductInCart() {
@@ -170,7 +173,7 @@ class ProductPage extends Component {
 
   render() {
     const { quantityLimitReached, issueWarning, product, selectedSize, productInCart } = this.state;
-    const colors = this.sameProducts.map(product => (
+    const colorOptions = this.sameProducts.map(product => (
       <StyledColor
         key={product.color}
         to={this.props.location.pathname.replace(this.props.match.params.color, product.color)}
@@ -189,9 +192,11 @@ class ProductPage extends Component {
             <h2 className="name">{product.name}</h2>
           </div>
           <h3 className="price">${product.price}</h3>
+          // List of links to all colors available for this product
+          // User can quickly compare colors if more than one color is available
           <div>
             <h3 className="color-size-text">{product.color}</h3>
-            <StyledColorsContainer>{colors}</StyledColorsContainer>
+            <StyledColorsContainer>{colorOptions}</StyledColorsContainer>
           </div>
           <Form
             onSubmit={this.onSubmit}
@@ -238,8 +243,10 @@ class ProductPage extends Component {
 }
 
 export default ProductPage;
-
-const StyledColorsContainer = styled.div``;
+ 
+const StyledColorsContainer = styled.div`
+  color: white;
+`;
 
 const activeClassName = "nav-item-active";
 const StyledColor = styled(NavLink).attrs({
@@ -264,8 +271,8 @@ const Color = styled.div`
   background-color: ${props => props.colorCode};
   display: inline-block;
   border: ${props => props.colorCode === "#fff" && `1px solid #dfe0e1`};
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 50%;
   justify-content: center;
   vertical-align: middle;
@@ -366,7 +373,7 @@ const Inputs_Styled = styled.div`
   label {
     display: inline-block;
     cursor: pointer;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 600;
     border: 1px solid transparent;
     padding: 0.4rem 0.7rem;
