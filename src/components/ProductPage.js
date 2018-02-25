@@ -46,7 +46,7 @@ class ProductPage extends Component {
     const { products, match, productLimit, sizeOptions } = props;
 
     this.sameProducts = products[match.params.category].filter(
-      product => match.params.productName === product.name && match.params.brand === product.brand
+      product => match.params.name === product.name && match.params.brand === product.brand
     );
 
     Object.assign(this, { productLimit, sizeOptions });
@@ -56,8 +56,9 @@ class ProductPage extends Component {
       issueWarning: "",
       quantityLimitReached: false,
       product: this.getProduct(match.params.color),
-      productInCart: null,
-      selectedSize: undefined
+      productInCart: undefined,
+      selectedSize: undefined,
+      imageError: false
     };
   }
 
@@ -140,7 +141,7 @@ class ProductPage extends Component {
 
   updateProduct = eventValue => {
     const selectedProduct = { ...this.state.product, size: eventValue };
-    this.clearNotificationStack(); 
+    this.clearNotificationStack();
     this.setState(
       {
         product: selectedProduct,
@@ -164,11 +165,19 @@ class ProductPage extends Component {
     this.props.addToCart(this.state.product);
     // this.notificationStack.push(this.purchasedNotification);
 
-    this.timeoutIdStack.push(setTimeout(() => {
-      this.timeoutIdStack.pop();
-      this.forceUpdate();
-    }, 2000));
+    this.timeoutIdStack.push(
+      setTimeout(() => {
+        this.timeoutIdStack.pop();
+        this.forceUpdate();
+      }, 2000)
+    );
     this.checkProductInCart();
+  };
+
+  handleImageError = () => {
+    console.log('error occured!')
+    throw new Error("image source not found")
+    this.setState({ imageError: true });
   };
 
   render() {
@@ -185,15 +194,15 @@ class ProductPage extends Component {
 
     return (
       <Styled>
-        <img className="image" src={product.img} alt={product.img} />
+        <img className="image" onError={this.handleImageError} src={product.img} alt={product.img} />
         <div className="product-info">
           <div>
             <h2 className="brand">{product.brand}</h2>
             <h2 className="name">{product.name}</h2>
           </div>
           <h3 className="price">${product.price}</h3>
-          // List of links to all colors available for this product
-          // User can quickly compare colors if more than one color is available
+          {/* List of links to all colors available for this product
+          User can quickly compare colors if more than one color is available */}
           <div>
             <h3 className="color-size-text">{product.color}</h3>
             <StyledColorsContainer>{colorOptions}</StyledColorsContainer>
@@ -201,18 +210,31 @@ class ProductPage extends Component {
           <Form
             onSubmit={this.onSubmit}
             render={({ handleSubmit, reset, submitting, pristine, values }) => {
-              return <form onSubmit={handleSubmit}>
-                  <WarningText className="color-size-text" warn={!selectedSize && issueWarning} showUserInput={selectedSize} defaultText="Size">
+              return (
+                <form onSubmit={handleSubmit}>
+                  <WarningText
+                    className="color-size-text"
+                    warn={!selectedSize && issueWarning}
+                    showUserInput={selectedSize}
+                    defaultText="Size"
+                  >
                     {selectedSize || issueWarning}
                   </WarningText>
-                  <RadioInputs name="size" options={this.sizeOptions} customOnChange={this.updateProduct} error={!selectedSize && issueWarning} />
+                  <RadioInputs
+                    name="size"
+                    options={this.sizeOptions}
+                    customOnChange={this.updateProduct}
+                    error={!selectedSize && issueWarning}
+                  />
                   <div>
                     <WarningText success>
-                      {(quantityLimitReached && issueWarning) || this.timeoutIdStack.length > 0 && this.purchasedNotification}
+                      {(quantityLimitReached && issueWarning) ||
+                        (this.timeoutIdStack.length > 0 && this.purchasedNotification)}
                     </WarningText>
                     <button disabled={quantityLimitReached}>Add to Cart</button>
                   </div>
-                </form>;
+                </form>
+              );
             }}
           />
           <div className="details-container">
@@ -224,7 +246,7 @@ class ProductPage extends Component {
             </div>
             <div className="detail">
               <span>
-                <Icon icon={ICONS.THREAD_WHEEL} size="19" />
+                <Icon icon={ICONS.THREAD_WHEEL} size={19} />
               </span>
               <p>Made in Omaha, NE</p>
             </div>
@@ -243,7 +265,7 @@ class ProductPage extends Component {
 }
 
 export default ProductPage;
- 
+
 const StyledColorsContainer = styled.div`
   color: white;
 `;
@@ -266,11 +288,12 @@ const StyledColor = styled(NavLink).attrs({
     border-color: ${theme.grey_5};
   }
 `;
+StyledColor.displayName = "Color"; //for testing
 
 const Color = styled.div`
   background-color: ${props => props.colorCode};
   display: inline-block;
-  border: ${props => props.colorCode === "#fff" && `1px solid #dfe0e1`};
+  border: ${props => props.colorCode === "#fff" && `1px solid ${props.theme.grey_1}`};
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 50%;

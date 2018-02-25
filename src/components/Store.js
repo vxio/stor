@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 import styled from "styled-components";
-import theme from '../theme';
+import theme from "../theme";
 import { NavItem, NavItems } from "./NavItems";
 import StoreFront from "./StoreFront";
 import Shop from "./Shop";
@@ -34,21 +34,25 @@ export class Store extends Component {
     currency: "USD"
   });
 
+  generateRandom(number) {
+    return Math.floor(Math.random() * number);
+  }
+
+  generateRandomProduct() {
+    const product_keys = Object.keys(this.categorizedProducts);
+    const randomCategoryNum = this.generateRandom(product_keys.length);
+    const category = this.categorizedProducts[product_keys[randomCategoryNum]]; //array of products
+    const product = category[this.generateRandom(category.length)];
+    return product;
+  }
+
   insertRandomCartItems(numOfCartItems) {
     let cartItemsInserted = 0;
-    function generateRandom(number) {
-      return Math.floor(Math.random() * number);
-    }
-
-    const product_keys = Object.keys(this.categorizedProducts);
     let newCart = [];
     while (cartItemsInserted < numOfCartItems) {
-      const randomCategoryNum = generateRandom(product_keys.length);
-      const category = this.categorizedProducts[product_keys[randomCategoryNum]]; //array of products
-      // console.log(product_keys[randomCategoryNum]);
-      const product = category[generateRandom(category.length)];
-      const randomSize = this.sizeOptions[generateRandom(Object.keys(this.sizeOptions).length)].value;
-      const randomQuantity = generateRandom(this.productLimit);
+      const product = this.generateRandomProduct();
+      const randomSize = this.sizeOptions[this.generateRandom(Object.keys(this.sizeOptions).length)].value;
+      const randomQuantity = this.generateRandom(this.productLimit);
       const newProduct = {
         ...product,
         quantity: randomQuantity,
@@ -65,11 +69,9 @@ export class Store extends Component {
 
   getProducts() {
     //use this url for localhost. May need to use a different url in production
-    // const url = "products.json";
-    axios.defaults.baseURL = "/";
-    const url = "product_data.json";
-
-    axios.get(url).then(response => {
+    // axios.defaults.baseURL = "/";
+    const url = "/product_data.json";
+    return axios.get(url).then(response => {
       this.products = response.data.productData;
       this.sizeOptions = response.data.sizeOptions;
       //attach links to products
@@ -90,15 +92,13 @@ export class Store extends Component {
     });
   }
 
-  componentWillMount() {
-  }
-  
-  componentDidMount() {
-  this.getProducts();
-}
+  componentWillMount() {}
 
-  componentDidUpdate() {
+  componentDidMount() {
+    this.getProducts();
   }
+
+  componentDidUpdate() {}
 
   updateTotal() {
     this.tax = +(this.state.subTotal * this.taxRate).toFixed(2);
@@ -211,8 +211,6 @@ export class Store extends Component {
     });
   };
 
-
-
   render() {
     if (this.state.loading) return <div>Loading sir</div>;
     const { cart, totalCartItems, subTotal, shouldBounce } = this.state;
@@ -225,7 +223,6 @@ export class Store extends Component {
         <NavItems>
           <NavItem to="/">home</NavItem>
           <NavItem to="/shop">shop</NavItem>
-          {/* <NavItem to="/checkout">Checkout</NavItem> */}
           <NavItem to="/cart">
             <CountContainer notEmpty={cartLink} shouldBounce={shouldBounce} totalCartItems={totalCartItems}>
               <Icon.ShoppingBag />
@@ -233,24 +230,15 @@ export class Store extends Component {
             </CountContainer>
           </NavItem>
         </NavItems>
-        {/* 
-        <div>
-          <div>Cart total: {totalCartItems}</div>
-          <div>unique products: {cart.length}</div>
-          <div>subtotal price: ${subTotal}</div>
-          <div>tax: ${this.tax}</div>
-          <div>Total price: ${this.total}</div>
-        </div> */}
         <Switch>
           <RouteWithProps path="/shop/:category?/:brand?" exact products={this.categorizedProducts} component={Shop} />
           <RouteWithProps
-            path="/shop/:category/:brand/:productName/:color"
+            path="/shop/:category/:brand/:name/:color"
             exact
             products={this.categorizedProducts}
             cart={this.state.cart}
             sizeOptions={this.sizeOptions}
             addToCart={this.handleAddToCart}
-            changeSize={this.handleChangeSize}
             productLimit={this.productLimit}
             component={ProductPage}
           />
