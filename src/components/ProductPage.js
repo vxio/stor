@@ -6,9 +6,11 @@ import WarningText from "./WarningText";
 import ReactImageMagnify from "react-image-magnify";
 import { Form, Field } from "react-final-form";
 import { NavLink } from "react-router-dom";
-import Washer_svg from "../images/svgs/washer.svg";
+import Check_svg from "../images/svgs/check.svg";
 import Icon from "./Icon";
 import { ICONS } from "./constants";
+import { TransitionMotion, spring } from "react-motion";
+import Transition from "react-motion-ui-pack";
 
 const RadioInputs = props => {
   const { name, options, customOnChange, error } = props;
@@ -51,9 +53,10 @@ class ProductPage extends Component {
 
     Object.assign(this, { productLimit, sizeOptions });
     this.purchasedNotification = "Added to cart!";
-    this.timeoutIdStack = [];
+    this.limitReachedNotification = "You've reached the limit of 10 for this item and size. Please see cart for details.";
     this.state = {
-      issueWarning: "",
+      sizeText: "",
+      cartNotificationText: "",
       quantityLimitReached: false,
       product: this.getProduct(match.params.color),
       productInCart: undefined,
@@ -94,7 +97,7 @@ class ProductPage extends Component {
     //if quantity is not reached, reset state
     this.setState({
       quantityLimitReached: false,
-      issueWarning: ""
+      sizeText: ""
     });
   }
 
@@ -102,8 +105,7 @@ class ProductPage extends Component {
     const { productInCart, quantityLimitReached } = this.state;
     if (productInCart.quantity === this.productLimit) {
       this.setState({
-        quantityLimitReached: true,
-        issueWarning: this.purchasedNotification + "\n (Limit of 10 for this item and size)"
+        quantityLimitReached: true
       });
     } else {
       this.clearQuantityLimit();
@@ -122,7 +124,6 @@ class ProductPage extends Component {
         },
         function() {
           this.checkProductInCart();
-          this.clearNotificationStack();
         }
       );
     }
@@ -130,23 +131,14 @@ class ProductPage extends Component {
 
   componentDidUpdate() {}
 
-  clearTimeoutOnStack(stackArray) {
-    stackArray.map(id => clearTimeout(id));
-  }
-
-  clearNotificationStack() {
-    this.clearTimeoutOnStack(this.timeoutIdStack);
-    this.timeoutIdStack = [];
-  }
-
   updateProduct = eventValue => {
     const selectedProduct = { ...this.state.product, size: eventValue };
-    this.clearNotificationStack();
     this.setState(
       {
         product: selectedProduct,
         selectedSize: eventValue,
-        issueWarning: eventValue
+        sizeText: eventValue
+        // cartNotificationText: ''
       },
       function() {
         this.checkProductInCart();
@@ -156,32 +148,34 @@ class ProductPage extends Component {
 
   onSubmit = values => {
     if (!this.state.product.size) {
-      console.log(this.state.product);
       this.setState({
-        issueWarning: "Please select a size*"
+        sizeText: "Please select a size*"
       });
       return;
     }
-    this.props.addToCart(this.state.product);
-    // this.notificationStack.push(this.purchasedNotification);
 
-    this.timeoutIdStack.push(
-      setTimeout(() => {
-        this.timeoutIdStack.pop();
-        this.forceUpdate();
-      }, 2000)
-    );
+    this.props.addToCart(this.state.product);
+    this.setState({ cartNotificationText: this.purchasedNotification }, function() {
+      setTimeout(() => this.setState({ cartNotificationText: "" }), 1200);
+    });
     this.checkProductInCart();
   };
 
   handleImageError = () => {
-    console.log('error occured!')
-    throw new Error("image source not found")
+    console.log("error occured!");
+    throw new Error("image source not found");
     this.setState({ imageError: true });
   };
 
+  // willEnter() {
+  //   return { opacity: spring(1) };
+  // }
+  // willLeave() {
+  //   return { opacity: spring(0) };
+  // }
+
   render() {
-    const { quantityLimitReached, issueWarning, product, selectedSize, productInCart } = this.state;
+    const { quantityLimitReached, sizeText, cartNotificationText, product, selectedSize, productInCart } = this.state;
     const colorOptions = this.sameProducts.map(product => (
       <StyledColor
         key={product.color}
@@ -191,6 +185,9 @@ class ProductPage extends Component {
         <Color colorCode={product.colorCode} />
       </StyledColor>
     ));
+
+    //used for selecting in test
+    Form.displayName = "Form";
 
     return (
       <Styled>
@@ -204,7 +201,7 @@ class ProductPage extends Component {
           {/* List of links to all colors available for this product
           User can quickly compare colors if more than one color is available */}
           <div>
-            <h3 className="color-size-text">{product.color}</h3>
+            <h3 className="color-size-text">Color: {product.color}</h3>
             <StyledColorsContainer>{colorOptions}</StyledColorsContainer>
           </div>
           <Form
@@ -213,26 +210,26 @@ class ProductPage extends Component {
               return (
                 <form onSubmit={handleSubmit}>
                   <WarningText
+                    id="size-text"
                     className="color-size-text"
-                    warn={!selectedSize && issueWarning}
+                    warn={!selectedSize && sizeText}
                     showUserInput={selectedSize}
                     defaultText="Size"
                   >
-                    {selectedSize || issueWarning}
+                    {(selectedSize && `Size: ${selectedSize}`) || sizeText}
                   </WarningText>
                   <RadioInputs
                     name="size"
                     options={this.sizeOptions}
                     customOnChange={this.updateProduct}
-                    error={!selectedSize && issueWarning}
+                    error={!selectedSize && sizeText}
                   />
-                  <div>
-                    <WarningText success>
-                      {(quantityLimitReached && issueWarning) ||
-                        (this.timeoutIdStack.length > 0 && this.purchasedNotification)}
-                    </WarningText>
-                    <button disabled={quantityLimitReached}>Add to Cart</button>
-                  </div>
+                  <WarningText id="limit-notification" success>
+                    {quantityLimitReached && this.limitReachedNotification}
+                  </WarningText>
+                  <button type="submit" disabled={quantityLimitReached || cartNotificationText}>
+                    {cartNotificationText || 'Add to Cart'}
+                  </button>
                 </form>
               );
             }}
@@ -305,7 +302,7 @@ const Styled = styled.div`
   grid-column: full;
 
   display: grid;
-  grid-template-columns: 1fr minmax(33rem, 55rem) 5rem 30rem 1fr;
+  grid-template-columns: 1fr minmax(33rem, 55rem) 9rem 30rem 1fr;
 
   .image {
     width: 100%;
@@ -334,6 +331,11 @@ const Styled = styled.div`
       color: ${theme.grey_4};
       font-weight: 500;
       margin-bottom: 0.9rem;
+    }
+
+    #cart-notification {
+      font-size: 1.8rem;
+      font-weight: 600;
     }
     .details-container {
       margin: 5rem 0 2rem;

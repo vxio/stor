@@ -7,7 +7,7 @@ const Icon = props => {
     svg: {
       display: "inline-block",
       verticalAlign: "middle",
-      margin: 'auto'
+      margin: "auto"
     },
     path: {
       fill: props.color
@@ -17,10 +17,10 @@ const Icon = props => {
 
   return (
     <SVG_Styles
-     className={props.icon.title}
+      className={props.icon.title}
       style={styles.svg}
       width={`${props.size}px`}
-      height={`${props.size}px`} 
+      height={`${props.size}px`}
       viewBox={props.icon.viewBox || "0 0 1024 1024"}
       fill={props.fill}
     >
@@ -43,6 +43,6 @@ export default Icon;
 
 const SVG_Styles = styled.svg`
   path {
-    fill: ${props => props.fill};
+    fill: ${props => props.fill || "inherit"};
   }
 `;
