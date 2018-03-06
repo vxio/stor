@@ -17,7 +17,7 @@ const Icon = props => {
 
   return (
     <SVG_Styles
-      className={props.icon.title}
+      className={props.className}
       style={styles.svg}
       width={`${props.size}px`}
       height={`${props.size}px`}

@@ -1,9 +1,9 @@
 import React from "react";
 import ItemGrid from "./ItemGrid";
-import theme from "../theme";
+import theme, { Grid } from "../theme";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import AnimatedLink from './AnimatedLink';
+import AnimatedLink from "./AnimatedLink";
 
 class Shop extends React.Component {
   state = {
@@ -38,7 +38,7 @@ class Shop extends React.Component {
   componentWillReceiveProps(nextProps) {
     console.log("will receive props");
     this.updateView(nextProps);
-    
+
     console.log(this.props);
     console.log(nextProps);
     if (this.props.match.url !== nextProps.match.url) {
@@ -94,59 +94,61 @@ class Shop extends React.Component {
               </StyledSubLink>
             ));
 
-      return <React.Fragment key={categoryName}>
+      return (
+        <React.Fragment key={categoryName}>
           <StyledLink to={this.mainPath + categoryName}>{categoryName}</StyledLink>
           {brandLinks}
-        </React.Fragment>;
+        </React.Fragment>
+      );
     });
 
     return (
-      <Styles>
-        <Sidebar>
-          <StyledLink view_all={currentCategory} to={this.mainPath}>
-            {this.viewAllText}
-          </StyledLink>
-          {categoryNavItems}
-        </Sidebar>
-        <Main>
-          {currentCategory && <CategoryHeader>{currentBrand + " " + currentCategory}</CategoryHeader>}
-          {this.renderProductsDisplayed()}
-        </Main>
-      </Styles>
+      <Grid>
+        <Styles>
+          <div>
+            <Sidebar>
+              <StyledLink exact to={this.mainPath}>
+                {this.viewAllText}
+              </StyledLink>
+              {categoryNavItems}
+            </Sidebar>
+          </div>
+          <Main>
+            {currentCategory && <CategoryHeader>{currentBrand + " " + currentCategory}</CategoryHeader>}
+            {this.renderProductsDisplayed()}
+          </Main>
+        </Styles>
+      </Grid>
     );
   }
 }
 
 export default Shop;
 
+const Styles = styled.div`
+  grid-column: full;
+  display: flex;
+  & > *:first-child {
+    margin-right: 5rem;
+  }
+`
+
 const CategoryHeader = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 500;
-
-  margin-bottom: 6rem;
-
+  font-size: 3.3rem;
+  font-weight: 400;
+  margin-bottom: 4.5rem;
   margin-left: 1rem;
 `;
 
-const Styles = styled.div`
-  grid-column: full;
-  justify-self: center;
-  display: grid;
-  grid-template-columns: 1fr 25rem minmax(min-content, 90rem) 1fr;
-  /* grid-template-columns: 1fr rem minmax(min-content, 50rem) 1fr; */
-`;
-
 const Sidebar = styled.div`
-  grid-column: 2/3;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* width: 25rem; */
-  position: fixed;
+  width: 20rem;
 `;
 const Main = styled.div`
-  grid-column: 3/4;
-
+  /* grid-column: col-start 4 / full-end; */
+  margin-left: 2rem;
   .item-grid {
     margin-bottom: 12rem;
   }
@@ -156,28 +158,29 @@ const StyledLink = styled(NavLink).attrs({
   activeClassName
 })`
   font-size: 2rem;
-  padding: .7rem 0;
+  margin: 0.6rem 0;
   width: 100%;
+  transition: border 0.1s ease, color 0.3s ease, padding 0.3s ease;
 
   &.${activeClassName}, &:hover,
   &:active {
-    transition: all .1s ease-out;
-    color: ${props => !props.view_all && `${props.theme.primary} !important`};
-    
+    color: ${theme.primary} !important;
+    border-left: 2px solid ${theme.primary};
+    padding-left: 1rem;
   }
 `;
 
 const StyledSubLink = StyledLink.extend`
-  color: orangered;
-  /* margin-left: 2rem; */
-  padding-left: 2rem;
+  padding-left: 2rem !important;
+  border-left: none !important;
 
-  /* margin-bottom: 1rem; */
   font-size: 1.6rem;
   white-space: no-wrap;
+  margin: .5rem 0;
   
 
-  &.${activeClassName}, &:hover {
+   &:hover {
+    padding-left: 2.7rem !important;
     /* color: ${theme.primary} !important; */
     /* background-color: ${theme.grey_1}; */
     /* background-color: red; */

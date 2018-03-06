@@ -1,4 +1,6 @@
 import createTheme from "styled-components-theme";
+import React from 'react';
+import styled from 'styled-components';
 
 // const primary = "rgb(12, 122, 192)";
 
@@ -29,15 +31,16 @@ import createTheme from "styled-components-theme";
 
 export const variables = {
   baseFontFamily: "Source Sans Pro" /* Colors */,
-  primary: "#55c57a",
-  primary_light: "#7ed56f",
-  primary_dark: "#28b485",
+  primary: "#44c0b6",
+  primary_light: "#6ACDC5",
+  primary_dark: "#3db6ac",
   grey_1: "#cacbcf",
   grey_2: "#b0b1b6",
   grey_3: "#9EA0A6",
   grey_4: "#8c8f96",
   grey_5: "#7b7d85",
   grey_6: "#6a6d74",
+  grey_7: "#5a5c62",
   white: "#F2F0EA",
   black: "#282c37" /* Fonts */,
   baseFontSize: "1.6rem",
@@ -45,9 +48,18 @@ export const variables = {
   fontNormal: 400,
   fontSemibold: 600,
   fontBold: 700
-}; // secondary_dark: #ff7730;
+}; // primary: "#55c57a", // secondary_dark: #ff7730;
 
 const theme = createTheme(...Object.keys(variables));
+
+export const Grid = styled.div`
+ display: grid;
+ grid-template-columns:
+   minmax(3rem,1fr) [full-start] repeat(12, [col-start] minmax(min-content, 10rem) [col-end])
+   [full-end] minmax(3rem, 1fr);
+ justify-content: center;
+ justify-items: center;
+`
 
 export default theme;
 

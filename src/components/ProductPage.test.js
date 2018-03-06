@@ -28,7 +28,7 @@ describe("ProductPage", () => {
   let storeInstance;
   let categorizedProducts;
   let wrapper;
-  let size;
+  let size = 'medium';
   const productPage = () => {
     return shallow(<ProductPage {...props} />);
   };
@@ -49,7 +49,6 @@ describe("ProductPage", () => {
   }
 
   beforeAll(() => {
-    size = "medium";
     storeInstance = getStoreInstance();
     return storeInstance.getProducts().then(result => {
       categorizedProducts = storeInstance.categorizedProducts;

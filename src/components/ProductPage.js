@@ -67,8 +67,6 @@ class ProductPage extends Component {
 
   getProduct(color) {
     const product = this.sameProducts.filter(product => color === product.color)[0];
-    product.quantity = 1;
-    product.totalPrice = product.price;
     return product;
   }
 
@@ -149,7 +147,7 @@ class ProductPage extends Component {
   onSubmit = values => {
     if (!this.state.product.size) {
       this.setState({
-        sizeText: "Please select a size*"
+        sizeText: "Please select a size"
       });
       return;
     }
@@ -245,7 +243,7 @@ class ProductPage extends Component {
               <span>
                 <Icon icon={ICONS.THREAD_WHEEL} size={19} />
               </span>
-              <p>Made in Omaha, NE</p>
+              <p>Made in Bentonville, AR</p>
             </div>
           </div>
           <div className="description">
@@ -316,6 +314,7 @@ const Styled = styled.div`
 
     .name {
       font-size: 3rem;
+      white-space: nowrap;
     }
     .brand {
       color: ${theme.grey_4};

@@ -23,13 +23,14 @@ const UtilityContainer = styled.div`
 
   a {
     text-decoration: none;
+    color: ${theme.black};
 
     &:hover {
       color: ${theme.primary};
     }
 
     &:not(:hover) {
-      color: inherit;
+      /* color: inherit; */
     }
   }
 

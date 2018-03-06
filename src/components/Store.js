@@ -17,7 +17,8 @@ export class Store extends Component {
     loading: true,
     totalCartItems: 0,
     cart: [],
-    shouldBounce: false
+    shouldBounce: false,
+    subTotal: 0
   };
 
   products;
@@ -52,7 +53,7 @@ export class Store extends Component {
     while (cartItemsInserted < numOfCartItems) {
       const product = this.generateRandomProduct();
       const randomSize = this.sizeOptions[this.generateRandom(Object.keys(this.sizeOptions).length)].value;
-      const randomQuantity = this.generateRandom(this.productLimit);
+      const randomQuantity = this.generateRandom(this.productLimit) + 1;
       const newProduct = {
         ...product,
         quantity: randomQuantity,
@@ -121,15 +122,6 @@ export class Store extends Component {
     return orderInfo;
   };
 
-  handleGetSelectedProduct = product => {
-    this.setState({ selectedProduct: product });
-  };
-
-  sizeChangeHandler = newSize => {
-    const updatedProduct = { ...this.state.selectedProduct, size: newSize };
-    this.setState({ selectedProduct: updatedProduct });
-  };
-
   handleAddToCart = product => {
     // e.preventDefault();
     if (!product.size) {
@@ -140,10 +132,13 @@ export class Store extends Component {
         setTimeout(() => this.setState({ shouldBounce: false }), 400);
       });
     }
-
     //if id of productpage matches any id in shopping cart, increase quantity by 1,
     // else add the item as a new item
-    const index = this.state.cart.findIndex(cartItem => cartItem.id === product.id && cartItem.size === product.size);
+    const index = this.state.cart.findIndex(cartItem => {
+      return cartItem.size === product.size && cartItem.id === product.id;
+    });
+    // console.log(product.size);
+    // console.log(index);
     //checks if we've already purchased the product in a certain size
 
     if (index > -1) {
@@ -160,15 +155,19 @@ export class Store extends Component {
       }));
       //Add the new product
     } else {
+      if (!product.testing) {
+        product.quantity = 1;
+        product.totalPrice = product.price;
+      }
       this.setState(prevState => ({
         cart: [...this.state.cart, product],
         totalCartItems: prevState.totalCartItems + product.quantity,
-        subTotal: prevState.subTotal + product.price
+        subTotal: prevState.subTotal + (product.testing ? product.totalPrice : product.price) //use totalPrice here for inserting cart items manually
       }));
     }
   };
 
-  removeItem = product => {
+  handleRemoveItem = product => {
     const { id, size, quantity, totalPrice } = product;
     const cartClone = this.state.cart.filter(cartItem => cartItem.id !== id || cartItem.size !== size);
 
@@ -179,7 +178,6 @@ export class Store extends Component {
         subTotal: prevState.subTotal - totalPrice
       }),
       function() {
-        console.log(this.state.cart);
       }
     );
   };
@@ -219,7 +217,7 @@ export class Store extends Component {
 
     this.updateTotal();
     return (
-      <Styled>
+      <React.Fragment>
         <NavItems>
           <NavItem to="/">home</NavItem>
           <NavItem to="/shop">shop</NavItem>
@@ -249,7 +247,7 @@ export class Store extends Component {
             exact
             cart={this.state.cart}
             orderData={this.handleGetOrderData()}
-            removeItem={this.removeItem}
+            removeItem={this.handleRemoveItem}
             userOptions
             updateQuantity={this.handleUpdateQuantity}
             component={ShoppingCart}
@@ -259,16 +257,17 @@ export class Store extends Component {
             path="/checkout"
             clearCart={this.handleClearCart}
             getOrderData={this.handleGetOrderData}
+            orderData={this.handleGetOrderData()}
             exact
             cart={cart}
             component={Checkout}
           />
-          <RouteWithProps path="/order-summary" exact component={OrderSummary} />
+          <RouteWithProps path="/checkout/order-summary" exact component={OrderSummary} />
 
           <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
           <Redirect to="/" />
         </Switch>
-      </Styled>
+      </React.Fragment>
     );
   }
 }
@@ -289,8 +288,8 @@ const Styled = styled.div`
   display: grid;
   /* grid-template-rows:auto; */
   grid-template-columns:
-    [full-start] repeat(10, [col-start] minmax(min-content, 30rem) [col-end])
-    [full-end];
+    minmax(4rem,1fr) [full-start] repeat(8, [col-start] minmax(min-content, 30rem) [col-end])
+    [full-end] minmax(4rem, 1fr);
   justify-content: center;
   /* border-top: 2.5px solid ${theme.primary_dark}; */
   /* background-color: ${theme.white}; */
@@ -308,7 +307,7 @@ const CountContainer = styled.div`
     /* transition-duration: .3s; */
     font-weight: 300;
     transform: ${props => props.notEmpty && `translateX(-1rem)`};
-    animation: ${props => props.shouldBounce && `bounce .4s`};
+    animation: ${props => props.shouldBounce && `bounce .5s`};
   }
   & span {
     position: absolute;

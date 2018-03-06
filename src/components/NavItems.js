@@ -11,7 +11,7 @@ const StyledLink = styled(NavLink).attrs({
   background-color: white;
   font-size: 1.75rem;
 
-  transition: all .15s ease-in;
+  transition: all .2s ease;
 
 
   // &.${activeClassName},
@@ -31,7 +31,7 @@ export const NavItem = props => (
 export const NavItems = props => <StyledNavItems>{props.children}</StyledNavItems>;
 
 const StyledNavItems = styled.div`
-  grid-column: full;
+  grid-column: 1 / -1;
   text-transform: capitalize;
   /* margin-top: 1rem; */
   /* margin: 1.8rem auto 4rem; */
