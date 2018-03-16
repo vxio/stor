@@ -3,54 +3,90 @@ import { Elements, CardElement } from "react-stripe-elements";
 
 import { render } from "react-dom";
 import { Form, Field } from "react-final-form";
-import { FORM_ERROR } from "final-form";
+// import { FORM_ERROR } from "final-form";
 import { checkValidity } from "./Utility";
 import styled from "styled-components";
 import theme from "../theme";
 import OrderSummary from "./OrderSummary";
 import { Grid_Styled } from "./ShoppingCart";
+import Button from "./GeneralUI/Button";
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const required = value => (value ? undefined : "Required");
+const onlyNumbers = value => (isNaN(value) ? "Must be a number" : undefined);
+const onlyLetters = value => (/^[a-zA-Z\s]*$/.test(value) ? undefined : "Must only contain letters");
 
-const required = value => (value ? undefined : true);
-const mustBeNumber = value => (isNaN(value) ? "Must be a number" : undefined);
-const checkDigits = digits => value =>
-  !isNaN(value) && value.length === digits ? undefined : `Must be ${digits} digits`;
-const minValue = min => value => (isNaN(value) || value >= min ? undefined : `Should be greater than ${min}`);
+const checkDigits = (digits, label) => value =>
+  !isNaN(value) && value.length === digits ? undefined : `Enter a ${digits} digit ${label}`;
+const validEmail = value => {
+  const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+  return pattern.test(value) ? undefined : "Enter a valid email address";
+};
+
 const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), undefined);
 
-const TextInput = ({ name, label, purpose, isEmail, validate, disabled, ...props }) => {
+const TextInput = ({
+  name,
+  label,
+  purpose,
+  isEmail,
+  validate,
+  disabled,
+  charLimit,
+  errorCheckOnInput,
+  customErrorMsg,
+  id,
+  autoFocus,
+  onFocus,
+  ...props
+}) => {
   return (
-    <div>
-      <Field name={`${purpose}.${name}`} component="input" placeholder={`${label}`} validate={validate}>
-        {({ input, meta }) => {
-          // const validInput = meta.error && meta.touched;
-          // console.log("input", input)
-          // console.log("meta", meta)
-          return (
-            <FormGroup hasValue={input.value} className="form-group">
-              <input
-                style={(meta.error && meta.touched && {}) || {}}
-                {...input}
-                disabled={
-                  disabled // {...input}
-                }
-                type="text"
-              />
-              {/*  placeholder={`${label}`} */}
-              <label className="control-label">{label}</label>
-              <i class="bar" />
-              {/* {meta.submitFailed || meta.touched && <span>{meta.error}</span>} */}
-            </FormGroup>
-          );
-        }}
-      </Field>
-    </div>
+    <Field name={`${purpose}.${name}`} component="input" placeholder={`${label}`} validate={validate}>
+      {({ input, meta }) => {
+        if (typeof errorCheckOnInput === "function") {
+          errorCheckOnInput = errorCheckOnInput(input.value);
+        }
+        const invalidInput = meta.error && (meta.touched || (input.value && errorCheckOnInput && meta.dirty));
+        // console.log("input", input)
+        name === "city" && console.log(purpose, name, meta);
+
+        return (
+          <FormGroup hasValue={input.value} invalidInput={invalidInput} className="form-group">
+            <input
+              style={(invalidInput && { borderColor: "#F15C5C" }) || {}}
+              {...input}
+              disabled={
+                disabled // {...input}
+              }
+              type="text"
+              maxLength={charLimit}
+              id={id}
+              autoFocus={autoFocus}
+              onFocus={onFocus}
+            />
+            {/*  placeholder={`${label}`} */}
+            <label className="control-label">{label}</label>
+            <i className="bar" />
+            {
+              <span className="error-msg">
+                {(invalidInput && ((meta.error && customErrorMsg) || meta.error)) || <br />}
+              </span>
+            }
+          </FormGroup>
+        );
+      }}
+    </Field>
   );
 };
 
 const FormGroup = styled.div`
+  
+  .error-msg {
+    /* margin-top: 8rem; */
+    line-height: 1.7;
+    font-size: ${theme.p_small};
+    color: ${theme.danger}; 
+  }
 
   .control-label {
     position: absolute;
@@ -76,10 +112,9 @@ const FormGroup = styled.div`
     color: transparent;
     transition: all 0.3s ease;
     box-shadow: none;
-    margin-bottom: 3rem;
-    /* -webkit-box-shadow: 0 0 0px 1000px white inset; */
    /* -webkit-appearance: none; */
    box-shadow: inset 0px 0px 0px 0px white;
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
     border-bottom: 1px solid ${theme.grey_5};
   }
 
@@ -88,11 +123,12 @@ const FormGroup = styled.div`
 
     ~ .control-label {
       font-size: 1.4rem;
-      color: ${theme.primary};
+      color: ${props => (props.invalidInput && theme.danger) || theme.primary};
       top: -1.2rem;
       left: 0;
     }
   }
+
 
   select,
   input,
@@ -108,13 +144,31 @@ const FormGroup = styled.div`
 const AddressInputs = ({ purpose }) => {
   return (
     <Fragment>
-      <TextInput name="street" label="Street" purpose={purpose} validate={required} />
-      <TextInput name="city" label="City" purpose={purpose} validate={required} />
+      <TextInput name="street" label="Street" charLimit="70" purpose={purpose} validate={required} />
+      <TextInput
+        name="city"
+        label="City"
+        charLimit="45"
+        errorCheckOnInput
+        purpose={purpose}
+        validate={composeValidators(onlyLetters, required)}
+      />
+      <TextInput
+        name="state"
+        label="State"
+        charLimit="50"
+        errorCheckOnInput
+        purpose={purpose}
+        validate={composeValidators(onlyLetters, required)}
+      />
       <TextInput
         name="zipcode"
         label="Zipcode"
+        charLimit="5"
         purpose={purpose}
-        validate={composeValidators(checkDigits(5), required)}
+        errorCheckOnInput={onlyNumbers}
+        customErrorMsg="Enter a 5 digit ZIP code"
+        validate={checkDigits(5)}
       />
     </Fragment>
   );
@@ -122,51 +176,86 @@ const AddressInputs = ({ purpose }) => {
 
 class ContactForm extends React.Component {
   state = {
-    sameAddress: false
+    sameAddress: this.props.customerInfo ? this.props.customerInfo.shipping === this.props.customerInfo.billing : true
   };
+
+  componentDidMount() {
+    const initialFocus = document.getElementById("initial-focus");
+  }
+
+  moveCaretAtEnd(e) {
+    var temp_value = e.target.value;
+    e.target.value = "";
+    e.target.value = temp_value;
+  }
+
   render() {
-    const { id, onSubmit } = this.props;
+    const { id, onSubmit, customerInfo } = this.props;
 
     return (
       <Styles id={id}>
         <Form
           onSubmit={onSubmit}
-          render={({ handleSubmit, reset, submitting, pristine, values }) => (
-            <form onSubmit={handleSubmit}>
-              <div className="header">
-                <span>Billing and Shipping Information</span>
-              </div>
-              <TextInput name="firstName" id="hi" label="First Name" purpose="main" validate={required} />
-              <TextInput name="lastName" label="Last Name" purpose="main" validate={required} />
-              <TextInput name="email" label="Email" isEmail purpose="main" validate={required} />
-              <h2 className="subheader">Billing Address</h2>
-              <AddressInputs purpose="billing" />
-              <h2 className="subheader">Shipping Address</h2>
-              <div className="checkbox">
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={() => {
-                      this.setState(prevState => ({ sameAddress: !prevState.sameAddress }));
-                    }}
-                  />
-                  <i className="helper" />
-                  <span className="text">I'm the label from a checkbox</span>
-                </label>
-              </div>
-
-              {this.state.sameAddress ? null : <AddressInputs purpose="shipping" />}
-              <div className="buttons">
-                <button type="submit" disabled={submitting}>
-                  Submit
-                </button>
-                <button type="button" onClick={reset} disabled={submitting || pristine}>
-                  Clear Form
-                </button>
-              </div>
-              <pre>{JSON.stringify(values, 0, 2)}</pre>
-            </form>
-          )}
+          initialValues={customerInfo}
+          render={({ handleSubmit, reset, submitting, pristine, values }) => {
+            //set initial values for testing
+            // values.main.firstName = 'vince'
+            //sets shipping address equal to billing address
+            if (this.state.sameAddress) {
+              values.shipping = values.billing;
+            }
+            return (
+              <form onSubmit={handleSubmit}>
+                <div className="header">
+                  <span>Account Information</span>
+                </div>
+                <TextInput
+                  name="firstName"
+                  id="initial-focus"
+                  label="First Name"
+                  purpose="main"
+                  charLimit="35"
+                  autoFocus
+                  onFocus={this.moveCaretAtEnd}
+                  validate={required}
+                />
+                <TextInput name="lastName" label="Last Name" purpose="main" charLimit="35" validate={required} />
+                <TextInput name="email" label="Email" isEmail purpose="main" charLimit="254" validate={validEmail} />
+                <h2 className="subheader">Billing Address</h2>
+                <AddressInputs purpose="billing" />
+                <h2 className="subheader">Shipping Address</h2>
+                <div className="checkbox">
+                  <label>
+                    <input
+                      type="checkbox"
+                      onChange={() => {
+                        this.setState(prevState => {
+                          const updatedState = !prevState.sameAddress;
+                          if (!updatedState) {
+                            values.shipping = undefined;
+                          }
+                          return { sameAddress: updatedState };
+                        });
+                      }}
+                      defaultChecked={this.state.sameAddress}
+                    />
+                    <i className="helper" />
+                    <span className="text">Same as billing address</span>
+                  </label>
+                </div>
+                {this.state.sameAddress ? null : <AddressInputs purpose="shipping" />}
+                <div className="buttons">
+                  <Button color="primary" type="submit" disabled={submitting}>
+                    Submit
+                  </Button>
+                  {/* <Button type="button" onClick={reset} disabled={submitting || pristine}>
+                    Clear Form
+                  </Button> */}
+                </div>
+                <pre>{JSON.stringify(values, 0, 2)}</pre>
+              </form>
+            );
+          }}
         />
       </Styles>
     );
@@ -175,217 +264,220 @@ class ContactForm extends React.Component {
 export default ContactForm;
 
 const Styles = styled.div`
-form {
-  width: 38rem;
-  /* margin: 10px auto; */
-  padding: 2rem 2.5rem;
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-  .form-radio,
-  .form-group {
-    position: relative;
-    /* margin-top: calc(1.6rem * 3);
-    margin-bottom: calc(1.6rem * 3); */
-    margin-bottom: 1.6rem;
-  }
+  grid-column: full;
+  border-top: 6px solid ${theme.primary};
+  justify-self: center;
 
-  .header {
-    /* background-color: ${theme.grey_5}; */
-    margin-bottom: 3rem;
-    span {
-      font-size: 2rem;
-      font-weight: 600;
-      display: inline-block;
-      margin: 0 auto;
-    }
+  button {
+    margin: 2rem auto;
   }
-  .subheader {
-    font-size: 1.7rem;
-    margin-bottom: 2rem;
-  }
-
-
-  /*checkbox and radio  */
-  .checkbox,
-  .form-radio {
-    label {
-      font-size: 1.4rem;
+  form {
+    width: 45rem;
+    /* margin: 10px auto; */
+    padding: 3rem 3.5rem;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    .form-radio,
+    .form-group {
       position: relative;
-      cursor: pointer;
-      padding-left: 2rem;
-      text-align: left;
-      color: #333;
-      display: block;
-      width: max-content;
+      margin-bottom: 2rem;
     }
 
-    input {
-      width: auto;
-      opacity: 0.00000001;
-      position: absolute;
-      left: 0;
+    .header {
+      margin-bottom: 4rem;
+      text-align: center;
+      span {
+        font-size: 2.2rem;
+        font-weight: 600;
+      }
     }
-  }
+    .subheader {
+      font-size: 2.2 rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
 
-  .radio {
-    margin-bottom: 1.6rem;
+    /*checkbox and radio  */
+    .checkbox,
+    .form-radio {
+      label {
+        font-size: 1.4rem;
+        position: relative;
+        cursor: pointer;
+        padding-left: 2rem;
+        text-align: left;
+        color: #333;
+        display: block;
+        width: max-content;
+      }
 
-    .helper {
-      position: absolute;
-      top: calc(1.6rem/4);
-      left: calc(1.6rem/4);
-      cursor: pointer;
-      display: block;
-      font-size: 1.6rem;
-      user-select: none;
-      color: #999;
-
-      &::before,
-      &::after {
-        content: "";
+      input {
+        /* width: 2rem; */
+        opacity: 0.00000001;
         position: absolute;
         left: 0;
-        top: 0;
-        margin: calc(.2rem * 2);
+        cursor: pointer;
+        margin-left: -1rem;
+      }
+    }
+
+    .radio {
+      margin-bottom: 1.6rem;
+
+      .helper {
+        position: absolute;
+        top: calc(1.6rem / 4);
+        left: calc(1.6rem / 4);
+        cursor: pointer;
+        display: block;
+        font-size: 1.6rem;
+        user-select: none;
+        color: #999;
+
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          margin: calc(0.2rem * 2);
+          width: 1.6rem;
+          height: 1.6rem;
+          transition: transform 0.1s ease;
+          border-radius: 50%;
+          border: calc(1.6rem / 8) solid currentColor;
+        }
+
+        &::after {
+          transform: scale(0);
+          background-color: ${theme.primary};
+          border-color: ${theme.primary};
+        }
+      }
+
+      label:hover .helper {
+        color: ${theme.primary};
+      }
+
+      // scss-lint:disable QualifyingElement, NestingDepth
+      input:checked {
+        ~ .helper {
+          &::after {
+            transform: scale(0.5);
+          }
+          &::before {
+            color: ${theme.primary};
+          }
+        }
+      }
+    }
+
+    .checkbox {
+      margin-top: calc(1rem * 2);
+      margin-bottom: 3rem;
+      margin-left: 0.5rem;
+      position: relative;
+      .text {
+        display: inline-block;
+        margin-left: 0.7rem;
+        font-size: 1.6rem;
+      }
+
+      .helper {
+        color: #999;
         width: 1.6rem;
         height: 1.6rem;
-        transition: transform .1s ease;
-        border-radius: 50%;
-        border: calc(1.6rem / 8) solid currentColor;
-      }
-
-      &::after {
-        transform: scale(0);
-        background-color: ${theme.primary};
-        border-color: ${theme.primary};
-      }
-    }
-
-    label:hover .helper {
-      color: ${theme.primary};
-    }
-
-    // scss-lint:disable QualifyingElement, NestingDepth
-    input:checked {
-      ~ .helper {
-        &::after {
-          transform: scale(0.5);
-        }
-        &::before {
-          color: ${theme.primary};
-        }
-      }
-    }
-  }
-
-  .checkbox {
-
-    margin-top: calc(1rem * 2);
-    margin-bottom: 1.6rem;
-    position: relative;
-    .text {
-      display: inline-block;
-      margin-left: .7rem;
-      font-size: 1.6rem;
-    }
-
-    .helper {
-      color: #999;
-      width: 1.6rem;
-      height: 1.6rem;
-            position: absolute;
-      top: calc(1.6rem / 6);
-      left: 0;
-      z-index: 0;
-      border: calc(1.6rem / 8) solid currentColor;
-      border-radius: calc(1.6rem / 16);
-      transition: border-color .1s ease;
-
-      &::before,
-      &::after {
         position: absolute;
-        height: 0;
-        width: calc(1.6rem * 0.2);
-        background-color: ${theme.primary};
-        display: block;
-        transform-origin: left top;
-        border-radius: calc(1.6rem / 4);
-        content: "";
-        transition: opacity .1s ease,
-          height 0s linear .1s;
-        opacity: 0;
-      }
-
-      &::before {
-        top: calc(1.6rem * 0.65);
-        left: calc(1.6rem * 0.38);
-        transform: rotate(-135deg);
-        box-shadow: 0 0 0 calc(1.6rem / 16) #fff;
-      }
-
-      &::after {
-        top: calc(1.6rem * 0.3);
+        top: calc(1.6rem / 6);
         left: 0;
-        transform: rotate(-45deg);
-      }
-    }
+        z-index: 0;
+        border: calc(1.6rem / 8) solid currentColor;
+        border-radius: calc(1.6rem / 16);
+        transition: border-color 0.1s ease;
 
-    label:hover .helper {
-      color: ${theme.primary};
-    }
+        &::before,
+        &::after {
+          position: absolute;
+          height: 0;
+          width: calc(1.6rem * 0.2);
+          background-color: ${theme.primary};
+          display: block;
+          transform-origin: left top;
+          border-radius: calc(1.6rem / 4);
+          content: "";
+          transition: opacity 0.1s ease, height 0s linear 0.1s;
+          opacity: 0;
+        }
 
-    input:checked {
-      ~ .helper {
-        color: ${theme.primary};
-
-        &::after,
         &::before {
-          opacity: 1;
-          transition: height .1s ease;
+          top: calc(1.6rem * 0.65);
+          left: calc(1.6rem * 0.38);
+          transform: rotate(-135deg);
+          box-shadow: 0 0 0 calc(1.6rem / 16) #fff;
         }
 
         &::after {
-          height: calc(1.6rem / 2);
+          top: calc(1.6rem * 0.3);
+          left: 0;
+          transform: rotate(-45deg);
         }
+      }
 
-        &::before {
-          height: calc(1.6rem * 1.2);
-          transition-delay: .1s;
+      label:hover .helper {
+        color: ${theme.primary};
+      }
+
+      input:checked {
+        ~ .helper {
+          color: ${theme.primary};
+
+          &::after,
+          &::before {
+            opacity: 1;
+            transition: height 0.1s ease;
+          }
+
+          &::after {
+            height: calc(1.6rem / 2);
+          }
+
+          &::before {
+            height: calc(1.6rem * 1.2);
+            transition-delay: 0.1s;
+          }
         }
       }
     }
-  }
 
-  .radio + .radio,
-  .checkbox + .checkbox {
-    margin-top: 1.6rem;
-  }
-
-  .has-error {
-    .legend.legend,
-    &.form-group .control-label.control-label {
-      // Prevent !importantRule
-      color: $mf-error-color;
+    .radio + .radio,
+    .checkbox + .checkbox {
+      margin-top: 1.6rem;
     }
 
-    &.form-group,
-    &.checkbox,
-    &.radio,
-    &.form-radio {
-      .form-help,
-      .helper {
+    .has-error {
+      .legend.legend,
+      &.form-group .control-label.control-label {
+        // Prevent !importantRule
         color: $mf-error-color;
       }
-    }
 
-    .bar {
-      &::before {
-        background: $mf-error-color;
-        left: 0;
-        width: 100%;
+      &.form-group,
+      &.checkbox,
+      &.radio,
+      &.form-radio {
+        .form-help,
+        .helper {
+          color: $mf-error-color;
+        }
+      }
+
+      .bar {
+        &::before {
+          background: $mf-error-color;
+          left: 0;
+          width: 100%;
+        }
       }
     }
   }
-
-}
 `;

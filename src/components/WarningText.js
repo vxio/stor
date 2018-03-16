@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import theme from "../theme";
 const Warning = styled.p`
-  color: ${props => (props.success && theme.primary) || (!props.warn && theme.grey_5) || `#f15c5c !important`};
+  color: ${props => (props.success && theme.primary) || (!props.warn && theme.black) || `#f15c5c !important`};
   /* fill: ${props => (props.success && theme.primary) || (!props.warn && theme.grey_5) || `#f15c5c !important`}; */
   font-size: 1.6rem;
   text-transform: ${props => props.showUserInput && `capitalize`};
   white-space: pre-line;
-  transition: all .9s;
+  transition: all .2s;
 `;
 
 const WarningText = props => {

@@ -1,10 +1,17 @@
-import React from 'react'
-import styled from 'styled-components';
-import theme from '../theme';
-import { Link } from 'react-router-dom';
+import React from "react";
+import styled from "styled-components";
+import theme from "../theme";
+import { Link } from "react-router-dom";
+import Button from "./GeneralUI/Button";
 
 const OrderSummary = props => {
+  const {includeButtons, customerInfo} = props;
   const { subTotal, shipping, tax, total } = props.orderData;
+  let linkToNextPage = "/checkout/account-info" 
+  // debugger;
+  if(customerInfo) {
+    linkToNextPage="/checkout/review-and-order"
+  }
   return (
     <OrderSummary_Container id={props.id}>
       <div className="header">
@@ -17,29 +24,38 @@ const OrderSummary = props => {
         <PriceText name="Tax" price={tax} />
         <PriceText topBorder className="total" name="Total" price={total} />
       </div>
-
-      <Link className="" to="/checkout">
-        <button>Continue to checkout</button>
-      </Link>
+      {includeButtons && (
+        <Link to={linkToNextPage}>
+          <Button large color="primary">
+            Checkout
+          </Button>
+        </Link>
+      )}
     </OrderSummary_Container>
   );
 };
 
-export default OrderSummary
+export default OrderSummary;
 
 const OrderSummary_Container = styled.div`
-
   display:grid;
   grid-template-columns: 1fr minmax(18rem, max-content) 1fr;
+  grid-template-rows: repeat(3, max-content);
+  grid-row-gap: 3rem;
 
-  height: 30rem;
-  width: 35rem;
 
-  font-size: 1.7rem;
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
+  font-size: ${theme.p_large};
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  margin-bottom: auto;
   
   & > * {
     grid-column: 2/3;
+  }
+  
+  a {
+    /* display: inline-block; */
+    /* margin: auto; */
+    margin-bottom: 3rem;
   }
 
   .header {
@@ -49,13 +65,12 @@ const OrderSummary_Container = styled.div`
 
     & > * {
       text-align: center;
-      font-size: 2.2rem;
+      font-size: ${theme.h1_medium};
       margin-top: 2.5rem;
       
     }
 
   }
-
 
 }
 `;

@@ -105,14 +105,12 @@ class Shop extends React.Component {
     return (
       <Grid>
         <Styles>
-          <div>
             <Sidebar>
               <StyledLink exact to={this.mainPath}>
                 {this.viewAllText}
               </StyledLink>
               {categoryNavItems}
             </Sidebar>
-          </div>
           <Main>
             {currentCategory && <CategoryHeader>{currentBrand + " " + currentCategory}</CategoryHeader>}
             {this.renderProductsDisplayed()}
@@ -127,11 +125,13 @@ export default Shop;
 
 const Styles = styled.div`
   grid-column: full;
-  display: flex;
+  /* display: flex;
   & > *:first-child {
     margin-right: 5rem;
-  }
-`
+  } */
+  display: grid;
+  grid-template-columns: 22rem 1fr; 
+`;
 
 const CategoryHeader = styled.h1`
   font-size: 3.3rem;
@@ -141,13 +141,14 @@ const CategoryHeader = styled.h1`
 `;
 
 const Sidebar = styled.div`
+  position: fixed;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 20rem;
 `;
 const Main = styled.div`
-  /* grid-column: col-start 4 / full-end; */
+  grid-column: 2/3;
   margin-left: 2rem;
   .item-grid {
     margin-bottom: 12rem;

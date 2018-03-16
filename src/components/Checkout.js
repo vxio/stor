@@ -6,39 +6,26 @@ import { Form, Field } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { checkValidity } from "./Utility";
 import styled from "styled-components";
-import theme, {Grid} from "../theme";
+import theme, { Grid } from "../theme";
 import OrderSummary from "./OrderSummary";
 import { Cart_Checkout_Styled } from "./ShoppingCart";
 import ContactForm from "./ContactForm";
+import {Redirect} from 'react-router-dom';
 
 class Checkout extends React.Component {
-  orderData = this.props.getOrderData();
-
-  handleOnSubmit = async values => {
-    // await sleep(300);
-    // window.alert(JSON.stringify(values, 0, 2));
-    console.log(values);
-    this.props.history.push("/checkout/order-summary", {
-      submittedInfo: values,
-      cart: this.props.cart,
-      sameAddress: this.state.sameAddress,
-      orderData: this.orderData
-    });
-    this.props.clearCart();
-  };
-
   render() {
+    const { onSubmit, orderData, customerInfo, cart } = this.props;
+    if(!cart.length) {
+      // return <Redirect to="/shop" />
+    }
+
     return (
       <Grid>
-      <Cart_Checkout_Styled>
-        <ContactForm id="contact-form" onSubmit={this.handleOnSubmit} />
-        <OrderSummary id="order-summary" orderData={this.props.orderData} />
-      </Cart_Checkout_Styled>
-</Grid>
+          <ContactForm id="contact-form" onSubmit={onSubmit} customerInfo={customerInfo} />
+          {/* <OrderSummary id="order-summary" orderData={orderData} /> */}
+      </Grid>
     );
   }
 }
 
 export default Checkout;
-
-

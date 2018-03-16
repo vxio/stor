@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import Button from "./GeneralUI/Button";
 import Input from "./GeneralUI/Input";
 import Select from "./GeneralUI/Select";
@@ -39,7 +39,7 @@ const CartEmpty_Styles = styled.div`
     flex-direction: column;
 
     h1 {
-      font-size: 5.5rem;
+      font-size: 5rem;
       margin-bottom: 2rem;
     }
     a {
@@ -101,16 +101,16 @@ const CartItem = props => {
 
           <div className="quantity-totalPrice">
             <div className="quantity">
-              <p>quantity:</p>
+              <p>quantity: </p>
               {userOptions && (
                 <Select
                   name={"quantity range"}
                   selectedOption={quantity}
                   min={1}
                   max={10}
-                  controlFunc={e => props.updateQuantity(e, index)}
+                  controlFunc={e => props.updateQuantity(e, product)}
                 />
-              )}
+              ) || <p style={{marginLeft: '.5rem'}}> {quantity}</p>}
             </div>
             <p>${totalPrice}</p>
           </div>
@@ -122,7 +122,7 @@ const CartItem = props => {
               onClick={() => {
                 props.removeItem(product);
                 removeButton.setAttribute("disabled", "disabled");
-                console.log(removeButton);
+                
               }}
             >
               ✖
@@ -140,6 +140,7 @@ const X_Button = styled.button`
   color: black;
   cursor: pointer;
   font-size: 1.4rem;
+  padding-left: 1rem;
 
   position: absolute;
   top: 0;
@@ -151,20 +152,18 @@ const X_Button = styled.button`
 `;
 
 const CartItem_Styles = styled.div`
-  width: max-content; 
   display: grid;
-  grid-template-columns: 13rem minmax(20rem, 27rem);
-  grid-column-gap: 3.5rem;
-  font-size: 1.4rem;
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
+  grid-template-columns: 16rem 1fr;
+  grid-column-gap: 4rem;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   padding: 2.3rem ;
   backface-visibility: hidden;
-  height: 90%;
 }
   & > .image {
     grid-column: 1/2;
     img {
       width: 100%;
+      height: auto;
       vertical-align: middle;
     }
     &:hover ~ div .product-name-brand {
@@ -175,17 +174,19 @@ const CartItem_Styles = styled.div`
   & > .product-info {
     grid-column: 2/3;
     text-transform: capitalize;
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     display: flex;
     flex-direction: column;
     position: relative;
 
     .product-name-brand {
-      font-size: 1.6rem;
+      width: max-content; 
+      font-size: 1.8rem;
       font-weight: 600;
       margin-bottom: 1.5rem;
+      margin-right: 3.5rem;
       transition: all .2s ease;
-      & div:nth-child(2) {
+      & > *:nth-child(2) {
         /* font-size: 1.4rem; */
         color: ${theme.grey_6}; 
         font-weight: 400;
@@ -223,7 +224,7 @@ const CartItem_Styles = styled.div`
 `;
 
 const ShoppingCart = props => {
-  const { orderData, cart } = props;
+  const { orderData, cart, subComponent, location, customerInfo } = props;
 
   function willLeave() {
     // triggered when c's gone. Keeping c until its width/height reach 0. ,
@@ -237,7 +238,7 @@ const ShoppingCart = props => {
       styles={cart.map(cartItem => ({
         key: cartItem.id + cartItem.size,
         data: { product: cartItem },
-        style: { height: 200, opacity: 1 }
+        style: { height: 240, opacity: 1 }
       }))}
     >
       {interpolatedStyles => (
@@ -262,34 +263,49 @@ const ShoppingCart = props => {
     </TransitionMotion>
   );
 
+ let GridContainer;
+ if(subComponent) {
+   GridContainer = React.Fragment;
+ } else {
+   GridContainer = Grid;
+ }
+
+const isCartPage = location.pathname.split('/')[1];
+
+
   return (
-    <Grid>
+    <GridContainer>
       {!cart.length ? (
         <CartEmpty />
       ) : (
         <Cart_Checkout_Styled>
           <CartItemsContainer>{cartComponents}</CartItemsContainer>
-          <OrderSummary id="order-summary" orderData={orderData} />
+          <OrderSummary includeButtons={isCartPage === 'cart'} id="order-summary" orderData={orderData} customerInfo={customerInfo}/>
         </Cart_Checkout_Styled>
       )}
-    </Grid>
+    </GridContainer>
   );
 };
 
-export default ShoppingCart;
+export default withRouter( ShoppingCart );
 
 const CartItemsContainer = styled.div`
   /* grid-column: col-start 1 / span 7; */
+  /* width: 100%; */
 `;
 
 
 
 export const Cart_Checkout_Styled = styled.div`
-  grid-column: full;
-  display: flex;
-  & > *:first-child {
+  grid-column: col-start 2 / full-end;
+  /* grid-column: full; */
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) 45rem;
+  grid-gap: 4rem;
+  /* justify-items: end; */
+  /* & > *:first-child {
     margin-right: 5rem;
-  } 
+  }  */
 
 
 `

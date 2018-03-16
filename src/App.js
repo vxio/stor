@@ -18,6 +18,7 @@ class App extends Component {
 export default withRouter(App);
 
 const UtilityContainer = styled.div`
+
   color: ${theme.black};
   margin-bottom: 8rem;
 

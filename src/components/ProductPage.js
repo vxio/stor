@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import styled from "styled-components";
-import theme from "../theme";
+import theme, { Grid } from "../theme";
 import RadioInput from "./GeneralUI/RadioInput";
 import WarningText from "./WarningText";
 import ReactImageMagnify from "react-image-magnify";
@@ -11,6 +11,7 @@ import Icon from "./Icon";
 import { ICONS } from "./constants";
 import { TransitionMotion, spring } from "react-motion";
 import Transition from "react-motion-ui-pack";
+import Button from "./GeneralUI/Button";
 
 const RadioInputs = props => {
   const { name, options, customOnChange, error } = props;
@@ -53,7 +54,11 @@ class ProductPage extends Component {
 
     Object.assign(this, { productLimit, sizeOptions });
     this.purchasedNotification = "Added to cart!";
-    this.limitReachedNotification = "You've reached the limit of 10 for this item and size. Please see cart for details.";
+    // this.limitReachedNotification =
+    //   "You've reached the limit of 10 for this item and size. Please see cart for details.";
+    this.limitReachedNotification = "Quantity limit reached!";
+    this.notificationTimer = 1000;
+    this.timeoutId;
     this.state = {
       sizeText: "",
       cartNotificationText: "",
@@ -86,6 +91,9 @@ class ProductPage extends Component {
       );
       return true;
     } else {
+      this.setState({
+        productInCart: undefined
+      });
       this.clearQuantityLimit();
       return false;
     }
@@ -100,6 +108,7 @@ class ProductPage extends Component {
   }
 
   checkQuantityLimit() {
+    // debugger;
     const { productInCart, quantityLimitReached } = this.state;
     if (productInCart.quantity === this.productLimit) {
       this.setState({
@@ -130,13 +139,14 @@ class ProductPage extends Component {
   componentDidUpdate() {}
 
   updateProduct = eventValue => {
+    clearTimeout(this.timeoutId);
     const selectedProduct = { ...this.state.product, size: eventValue };
     this.setState(
       {
         product: selectedProduct,
         selectedSize: eventValue,
-        sizeText: eventValue
-        // cartNotificationText: ''
+        sizeText: eventValue,
+        cartNotificationText: ""
       },
       function() {
         this.checkProductInCart();
@@ -147,16 +157,33 @@ class ProductPage extends Component {
   onSubmit = values => {
     if (!this.state.product.size) {
       this.setState({
-        sizeText: "Please select a size"
+        sizeText: "Select a size"
       });
       return;
     }
 
-    this.props.addToCart(this.state.product);
-    this.setState({ cartNotificationText: this.purchasedNotification }, function() {
-      setTimeout(() => this.setState({ cartNotificationText: "" }), 1200);
+    this.props.addToCart(this.state.product, () => {
+      const limitReached = this.state.productInCart && this.state.productInCart.quantity >= this.productLimit - 1;
+      this.setState({ cartNotificationText: this.purchasedNotification }, function() {
+        this.timeoutId = setTimeout(
+          () =>
+            this.setState({
+              cartNotificationText: "",
+              quantityLimitReached: limitReached
+            }),
+          this.notificationTimer
+        );
+      });
+
+      if (!this.state.productInCart) {
+        this.checkProductInCart();
+      } else {
+        const updatedProductInCart = { ...this.state.productInCart };
+        updatedProductInCart.quantity++;
+        this.setState({ productInCart: updatedProductInCart });
+      }
     });
-    this.checkProductInCart();
+    // this.checkProductInCart();
   };
 
   handleImageError = () => {
@@ -186,84 +213,97 @@ class ProductPage extends Component {
 
     //used for selecting in test
     Form.displayName = "Form";
+    const buttonDisabled = quantityLimitReached || cartNotificationText;
 
     return (
-      <Styled>
-        <img className="image" onError={this.handleImageError} src={product.img} alt={product.img} />
-        <div className="product-info">
-          <div>
-            <h2 className="brand">{product.brand}</h2>
-            <h2 className="name">{product.name}</h2>
-          </div>
-          <h3 className="price">${product.price}</h3>
-          {/* List of links to all colors available for this product
+      <Grid>
+        <Styled>
+          <img className="image" onError={this.handleImageError} src={product.img} alt={product.img} />
+          <div className="product-info">
+            <div>
+              <h2 className="name">{product.name}</h2>
+              <h2 className="brand">{product.brand}</h2>
+            </div>
+            <h3 className="price">${product.price}</h3>
+            {/* List of links to all colors available for this product
           User can quickly compare colors if more than one color is available */}
-          <div>
-            <h3 className="color-size-text">Color: {product.color}</h3>
-            <StyledColorsContainer>{colorOptions}</StyledColorsContainer>
-          </div>
-          <Form
-            onSubmit={this.onSubmit}
-            render={({ handleSubmit, reset, submitting, pristine, values }) => {
-              return (
-                <form onSubmit={handleSubmit}>
-                  <WarningText
-                    id="size-text"
-                    className="color-size-text"
-                    warn={!selectedSize && sizeText}
-                    showUserInput={selectedSize}
-                    defaultText="Size"
-                  >
-                    {(selectedSize && `Size: ${selectedSize}`) || sizeText}
-                  </WarningText>
-                  <RadioInputs
-                    name="size"
-                    options={this.sizeOptions}
-                    customOnChange={this.updateProduct}
-                    error={!selectedSize && sizeText}
-                  />
-                  <WarningText id="limit-notification" success>
-                    {quantityLimitReached && this.limitReachedNotification}
-                  </WarningText>
-                  <button type="submit" disabled={quantityLimitReached || cartNotificationText}>
-                    {cartNotificationText || 'Add to Cart'}
-                  </button>
-                </form>
-              );
-            }}
-          />
-          <div className="details-container">
-            <div className="detail">
-              <span>
-                <Icon icon={ICONS.WASHING_MACHINE} />
-              </span>
-              <p>Machine washable</p>
+            <div>
+              <h3 className="color-size-text">
+                <strong>Color:</strong> {product.color}
+              </h3>
+              <StyledColorsContainer>{colorOptions}</StyledColorsContainer>
             </div>
-            <div className="detail">
-              <span>
-                <Icon icon={ICONS.THREAD_WHEEL} size={19} />
-              </span>
-              <p>Made in Bentonville, AR</p>
+            <Form
+              onSubmit={this.onSubmit}
+              render={({ handleSubmit, reset, submitting, pristine, values }) => {
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <WarningText
+                      id="size-text"
+                      className="color-size-text"
+                      warn={!selectedSize && sizeText}
+                      showUserInput={selectedSize}
+                    >
+                      {(selectedSize && (
+                        <span>
+                          <strong>Size: </strong>
+                          {selectedSize}
+                        </span>
+                      )) || <strong>Select size</strong> ||
+                        sizeText}
+                    </WarningText>
+                    <RadioInputs
+                      name="size"
+                      options={this.sizeOptions}
+                      customOnChange={this.updateProduct}
+                      error={!selectedSize && sizeText}
+                    />
+                    {/* <WarningText id="limit-notification" success>
+                      {quantityLimitReached && this.limitReachedNotification}
+                    </WarningText> */}
+                    <Button
+                      color={(quantityLimitReached && "disabled") || (buttonDisabled && "primary") || "black"}
+                      type="submit"
+                      disabled={buttonDisabled}
+                      width="25rem"
+                    >
+                      {cartNotificationText || (quantityLimitReached && this.limitReachedNotification) || "Add to Cart"}
+                    </Button>
+                  </form>
+                );
+              }}
+            />
+            <div className="details-container">
+              <div className="detail">
+                <span>
+                  <Icon icon={ICONS.WASHING_MACHINE} />
+                </span>
+                <p>Machine washable</p>
+              </div>
+              <div className="detail">
+                <span>
+                  <Icon icon={ICONS.THREAD_WHEEL} size={19} />
+                </span>
+                <p>Made in Bentonville, AR</p>
+              </div>
             </div>
+            {/* <div className="description">
+              <h3 className="title">Description</h3>
+              <p className="content">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ad dolor iure similique magnam,
+                totam accusantium illo natus error. Fugiat facere unde harum dolor dicta aliquid quibusdam.
+              </p>
+            </div> */}
           </div>
-          <div className="description">
-            <h3 className="title">Description</h3>
-            <p className="content">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ad dolor iure similique magnam, totam
-              accusantium illo natus error. Fugiat facere unde harum dolor dicta aliquid quibusdam.
-            </p>
-          </div>
-        </div>
-      </Styled>
+        </Styled>
+      </Grid>
     );
   }
 }
 
 export default ProductPage;
 
-const StyledColorsContainer = styled.div`
-  color: white;
-`;
+const StyledColorsContainer = styled.div``;
 
 const activeClassName = "nav-item-active";
 const StyledColor = styled(NavLink).attrs({
@@ -272,7 +312,7 @@ const StyledColor = styled(NavLink).attrs({
   display: inline-block;
   margin-right: 1rem;
   padding: 0.4rem;
-  border: 1.3px solid transparent;
+  border: 1.5px solid transparent;
   border-radius: 50%;
   transition: all 0.3s ease-out;
   margin-bottom: 2rem;
@@ -280,7 +320,7 @@ const StyledColor = styled(NavLink).attrs({
   &.${activeClassName}, &:hover,
   &:active {
     color: ${props => `${props.theme.primary} !important`};
-    border-color: ${theme.grey_5};
+    border-color: ${theme.grey_7};
   }
 `;
 StyledColor.displayName = "Color"; //for testing
@@ -297,39 +337,51 @@ const Color = styled.div`
 `;
 
 const Styled = styled.div`
-  grid-column: full;
+  grid-column: col-start 2 / full-end;
 
   display: grid;
-  grid-template-columns: 1fr minmax(33rem, 55rem) 9rem 30rem 1fr;
+  grid-template-columns: auto 1fr;
+  grid-gap: 8rem;
+  justify-content: center;
 
+  margin-top: 1rem;
   .image {
-    width: 100%;
-    grid-column: 2/3;
+    grid-column: 1/2;
+    /* height: 75vh; */
+    max-width: 100%;
+    max-height: 75vh;
   }
 
   .product-info {
-    grid-column: 4/5;
+    grid-column: 2/3;
+    margin-right: 5rem;
 
-    display: grid;
+    display: flex;
+    flex-flow: column;
+
+    button {
+      margin: 3rem auto 4rem;
+    }
 
     .name {
-      font-size: 3rem;
+      font-size: 3.2rem;
       white-space: nowrap;
     }
     .brand {
       color: ${theme.grey_4};
-      font-size: 2.1rem;
+      font-size: 2.5rem;
     }
     .price {
       font-size: 2.5rem;
       font-weight: 500;
-      margin: 3rem 0 5rem;
+      /* margin: 3rem 0 5rem; */
+      margin: 1rem 0 5rem;
     }
     .color-size-text {
       font-size: 1.75rem;
-      color: ${theme.grey_4};
+      /* color: ${theme.grey_6}; */
       font-weight: 500;
-      margin-bottom: 0.9rem;
+      margin: 1rem 0;
     }
 
     #cart-notification {
@@ -337,7 +389,6 @@ const Styled = styled.div`
       font-weight: 600;
     }
     .details-container {
-      margin: 5rem 0 2rem;
       font-size: 1.5rem;
       line-height: 1.8;
 
@@ -360,6 +411,7 @@ const Styled = styled.div`
     }
     .description {
       line-height: 1.5;
+      text-align: justify;
       .title {
         font-size: 1.5rem;
         font-weight: 500;
@@ -379,22 +431,23 @@ const Inputs_Styled = styled.div`
   width: 20rem;
   margin-top: -0.5rem;
   padding: 0.3rem 0.4rem;
-  border: ${props => props.error && `1px solid #F15C5C`};
+  border: ${props => `1px solid ${(props.error && props.theme.danger) || "transparent"}`};
   border-radius: 3px;
-  margin-bottom: 2rem;
+  transition: all 0.2s;
 
   input {
     display: none;
 
     & + label:hover,
     &:checked + label {
-      border: 1px solid ${theme.grey_4};
+      border: 1px solid ${theme.black};
       border-radius: 2px;
-      color: ${theme.grey_4};
+      color: ${theme.black};
       transition: all 0.3s ease-out;
     }
   }
   label {
+    color: ${theme.grey_6};
     display: inline-block;
     cursor: pointer;
     font-size: 1.6rem;

@@ -9,6 +9,7 @@ import ProductPage from "./ProductPage";
 import ShoppingCart from "./ShoppingCart";
 import Checkout from "./Checkout";
 import OrderSummary from "./OrderSummary";
+import OrderConfirmation from "./OrderConfirmation";
 import axios from "axios";
 import * as Icon from "react-feather";
 
@@ -18,7 +19,8 @@ export class Store extends Component {
     totalCartItems: 0,
     cart: [],
     shouldBounce: false,
-    subTotal: 0
+    subTotal: 0,
+    customerInfo: undefined
   };
 
   products;
@@ -34,6 +36,46 @@ export class Store extends Component {
     style: "currency",
     currency: "USD"
   });
+
+  orderData;
+
+  insertDataForDevelopment() {
+    this.insertSpecificCartItem(1, "medium", 9);
+    this.insertSpecificCartItem(1, "small", 8);
+    this.insertRandomCartItems(5);
+    // this.customerInfo = {
+    //   main: {
+    //     firstName: "Vincent",
+    //     lastName: "Xiao",
+    //     email: "vince@gmail.com"
+    //   },
+    //   billing: {
+    //     street: "555 Ace Street",
+    //     city: "West Covina",
+    //     state: "California",
+    //     zipcode: "99923"
+    //   },
+    //   shipping: {
+    //     street: "555 Ace Street",
+    //     city: "West Covina",
+    //     state: "California",
+    //     zipcode: "99923"
+    //   }
+    // };
+  }
+
+  handleOnSubmit = values => {
+    // await sleep(300);
+    console.log("handleSubmit");
+    // window.alert(JSON.stringify(values, 0, 2));
+    // this.setState({ customerInfo: values });
+    // this.customerInfo = values;
+    this.setState({ customerInfo: values }, () => {
+      this.props.history.push("/checkout/review-and-order");
+    });
+
+    // this.props.clearCart();
+  };
 
   generateRandom(number) {
     return Math.floor(Math.random() * number);
@@ -68,6 +110,20 @@ export class Store extends Component {
     // debugger;
   }
 
+  insertSpecificCartItem(id, size, quantity) {
+    const productToInsert = this.products.find(product => product.id === id);
+    const newProduct = {
+      ...productToInsert,
+      quantity: quantity,
+      totalPrice: quantity * productToInsert.price,
+      size: size,
+      testing: true
+    };
+
+    // console.log(newProduct);
+    this.handleAddToCart(newProduct);
+  }
+
   getProducts() {
     //use this url for localhost. May need to use a different url in production
     // axios.defaults.baseURL = "/";
@@ -76,7 +132,7 @@ export class Store extends Component {
       this.products = response.data.productData;
       this.sizeOptions = response.data.sizeOptions;
       //attach links to products
-      this.products.map(
+      this.products.forEach(
         product => (product.link = `/shop/${product.category}/${product.brand}/${product.name}/${product.color}`)
       );
       const categories = [...new Set(this.products.map(product => product.category))];
@@ -84,8 +140,6 @@ export class Store extends Component {
         category =>
           (this.categorizedProducts[category] = this.products.filter(product => product.category === category))
       );
-
-      this.insertRandomCartItems(5);
 
       this.setState({
         loading: false
@@ -96,11 +150,21 @@ export class Store extends Component {
   componentWillMount() {}
 
   componentDidMount() {
-    this.getProducts();
+    this.getProducts().then(() => {
+      this.insertDataForDevelopment();
+    });
   }
 
-  componentDidUpdate() {}
+  componentWillUpdate(nextProps, nextState) {
+    localStorage.setItem("cart", JSON.stringify(this.state.cart));
+    console.log(JSON.parse(localStorage.cart));
+  }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      window.scrollTo(0, 0);
+    }
+  }
   updateTotal() {
     this.tax = +(this.state.subTotal * this.taxRate).toFixed(2);
     this.total = +(this.state.subTotal + this.tax + this.shipping).toFixed(2);
@@ -122,7 +186,7 @@ export class Store extends Component {
     return orderInfo;
   };
 
-  handleAddToCart = product => {
+  handleAddToCart = (product, callback) => {
     // e.preventDefault();
     if (!product.size) {
       return;
@@ -148,22 +212,28 @@ export class Store extends Component {
       productClone.totalPrice = productClone.quantity * productClone.price;
       const cartClone = [...this.state.cart];
       cartClone[index] = productClone;
-      this.setState(prevState => ({
-        cart: cartClone,
-        totalCartItems: prevState.totalCartItems + 1,
-        subTotal: prevState.subTotal + productClone.price
-      }));
+      this.setState(
+        prevState => ({
+          cart: cartClone,
+          totalCartItems: prevState.totalCartItems + 1,
+          subTotal: prevState.subTotal + productClone.price
+        }),
+        callback
+      );
       //Add the new product
     } else {
       if (!product.testing) {
         product.quantity = 1;
         product.totalPrice = product.price;
       }
-      this.setState(prevState => ({
-        cart: [...this.state.cart, product],
-        totalCartItems: prevState.totalCartItems + product.quantity,
-        subTotal: prevState.subTotal + (product.testing ? product.totalPrice : product.price) //use totalPrice here for inserting cart items manually
-      }));
+      this.setState(
+        prevState => ({
+          cart: [...this.state.cart, product],
+          totalCartItems: prevState.totalCartItems + product.quantity,
+          subTotal: prevState.subTotal + (product.testing ? product.totalPrice : product.price) //use totalPrice here for inserting cart items manually
+        }),
+        callback
+      );
     }
   };
 
@@ -177,8 +247,7 @@ export class Store extends Component {
         totalCartItems: prevState.totalCartItems - quantity,
         subTotal: prevState.subTotal - totalPrice
       }),
-      function() {
-      }
+      function() {}
     );
   };
 
@@ -190,16 +259,14 @@ export class Store extends Component {
     });
   };
 
-  handleUpdateQuantity = (e, index) => {
-    const product = this.state.cart[index];
+  handleUpdateQuantity = (e, product) => {
     const newQuantity = +e.target.value;
     const difference = newQuantity - product.quantity;
     const cartClone = [...this.state.cart];
-    cartClone[index] = {
-      ...product,
-      quantity: newQuantity,
-      totalPrice: newQuantity * product.price
-    };
+    //need to get index here because of async React Motion transitions
+    const index = cartClone.findIndex(cartItem => cartItem.id === product.id && cartItem.size === product.size);
+    const productClone = { ...product, quantity: newQuantity, totalPrice: newQuantity * product.price };
+    cartClone[index] = productClone;
     this.setState(prevState => {
       return {
         cart: cartClone,
@@ -211,11 +278,15 @@ export class Store extends Component {
 
   render() {
     if (this.state.loading) return <div>Loading sir</div>;
-    const { cart, totalCartItems, subTotal, shouldBounce } = this.state;
+    const { cart, totalCartItems, subTotal, shouldBounce, customerInfo } = this.state;
     let cartLink = totalCartItems ? totalCartItems + " item" : undefined;
     if (totalCartItems > 1) cartLink += "s";
 
-    this.updateTotal();
+    if (this.state.cart.length) {
+      this.updateTotal();
+      this.orderData = this.handleGetOrderData();
+    }
+
     return (
       <React.Fragment>
         <NavItems>
@@ -241,28 +312,39 @@ export class Store extends Component {
             component={ProductPage}
           />
 
-          {/* <RouteWithProps path="/shop/Tees/:brand" exact items={this.state.products} component={FilterItems} /> */}
           <RouteWithProps
             path="/cart"
             exact
             cart={this.state.cart}
-            orderData={this.handleGetOrderData()}
+            orderData={this.orderData}
             removeItem={this.handleRemoveItem}
             userOptions
             updateQuantity={this.handleUpdateQuantity}
+            customerInfo={customerInfo}
             component={ShoppingCart}
           />
-
           <RouteWithProps
-            path="/checkout"
-            clearCart={this.handleClearCart}
-            getOrderData={this.handleGetOrderData}
-            orderData={this.handleGetOrderData()}
+            path="/checkout/account-info"
+            // clearCart={this.handleClearCart}
+            // orderData={this.orderData}
+            onSubmit={this.handleOnSubmit}
+            customerInfo={customerInfo}
             exact
             cart={cart}
             component={Checkout}
           />
-          <RouteWithProps path="/checkout/order-summary" exact component={OrderSummary} />
+
+          <RouteWithProps
+            path="/checkout/(review-and-order|order-confirmation)"
+            customerInfo={customerInfo}
+            orderData={this.orderData}
+            cart={this.state.cart}
+            removeItem={this.handleRemoveItem}
+            updateQuantity={this.handleUpdateQuantity}
+            clearCart={this.handleClearCart}
+            exact
+            component={OrderConfirmation}
+          />
 
           <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
           <Redirect to="/" />
