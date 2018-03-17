@@ -157,7 +157,7 @@ export class Store extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     localStorage.setItem("cart", JSON.stringify(this.state.cart));
-    console.log(JSON.parse(localStorage.cart));
+    // console.log(JSON.parse(localStorage.cart));
   }
 
   componentDidUpdate(prevProps) {

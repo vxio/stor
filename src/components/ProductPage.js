@@ -157,7 +157,7 @@ class ProductPage extends Component {
   onSubmit = values => {
     if (!this.state.product.size) {
       this.setState({
-        sizeText: "Select a size"
+        sizeText: "Select size"
       });
       return;
     }

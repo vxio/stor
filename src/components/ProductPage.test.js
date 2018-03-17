@@ -8,6 +8,7 @@ import ShoppingCart from "./ShoppingCart";
 import productData from "../../public/product_data.json";
 import axios from "axios";
 import { Form } from "react-final-form";
+import {variables} from '../theme';
 
 import ProductPage from "./ProductPage";
 
@@ -107,16 +108,11 @@ describe("ProductPage", () => {
     wrapper.setProps({ cart: storeInstance.state.cart });
     const wrapperInstance = wrapper.instance();
     wrapperInstance.checkProductInCart();
-    wrapperInstance.checkQuantityLimit();
     wrapper.update();
     //need to reset formWrapper after update()
     formWrapper = getFormFromComponent(wrapper);
-    const button = formWrapper.find("button");
+    const button = formWrapper.find('Button');
     expect(button.prop("disabled")).toEqual(true);
-    // 
-    expect(formWrapper.find("#limit-notification").exists()).toEqual(true);
-    // expect(wrapperInstance.state.)
-    // 
   });
 
   it("should show warning and no item added to cart if user submits without a selected size", () => {
@@ -135,7 +131,7 @@ describe("ProductPage", () => {
     expect(storeInstance.state.cart.length).toEqual(0);
   });
 
-  it("should not show size No Size Selected warning if user clicks on different color", () => {
+  it("should not show No Size Selected warning if user clicks on different color", () => {
     const product = storeInstance.categorizedProducts.Tees[0]; //should be the black Arch Logo Tee and have other color options
 
     let otherProps = destructureProduct(product);
@@ -150,12 +146,6 @@ describe("ProductPage", () => {
     formElement.simulate("submit");
     wrapper.update();
     formWrapper = getFormFromComponent(wrapper);
-    expect(
-      formWrapper
-        .find("#size-text")
-        .children()
-        .text()
-    ).toEqual(wrapper.instance().state.sizeText);
 
     const otherProduct = wrapper.instance().sameProducts[1];
     otherProps = destructureProduct(otherProduct);
@@ -164,14 +154,8 @@ describe("ProductPage", () => {
       ...otherProps
     };
     wrapper.setProps({ ...props });
-    formWrapper = getFormFromComponent(wrapper);
-    
-    expect(
-      formWrapper
-        .find("#size-text")
-        .children()
-        .exists()
-    ).toEqual(false);
+    expect(wrapper.instance().state.sizeText).toEqual('');
+
   });
 
   //use this method to test 'Shop' page

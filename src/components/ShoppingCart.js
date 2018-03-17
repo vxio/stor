@@ -9,6 +9,7 @@ import { spring, TransitionMotion, presets } from "react-motion";
 import Icon from "./Icon";
 import { ICONS } from "./constants";
 import OrderSummary from "./OrderSummary";
+import LinkWithHoverEffect from "./LinkWithHoverEffect";
 
 const CartEmpty = props => {
   return (
@@ -16,10 +17,7 @@ const CartEmpty = props => {
       <Icon className="cart-svg" icon={ICONS.EMPTY_CART} size={140} />
       <div className="text">
         <h1>Your cart is empty!</h1>
-        <Link to="/shop">
-          <Icon fill="currentColor" size={20} icon={ICONS.CHEVRON_RIGHT} />
-          <span>Continue shopping</span>
-        </Link>
+        <LinkWithHoverEffect id="linkToShop" to="/shop" size={18}>Continue shopping </LinkWithHoverEffect>
       </div>
     </CartEmpty_Styles>
   );
@@ -33,6 +31,10 @@ const CartEmpty_Styles = styled.div`
     display: inline-block;
     /* fill: ${theme.grey_2}; */
   }
+  #linkToShop {
+    margin-left: 0.2rem;
+    margin-right: auto;
+  }
   .text {
     margin-left: 6rem;
     display: flex;
@@ -42,34 +44,7 @@ const CartEmpty_Styles = styled.div`
       font-size: 5rem;
       margin-bottom: 2rem;
     }
-    a {
-      color: ${theme.grey_6};
-      font-size: 2.5rem;
-      margin-left: 0.2rem;
-      display: inline-block;
-      margin-right: auto;
-    
 
-      &:hover {
-        svg {
-          transform: translateX(-.3em);
-          fill: ${theme.primary};
-        }
-        span {
-          transform: translateX(.2em);
-        }
-      }
-
-      svg {
-        transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-        vertical-align: baseline !important;
-      }
-      span {
-        transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-        margin-left: .8rem;
-        display: inline-block;
-      }
-    }
   }
 `;
 const CartItem = props => {
@@ -102,7 +77,7 @@ const CartItem = props => {
           <div className="quantity-totalPrice">
             <div className="quantity">
               <p>quantity: </p>
-              {userOptions && (
+              {(userOptions && (
                 <Select
                   name={"quantity range"}
                   selectedOption={quantity}
@@ -110,7 +85,7 @@ const CartItem = props => {
                   max={10}
                   controlFunc={e => props.updateQuantity(e, product)}
                 />
-              ) || <p style={{marginLeft: '.5rem'}}> {quantity}</p>}
+              )) || <p style={{ marginLeft: ".5rem" }}> {quantity}</p>}
             </div>
             <p>${totalPrice}</p>
           </div>
@@ -122,7 +97,6 @@ const CartItem = props => {
               onClick={() => {
                 props.removeItem(product);
                 removeButton.setAttribute("disabled", "disabled");
-                
               }}
             >
               ✖
@@ -149,6 +123,9 @@ const X_Button = styled.button`
     transition: all 0.2s;
     color: rgba(0, 0, 0, 0.5);
   }
+  &:focus {
+    outline: 0;
+  }
 `;
 
 const CartItem_Styles = styled.div`
@@ -158,6 +135,7 @@ const CartItem_Styles = styled.div`
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   padding: 2.3rem ;
   backface-visibility: hidden;
+
 }
   & > .image {
     grid-column: 1/2;
@@ -186,6 +164,10 @@ const CartItem_Styles = styled.div`
       margin-bottom: 1.5rem;
       margin-right: 3.5rem;
       transition: all .2s ease;
+        color: ${theme.black};
+        &:hover {
+          color: ${theme.primary};
+        }
       & > *:nth-child(2) {
         /* font-size: 1.4rem; */
         color: ${theme.grey_6}; 
@@ -263,15 +245,14 @@ const ShoppingCart = props => {
     </TransitionMotion>
   );
 
- let GridContainer;
- if(subComponent) {
-   GridContainer = React.Fragment;
- } else {
-   GridContainer = Grid;
- }
+  let GridContainer;
+  if (subComponent) {
+    GridContainer = React.Fragment;
+  } else {
+    GridContainer = Grid;
+  }
 
-const isCartPage = location.pathname.split('/')[1];
-
+  const isCartPage = location.pathname.split("/")[1];
 
   return (
     <GridContainer>
@@ -280,21 +261,24 @@ const isCartPage = location.pathname.split('/')[1];
       ) : (
         <Cart_Checkout_Styled>
           <CartItemsContainer>{cartComponents}</CartItemsContainer>
-          <OrderSummary includeButtons={isCartPage === 'cart'} id="order-summary" orderData={orderData} customerInfo={customerInfo}/>
+          <OrderSummary
+            includeButtons={isCartPage === "cart"}
+            id="order-summary"
+            orderData={orderData}
+            customerInfo={customerInfo}
+          />
         </Cart_Checkout_Styled>
       )}
     </GridContainer>
   );
 };
 
-export default withRouter( ShoppingCart );
+export default withRouter(ShoppingCart);
 
 const CartItemsContainer = styled.div`
   /* grid-column: col-start 1 / span 7; */
   /* width: 100%; */
 `;
-
-
 
 export const Cart_Checkout_Styled = styled.div`
   grid-column: col-start 2 / full-end;
@@ -306,6 +290,4 @@ export const Cart_Checkout_Styled = styled.div`
   /* & > *:first-child {
     margin-right: 5rem;
   }  */
-
-
-`
+`;

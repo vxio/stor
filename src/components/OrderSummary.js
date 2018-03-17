@@ -65,7 +65,7 @@ const OrderSummary_Container = styled.div`
 
     & > * {
       text-align: center;
-      font-size: ${theme.h1_medium};
+      font-size: ${theme.h1_small};
       margin-top: 2.5rem;
       
     }

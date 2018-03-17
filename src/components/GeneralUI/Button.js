@@ -61,7 +61,11 @@ background-color: ${props => !props.disabled && ((darkColor && theme[color].ligh
   border: none;
   box-shadow: none;
 }
+&::-moz-focus-inner {
+  border: 0;
+}
 
 `;
 
+Button.displayName = 'Button';
 export default Button;

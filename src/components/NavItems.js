@@ -10,6 +10,7 @@ const StyledLink = styled(NavLink).attrs({
 })`
   background-color: white;
   font-size: 1.75rem;
+  color: ${theme.black};
 
   transition: all .2s ease;
 

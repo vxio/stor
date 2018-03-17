@@ -120,7 +120,7 @@ describe("Store", () => {
       }
     };
     // productToUpdate index === 3
-    wrapperInstance.handleUpdateQuantity(mockedEvent, 3);
+    wrapperInstance.handleUpdateQuantity(mockedEvent, productToUpdate);
     let cart = wrapperInstance.state.cart;
     expect(cart[3].quantity).toEqual(5);
     const expectedSubtotal =
@@ -148,7 +148,7 @@ describe("Store", () => {
     };
 
     // productToUpdate index === 3
-    wrapperInstance.handleUpdateQuantity(mockedEvent, 3);
+    wrapperInstance.handleUpdateQuantity(mockedEvent, productToUpdate);
     expect(wrapper.instance().state.totalCartItems).toEqual(8);
   });
 });

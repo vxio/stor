@@ -162,6 +162,7 @@ const StyledLink = styled(NavLink).attrs({
   margin: 0.6rem 0;
   width: 100%;
   transition: border 0.1s ease, color 0.3s ease, padding 0.3s ease;
+  color: ${theme.black};
 
   &.${activeClassName}, &:hover,
   &:active {

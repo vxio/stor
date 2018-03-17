@@ -14,13 +14,14 @@ const Icon = props => {
     }
   };
   const icon = props.icon.format === "data" ? <path d={props.icon.path} /> : props.icon.markup;
+  const pixels = convertRemToPixels(props.size/10);
 
   return (
     <SVG_Styles
       className={props.className}
       style={styles.svg}
-      width={`${props.size}px`}
-      height={`${props.size}px`}
+      width={`${pixels}px`}
+      height={`${pixels}px`}
       viewBox={props.icon.viewBox || "0 0 1024 1024"}
       fill={props.fill}
     >
@@ -46,3 +47,7 @@ const SVG_Styles = styled.svg`
     fill: ${props => props.fill || "inherit"};
   }
 `;
+
+function convertRemToPixels(rem) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
