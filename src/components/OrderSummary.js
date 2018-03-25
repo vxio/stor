@@ -1,16 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import theme from "../theme";
+import theme, { media } from "../theme";
 import { Link } from "react-router-dom";
 import Button from "./GeneralUI/Button";
 
 const OrderSummary = props => {
-  const {includeButtons, customerInfo} = props;
+  const { includeButtons, customerInfo } = props;
   const { subTotal, shipping, tax, total } = props.orderData;
-  let linkToNextPage = "/checkout/account-info" 
+  let linkToNextPage = "/checkout/account-info";
   // debugger;
-  if(customerInfo) {
-    linkToNextPage="/checkout/review-and-order"
+  if (customerInfo) {
+    linkToNextPage = "/checkout/review-and-order";
   }
   return (
     <OrderSummary_Container id={props.id}>
@@ -47,6 +47,11 @@ const OrderSummary_Container = styled.div`
   font-size: ${theme.p_large};
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   margin-bottom: auto;
+
+  width: 45rem;
+
+  ${media.tabletLarge`width:35rem`};
+  ${media.tabletSmall`width: 100%;`}
   
   & > * {
     grid-column: 2/3;
@@ -67,6 +72,9 @@ const OrderSummary_Container = styled.div`
       text-align: center;
       font-size: ${theme.h1_small};
       margin-top: 2.5rem;
+      ${media.phone`
+      font-size: ${theme.h1_extraSmall};
+      `}
       
     }
 

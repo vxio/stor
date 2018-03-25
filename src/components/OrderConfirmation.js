@@ -3,7 +3,7 @@ import styled from "styled-components";
 import OrderSummary from "./OrderSummary";
 import { Link, Redirect } from "react-router-dom";
 
-import theme, { Grid } from "../theme";
+import theme, { Grid, media } from "../theme";
 import ShoppingCart from "./ShoppingCart";
 import Button from "./GeneralUI/Button";
 import { PulseLoader } from "react-spinners";
@@ -35,8 +35,7 @@ class OrderConfirmation extends React.Component {
           },
           () => {
             this.props.clearCart();
-            this.props.history.replace('/checkout/order-confirmation')
-
+            this.props.history.replace("/checkout/order-confirmation");
           }
         );
       }, 1000);
@@ -46,11 +45,10 @@ class OrderConfirmation extends React.Component {
   render() {
     let { orderData, customerInfo, removeItem, updateQuantity, cart } = this.props;
     const { orderPlaced, submitLoading } = this.state;
-    if(!cart.length && !orderPlaced) {
-      return <Redirect to="/cart" />
-    }
-    else if(!customerInfo) {
-      return <Redirect to="/checkout/account-info" />
+    if (!cart.length && !orderPlaced) {
+      return <Redirect to="/cart" />;
+    } else if (!customerInfo) {
+      return <Redirect to="/checkout/account-info" />;
     }
     if (orderPlaced) {
       cart = this.state.itemsPurchased;
@@ -65,11 +63,17 @@ class OrderConfirmation extends React.Component {
           <Header>
             <div>
               <h1 className="title">{orderPlaced ? "Thank you for your order" : "Review and Place Your Order"}</h1>
-              {orderPlaced && <span id="order-submitted-msg">Your order has been received<br/>Order number: <strong>#{orderNumber}</strong></span>}
+              {orderPlaced && (
+                <span id="order-submitted-msg">
+                  Your order has been received<br />Order number: <strong>#{orderNumber}</strong>
+                </span>
+              )}
             </div>
-            {!orderPlaced && <Button onClick={this.handleSubmitOrder} large color="primary" width="30rem">
-              {submitLoading ? <PulseLoader margin="9px" size={12} color="#fff" /> : "Place Order"}
-            </Button>}
+            {!orderPlaced && (
+              <Button onClick={this.handleSubmitOrder} large color="primary" width="30rem">
+                {submitLoading ? <PulseLoader margin="9px" size={12} color="#fff" /> : "Place Order"}
+              </Button>
+            )}
           </Header>
           <CustomerInfo_Container>
             <CustomerInfoText title="Account Info" info={customerInfo.main} />
@@ -106,6 +110,7 @@ const Container = styled.div`
     font-size: ${theme.h1_extraSmall};
     /* margin: 1rem 0 3rem; */
     margin-top: 1.5rem;
+    ${media.phone`margin-top: -1rem;`};
   }
 `;
 
@@ -113,14 +118,26 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 4rem;
+  ${media.phone`
+  flex-direction: column;
+  `};
+
   .title {
-    font-size: ${theme.h1_large};
+    font-size: ${theme.h1_medium};
+    ${media.phone`
+    font-size: ${theme.h1_small};
+    margin-bottom: 4rem;
+    `};
   }
 
   button {
-    /* margin-left: auto; */
+    margin-left: 2rem;
     margin-right: 0;
     height: 5.4rem;
+    ${media.phone`
+    width: 75%;
+    margin: 0 auto;
+    `};
     div {
       /*spinner */
       margin-top: 0.3rem;
@@ -128,8 +145,6 @@ const Header = styled.div`
   }
 `;
 const CustomerInfo_Container = styled.div`
-  grid-column: 1/3;
-
   border-top: 6px solid ${theme.primary};
   display: grid;
   grid-template-columns: repeat(3, 1fr) max-content;
@@ -137,22 +152,27 @@ const CustomerInfo_Container = styled.div`
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   padding: 2.5rem 3rem;
   margin-bottom: 3rem;
+  position: relative;
+  ${media.phone`
+   grid-template-columns: 1fr;
+  `};
   #edit-link {
     font-size: 2rem;
     color: ${theme.link_blue};
     margin-bottom: auto;
     transition: all 0.2s;
-    &:hover {
+    ${media.phone`
+    grid-row: 1/2;
+    margin-left: auto;
+    margin-right: 2rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    `} &:hover {
       color: ${theme.link_blue.lighten(0.3)};
     }
-    /* height: max-content; */
-    /* color: #9bc4df; */
-    /* margin-left: auto; */
   }
-  /* justify-content: space-between; */
-  /* & > *:not(:last-child) {
-      margin-right: 4rem;
-    } */
 `;
 
 const CustomerInfoText = props => {
@@ -187,8 +207,6 @@ const CustomerInfoText = props => {
 
 const Styled = styled.div`
   font-size: 1.6rem;
-
-  /* margin-left: 2rem; */
   .title {
     font-size: 2.2rem;
     margin-bottom: 1.4rem;
@@ -196,7 +214,6 @@ const Styled = styled.div`
   }
   .name {
     font-weight: 600;
-    /* font-size: 1.8rem; */
   }
   & > * {
     list-style: none;

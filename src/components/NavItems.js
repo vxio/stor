@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import theme from "../theme";
+import theme, { media } from "../theme";
 import styled from "styled-components";
 
 const activeClassName = "nav-item-active";
@@ -8,12 +8,9 @@ const activeClassName = "nav-item-active";
 const StyledLink = styled(NavLink).attrs({
   activeClassName
 })`
-  background-color: white;
-  font-size: 1.75rem;
+  /* background-color: white; */
   color: ${theme.black};
-
   transition: all .2s ease;
-
 
   // &.${activeClassName},
    &:hover,
@@ -32,26 +29,26 @@ export const NavItem = props => (
 export const NavItems = props => <StyledNavItems>{props.children}</StyledNavItems>;
 
 const StyledNavItems = styled.div`
-  grid-column: 1 / -1;
+  font-size: 2rem;
   text-transform: capitalize;
-  /* margin-top: 1rem; */
-  /* margin: 1.8rem auto 4rem; */
-  /* margin-bottom: 6rem; */
-  width: 100%;
   justify-content: center;
-  padding: 1.8rem 0 .8rem;
+  padding: 1.8rem 3rem 0.8rem 0;
   display: flex;
-  margin-bottom: 5rem; //adjusted margin on homepage 
+  border-bottom: 1px solid transparent;
   & > * {
-    margin-right: 8rem;
+    margin: 0 4rem;
+
+    ${media.phoneSmall`
+  margin: 0 3rem;
+  `};
   }
   z-index: 100;
+  box-shadow: 0 1px 4px rgba(76, 76, 75, 0.15);
 
-  /* border-bottom: .5px solid${theme.grey_light_2}; */
-  /* box-shadow: 0px .5px 2px rggrey_light_2ba(0,0,0, .2); */
-  box-shadow: 0 1px 4px rgba(76,76,75,.15);
-  /* justify-content: space-between; */
-
+  ${media.phone`
+  font-size: 2.3rem;
+  padding-right: 4rem;
+  `};
 `;
 
 export default NavItems;

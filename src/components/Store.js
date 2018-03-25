@@ -43,25 +43,26 @@ export class Store extends Component {
     this.insertSpecificCartItem(1, "medium", 9);
     this.insertSpecificCartItem(1, "small", 8);
     this.insertRandomCartItems(5);
-    // this.customerInfo = {
-    //   main: {
-    //     firstName: "Vincent",
-    //     lastName: "Xiao",
-    //     email: "vince@gmail.com"
-    //   },
-    //   billing: {
-    //     street: "555 Ace Street",
-    //     city: "West Covina",
-    //     state: "California",
-    //     zipcode: "99923"
-    //   },
-    //   shipping: {
-    //     street: "555 Ace Street",
-    //     city: "West Covina",
-    //     state: "California",
-    //     zipcode: "99923"
-    //   }
-    // };
+    const customerInfo = {
+      main: {
+        firstName: "Vincent",
+        lastName: "Xiao",
+        email: "vince@gmail.com"
+      },
+      billing: {
+        street: "555 Ace Street",
+        city: "West Covina",
+        state: "California",
+        zipcode: "99923"
+      },
+      shipping: {
+        street: "555 Ace Street",
+        city: "West Covina",
+        state: "California",
+        zipcode: "99923"
+      }
+    };
+    this.setState({customerInfo})
   }
 
   handleOnSubmit = values => {
@@ -147,12 +148,17 @@ export class Store extends Component {
     });
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }
 
   componentDidMount() {
     this.getProducts().then(() => {
       this.insertDataForDevelopment();
     });
+
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -161,7 +167,11 @@ export class Store extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.location.pathname !== prevProps.location.pathname) {
+    const {pathname} = this.props.location;
+    const pathnameArray = pathname.split("/");
+    const onProductPage = pathnameArray[1] === 'shop' && pathnameArray[4];
+
+    if (pathname !== prevProps.location.pathname && !onProductPage) {
       window.scrollTo(0, 0);
     }
   }

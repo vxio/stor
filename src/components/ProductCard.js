@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import theme from "../theme";
+import theme, { media } from "../theme";
 import { Link, withRouter } from "react-router-dom";
 
 //used for homepage and store page
@@ -31,11 +31,11 @@ const ProductCard = props => {
 
 const Container = styled.figure`
   &:hover {
-    
     .overlay:after {
-    opacity: 1;
+      opacity: 1;
     }
   }
+
   .overlay {
     position: relative;
     &:after {
@@ -45,10 +45,10 @@ const Container = styled.figure`
       height: 100%;
       top: 0;
       left: 0;
-      background: rgba(0, 0, 0, .08);
+      background: rgba(0, 0, 0, 0.08);
       border-radius: 2px;
       opacity: 0;
-      transition: all 0.1s ease;
+      transition: all 0.2s ease-out;
     }
 
     img {
@@ -65,32 +65,30 @@ const Container = styled.figure`
 `;
 
 const ProductDetail = styled.div`
-width: 100%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   font-size: 1.5rem;
-  margin: .5rem 0 0;
-  /* background-color: ${theme.grey_1}; */
-  /* padding: .7rem .6rem; */
+  margin: 0.5rem 0 0;
 
-
-
-  div {
-    p:first-child { /*name and brand*/
+  ${media.tabletExtraSmall`font-size:2.4rem;`} div {
+    p:first-child {
+      /*name and brand*/
       /* transition: all .2s; */
       margin-bottom: 0.3rem;
       color: ${theme.black};
-
     }
-    p:nth-child(2) { /*price and color */
+    p:nth-child(2) {
+      /*price and color */
       color: ${theme.grey_5};
     }
   }
-   .name-brand {
+  .name-brand {
   }
 
   .color-price {
     text-align: right;
+  }
 `;
 
 export default withRouter(ProductCard);

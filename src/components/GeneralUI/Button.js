@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import theme from "../../theme";
+import theme, { media } from "../../theme";
 
 //component globals
 let baseFontSize;
@@ -34,6 +34,9 @@ const Button = styled.button`
 
   padding: .78em 1.5em;
   width: ${props => props.width || "100%"};
+  ${media.phone`width: 100%;
+   font-size: 16px;
+  `};
   /* letter-spacing: .5px; */
   font-family: inherit;
   margin: 0 auto;
@@ -67,5 +70,5 @@ background-color: ${props => !props.disabled && ((darkColor && theme[color].ligh
 
 `;
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 export default Button;

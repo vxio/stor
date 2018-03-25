@@ -6,7 +6,7 @@ import { Form, Field } from "react-final-form";
 // import { FORM_ERROR } from "final-form";
 import { checkValidity } from "./Utility";
 import styled from "styled-components";
-import theme from "../theme";
+import theme, {media} from "../theme";
 import OrderSummary from "./OrderSummary";
 import { Grid_Styled } from "./ShoppingCart";
 import Button from "./GeneralUI/Button";
@@ -273,10 +273,11 @@ const Styles = styled.div`
   }
   form {
     width: 45rem;
-    /* margin: 10px auto; */
     padding: 3rem 3.5rem;
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
     border-radius: 3px;
+    ${media.phone`width: 42rem;`}
+    ${media.phoneSmall`width:36rem;`}
     .form-radio,
     .form-group {
       position: relative;

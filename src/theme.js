@@ -1,6 +1,7 @@
 import createTheme from "styled-components-theme";
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { injectGlobal } from "styled-components";
 
 // const primary = "rgb(12, 122, 192)";
 
@@ -67,16 +68,59 @@ export const variables = {
   baseRadius_2: "5px"
 };
 
-const theme = createTheme(...Object.keys(variables));
+/*** MEDIA QUERIES ***/
+export const windowSizes = {
+  desktop: 1800,
+  laptop: 1200,
+  tabletLarge: 1024,
+  tabletSmall: 900,
+  tabletExtraSmall: 750,
+  phone: 600,
+  phoneSmall: 375 
+};
+
+// iterate through the sizes and create a media template
+export const media = Object.keys(windowSizes).reduce((accumulator, label) => {
+  // use em in breakpoints to work properly cross-browser and support users
+  // changing their browsers font-size: https://zellwk.com/blog/media-query-units/
+  const emSize = windowSizes[label] / 16;
+  if (label === "desktop") {
+    accumulator[label] = (...args) => css`
+      @media only screen and (min-width: ${emSize}em) {
+        ${css(...args)};
+      }
+    `;
+  } else {
+    accumulator[label] = (...args) => css`
+      @media only screen and (max-width: ${emSize}em) {
+        ${css(...args)};
+      }
+    `;
+  }
+  return accumulator;
+}, {});
+
+injectGlobal`
+  html {
+      overflow-x:hidden;
+    font-size: 62.5%;
+    ${media.desktop`font-size: 75%;`}
+    ${media.laptop`font-size: 56.25%;`}
+    ${media.phone`font-size: 50%;`}
+  }
+`;
 
 export const Grid = styled.div`
   display: grid;
   grid-template-columns:
-    minmax(3rem, 1fr) [full-start] repeat(12, [col-start] minmax(min-content, 10rem) [col-end])
+    minmax(3rem, 1fr) [full-start] repeat(12, [col-start] minmax(min-content, 11rem) [col-end])
     [full-end] minmax(3rem, 1fr);
   justify-content: center;
+  margin-top: 5rem;
+  ${media.phone`margin-top: 3rem;`};
 `;
 
+const theme = createTheme(...Object.keys(variables));
 export default theme;
 
 // @mixin centerAbsolute {

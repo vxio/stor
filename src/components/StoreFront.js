@@ -1,55 +1,41 @@
 import React, { Component } from "react";
 import TextContent from "./TextContent";
 import styled from "styled-components";
-import theme from '../theme';
+import theme, { media } from "../theme";
 import ScrollY from "./ScrollY";
 import { Link } from "react-router-dom";
 import LinkWithHoverEffect from "./LinkWithHoverEffect";
 
 import image1 from "../images/Homepage/female_teal_jacket_carhartt.jpg";
-import image2 from "../images/Homepage/grey_clothes_rack.jpg";
-import image3 from "../images/Homepage/hooded_cropped.png";
-import image4 from "../images/Homepage/pinkjacket_cropped.jpg";
-// import image5 from "../images/Homepage/brick_wall.jpg";
+import image2 from "../images/Homepage/hooded_cropped.png";
 
 class StoreFront extends Component {
   render() {
     return (
-      <React.Fragment>
-        <ScrollY
-          render={y => (
-            <React.Fragment>
-              <HomeContent>
-                <TextContent className="text-content text-1" title="Designed to last">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                  et dolore magna aliqua.
-                  <br /> <br />
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                  consequat. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat.
-                </TextContent>
-                <Image_One src={image1} />
-                <TextContent className="text-content text-2" title="Who we are">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                  et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                  aliquip ex ea commodo consequat.
-                </TextContent>
-                {/* <TwoImageContainer> */}
-                <img className="image-3" src={image3} alt="" />
-                {/* <img className="image-4" src={image4} alt="" /> */}
-                {/* </TwoImageContainer> */}
-                {/* <FixedBackground /> */}
-                <TextContent className="text-content text-3" title="About Us">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                  et dolore magna aliqua.
-                </TextContent>
-                <LinkToShop size={13} to="/shop">Explore our latest collection</LinkToShop>
-                {/* <img className="image-5" src={image5} alt=""/> */}
-              </HomeContent>
-            </React.Fragment>
-          )}
-        />
-      </React.Fragment>
+      <HomeContent>
+        <TextContent animation className="text-content left-side text-1" title="Designed To Last">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua.
+          <br /> <br />
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Ut
+          enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </TextContent>
+        <img className="image image-1" src={image1} alt="Woman in teal jacket" />
+        <TextContent animation={{ delay: 1 }} className="text-content left-side text-2" title="Who We Are">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.
+        </TextContent>
+        <img className="image image-2" src={image2} alt="Man in hoodie and windbreaker" />
+        <TextContent animation={{ delay: 1.4 }} className="text-content text-3" title="About Us">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua.
+        </TextContent>
+        <LinkToShop size={13} to="/shop">
+          Explore our latest collection
+        </LinkToShop>
+        {/* <img className="image-5" src={image5} alt=""/> */}
+      </HomeContent>
     );
   }
 }
@@ -57,92 +43,68 @@ class StoreFront extends Component {
 const LinkToShop = styled(LinkWithHoverEffect)`
   margin-top: 7rem;
   margin-bottom: 2rem;
-  grid-column: 1/ 10;
-  /* margin-right: auto; */
+  grid-column: 2 / 11;
   margin-left: auto;
   color: ${theme.grey_7};
-  /* font-size: 2.1rem; */
+  ${media.tabletLarge`grid-column-end: full-end;`};
+  ${media.phone`
+  margin-right: auto;
+  `};
 `;
-
-// const TwoImageContainer = styled.div`
-//   /* display */
-//   grid-column: 2/ 10;
-//   display: grid;
-//   grid-template-columns: repeat(2, 1fr);
-//   grid-gap: 4rem;
-//   & .image-3 {
-//     grid-column: 1;
-//   }
-
-//   & .image-4 {
-//     grid-column: 2;
-//   }
-// `;
 
 const HomeContent = styled.div`
-  margin-top: -5rem;
   grid-column: full;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  /* grid-template-rows: 85vh 40rem 45vh 30rem min-content; */
-  /* height: 400rem; */
+  grid-template-columns: 4rem [full-start] repeat(10, 1fr) [full-end] 4rem;
 
-  img {
+  .image.image {
     width: 100%;
+    ${media.phone`
+        grid-column: full;
+        margin-top: 4rem;
+      `};
   }
 
-  .image-3 {
-    grid-column: 2/6;
-    /* grid-row: 2/3; */
+  .image-1 {
+    grid-column: 8 / -1;
+  }
+
+  .image-2 {
+    grid-column: 3/7;
     margin-top: 8rem;
+    ${media.tabletLarge`grid-column-start: 2;`};
   }
 
-  & .text-content {
-    grid-column: 3 / 6;
+  .text-content.text-content {
     width: 100%;
-    /* justify-self: end; */
+
+    ${media.phone`
+    grid-column: full;
+    margin-top: 4rem;
+    `};
   }
-  & .text-1 {
-    /* margin-top: 10rem; */
-    /* margin-bottom: 4rem; */
-    align-self: center;
+  .left-side {
+    grid-column: 3 / span 3;
+    ${media.laptop`grid-column-end: span 4;`};
+    ${media.tabletSmall`
+    grid-column: 2 / span 5;`};
   }
 
-  & .text-2 {
-    grid-column: 3 / 6;
-    margin-top: 8rem;
-    /* justify-self: center; */
-    /* align-self: end; */
-    margin-bottom: 2rem;
+  .text-1 {
+    margin-top: 20rem;
+    ${media.tabletSmall`
+        margin-top: 8em;`};
   }
 
-  & .text-3 {
-    margin-top: 35%;
-    grid-column: 7/9;
-    /* align-self: end; */
-    /* margin-bottom: 25%; */
-    /* margin: 10rem 0 0; */
+  .text-2 {
+    margin-top: 10rem;
   }
 
-  & .text-4 {
-    /* margin-top: 4rem; */
-    grid-column: 7/9;
-    align-self: end;
-    margin-bottom: 25%;
-    /* margin: 10rem 0 0; */
+  .text-3 {
+    margin-top: 28rem;
+    grid-column: 8 / span 3;
+    ${media.laptop`grid-column-end: span 5;`};
   }
-
-  & .image-5 {
-    /* grid-column: 1/-1; */
-  }
-`;
-
-const Image_One = styled.img`
-  grid-column: 7 / -1;
-  /* height: 100%; */
-  /* margin-right: 4rem; */
-  /* width: 100%; */
-  justify-self: center;
 `;
 
 const FixedBackground = styled.div`

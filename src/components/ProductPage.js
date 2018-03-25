@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import styled from "styled-components";
-import theme, { Grid } from "../theme";
+import theme, { Grid, media } from "../theme";
 import RadioInput from "./GeneralUI/RadioInput";
 import WarningText from "./WarningText";
 import ReactImageMagnify from "react-image-magnify";
@@ -108,7 +108,6 @@ class ProductPage extends Component {
   }
 
   checkQuantityLimit() {
-    // debugger;
     const { productInCart, quantityLimitReached } = this.state;
     if (productInCart.quantity === this.productLimit) {
       this.setState({
@@ -310,8 +309,8 @@ const StyledColor = styled(NavLink).attrs({
   activeClassName
 })`
   display: inline-block;
-  margin-right: 1rem;
-  padding: 0.4rem;
+  margin-right: 13px;
+  padding: 4px;
   border: 1.5px solid transparent;
   border-radius: 50%;
   transition: all 0.3s ease-out;
@@ -329,8 +328,8 @@ const Color = styled.div`
   background-color: ${props => props.colorCode};
   display: inline-block;
   border: ${props => props.colorCode === "#fff" && `1px solid ${props.theme.grey_1}`};
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   justify-content: center;
   vertical-align: middle;
@@ -338,18 +337,26 @@ const Color = styled.div`
 
 const Styled = styled.div`
   grid-column: col-start 2 / full-end;
-
   display: grid;
   grid-template-columns: auto 1fr;
   grid-gap: 8rem;
   justify-content: center;
-
   margin-top: 1rem;
+  ${media.tabletExtraSmall`
+  grid-column: full;
+  display: flex;
+  flex-direction: column; 
+  margin-top: -1rem;
+  
+  `};
   .image {
     grid-column: 1/2;
     /* height: 75vh; */
     max-width: 100%;
     max-height: 75vh;
+    ${media.tabletExtraSmall`
+    /* width: 90%; */
+    margin: 0 auto;`};
   }
 
   .product-info {
@@ -359,8 +366,12 @@ const Styled = styled.div`
     display: flex;
     flex-flow: column;
 
+    ${media.tabletExtraSmall`margin: 5rem auto 0 ;`}
+    ${media.phone`margin: 3rem 4rem 0;
+    `};
+
     button {
-      margin: 3rem auto 4rem;
+      margin: 4rem auto;
     }
 
     .name {
@@ -375,13 +386,12 @@ const Styled = styled.div`
       font-size: 2.5rem;
       font-weight: 500;
       /* margin: 3rem 0 5rem; */
-      margin: 1rem 0 5rem;
+      margin: 1rem 0 3rem;
     }
     .color-size-text {
-      font-size: 1.75rem;
-      /* color: ${theme.grey_6}; */
-      font-weight: 500;
-      margin: 1rem 0;
+      font-size: 17px;
+      font-weight: 400;
+      margin: 13px 0;
     }
 
     #cart-notification {
@@ -409,7 +419,7 @@ const Styled = styled.div`
         }
       }
     }
-    .description {
+    /* .description {
       line-height: 1.5;
       text-align: justify;
       .title {
@@ -421,16 +431,15 @@ const Styled = styled.div`
         font-size: 1.2rem;
         color: ${theme.grey_6};
       }
-    }
+    } */
   }
 `;
 
 const Inputs_Styled = styled.div`
   display: flex;
-  justify-content: space-between;
-  width: 20rem;
-  margin-top: -0.5rem;
-  padding: 0.3rem 0.4rem;
+  margin-top: -5px;
+  width: min-content;
+  /* padding: 3px 4px; */
   border: ${props => `1px solid ${(props.error && props.theme.danger) || "transparent"}`};
   border-radius: 3px;
   transition: all 0.2s;
@@ -450,10 +459,11 @@ const Inputs_Styled = styled.div`
     color: ${theme.grey_6};
     display: inline-block;
     cursor: pointer;
-    font-size: 1.6rem;
+    font-size: 17px;
     font-weight: 600;
     border: 1px solid transparent;
-    padding: 0.4rem 0.7rem;
+    padding: 5px 8px;
+    margin: 0 5px;
     user-select: none;
   }
 `;

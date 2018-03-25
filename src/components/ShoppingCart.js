@@ -4,7 +4,7 @@ import Button from "./GeneralUI/Button";
 import Input from "./GeneralUI/Input";
 import Select from "./GeneralUI/Select";
 import styled from "styled-components";
-import theme, { Grid } from "../theme";
+import theme, { Grid, media, windowSizes } from "../theme";
 import { spring, TransitionMotion, presets } from "react-motion";
 import Icon from "./Icon";
 import { ICONS } from "./constants";
@@ -17,19 +17,24 @@ const CartEmpty = props => {
       <Icon className="cart-svg" icon={ICONS.EMPTY_CART} size={140} />
       <div className="text">
         <h1>Your cart is empty!</h1>
-        <LinkWithHoverEffect id="linkToShop" to="/shop" size={18}>Continue shopping </LinkWithHoverEffect>
+        <LinkWithHoverEffect id="linkToShop" to="/shop" size={18}>
+          Continue shopping
+        </LinkWithHoverEffect>
       </div>
     </CartEmpty_Styles>
   );
 };
 const CartEmpty_Styles = styled.div`
   grid-column: 1 / -1;
-  margin: 4rem auto;
-  display: flex;
+  margin: 2rem auto;
+  /* padding: 0 2rem; */
+  display: grid;
+  grid-auto-flow: column;
   align-items: center;
+  ${media.phone`grid-auto-flow: row;`};
   .cart-svg {
     display: inline-block;
-    /* fill: ${theme.grey_2}; */
+    ${media.phone`grid-row: 2/3;`};
   }
   #linkToShop {
     margin-left: 0.2rem;
@@ -39,21 +44,23 @@ const CartEmpty_Styles = styled.div`
     margin-left: 6rem;
     display: flex;
     flex-direction: column;
+    ${media.phone`margin: 0 0 7rem;`};
 
     h1 {
       font-size: 5rem;
       margin-bottom: 2rem;
+      ${media.phone`font-size: 4rem`};
     }
-
   }
 `;
+
 const CartItem = props => {
   const { product, index, removeItem, updateQuantity, userOptions } = props;
   const { name, price, size, link, totalPrice, quantity, img, brand, color } = product;
   let removeButton;
 
   return (
-    <div style={props.style}>
+    <div style={props.style} ref={props.setRef}>
       <CartItem_Styles>
         <Link className="image" to={link}>
           <img src={img} alt={name} />
@@ -135,7 +142,11 @@ const CartItem_Styles = styled.div`
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   padding: 2.3rem ;
   backface-visibility: hidden;
-
+  ${media.phone`
+  grid-template-columns: 14rem 1fr;
+  grid-column-gap: 2rem; 
+  padding: 1.5rem;
+  `}
 }
   & > .image {
     grid-column: 1/2;
@@ -143,6 +154,7 @@ const CartItem_Styles = styled.div`
       width: 100%;
       height: auto;
       vertical-align: middle;
+      /* ${media.phone`width: 80%;`} */
     }
     &:hover ~ div .product-name-brand {
         color: ${theme.primary};
@@ -158,7 +170,7 @@ const CartItem_Styles = styled.div`
     position: relative;
 
     .product-name-brand {
-      width: max-content; 
+      /* width: max-content;  */
       font-size: 1.8rem;
       font-weight: 600;
       margin-bottom: 1.5rem;
@@ -173,16 +185,19 @@ const CartItem_Styles = styled.div`
         color: ${theme.grey_6}; 
         font-weight: 400;
       }
+
+      ${media.phone`font-size: 1.6rem`}
     }
 
     .color-size {
-      /* margin-bottom: 0.6rem; */
+      margin-bottom: 2rem;
 }
      }
     .quantity-totalPrice {
       display: flex;
       margin-top: auto;
       justify-content: space-between;
+
     }
 
     .quantity {
@@ -205,73 +220,105 @@ const CartItem_Styles = styled.div`
   }
 `;
 
-const ShoppingCart = props => {
-  const { orderData, cart, subComponent, location, customerInfo } = props;
-
-  function willLeave() {
-    // triggered when c's gone. Keeping c until its width/height reach 0. ,
-    // return { height: spring(0, {stiffness: 150, damping: 34}), opacity: spring(0, { stiffness: 210 }), paddingTop: spring(0, {stiffness: 210}), border: 0 };
-    return { height: spring(0, { stiffness: 150, damping: 39 }), opacity: spring(0, { stiffness: 210 }) };
+class ShoppingCart extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { width: 0, height: 0 };
+  }
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener("resize", this.updateWindowDimensions);
   }
 
-  const cartComponents = (
-    <TransitionMotion
-      willLeave={willLeave}
-      styles={cart.map(cartItem => ({
-        key: cartItem.id + cartItem.size,
-        data: { product: cartItem },
-        style: { height: 240, opacity: 1 }
-      }))}
-    >
-      {interpolatedStyles => (
-        <div>
-          {interpolatedStyles.map((config, i) => {
-            return (
-              <CartItem
-                product={config.data.product}
-                key={config.key}
-                index={i}
-                userOptions={props.userOptions}
-                removeItem={props.removeItem}
-                updateQuantity={
-                  props.updateQuantity //can put this in CartItem instead
-                }
-                style={{ ...config.style }}
-              />
-            );
-          })}
-        </div>
-      )}
-    </TransitionMotion>
-  );
-
-  let GridContainer;
-  if (subComponent) {
-    GridContainer = React.Fragment;
-  } else {
-    GridContainer = Grid;
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
   }
 
-  const isCartPage = location.pathname.split("/")[1];
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
 
-  return (
-    <GridContainer>
-      {!cart.length ? (
-        <CartEmpty />
-      ) : (
-        <Cart_Checkout_Styled>
-          <CartItemsContainer>{cartComponents}</CartItemsContainer>
-          <OrderSummary
-            includeButtons={isCartPage === "cart"}
-            id="order-summary"
-            orderData={orderData}
-            customerInfo={customerInfo}
-          />
-        </Cart_Checkout_Styled>
-      )}
-    </GridContainer>
-  );
-};
+  render() {
+    const { orderData, cart, subComponent, location, customerInfo } = this.props;
+    const { width } = this.state;
+
+    let cartItemContainer_height;
+    if (width <= windowSizes.phone) {
+      cartItemContainer_height = 160;
+    } else if (width <= windowSizes.tabletLarge) {
+      cartItemContainer_height = 200;
+    } else if (width <= windowSizes.laptop) {
+      cartItemContainer_height = 210;
+    } else if (width <= windowSizes.desktop) {
+      cartItemContainer_height = 240;
+    } else {
+      //width >= windowSizes.desktop
+      cartItemContainer_height = 270;
+    }
+
+    function willLeave() {
+      return { height: spring(0, { stiffness: 150, damping: 39 }), opacity: spring(0, { stiffness: 210 }) };
+    }
+
+    const cartComponents = (
+      <TransitionMotion
+        willLeave={willLeave}
+        styles={cart.map(cartItem => ({
+          key: cartItem.id + cartItem.size,
+          data: { product: cartItem },
+          style: { height: cartItemContainer_height, opacity: 1 }
+        }))}
+      >
+        {interpolatedStyles => (
+          <div>
+            {interpolatedStyles.map((config, i) => {
+              return (
+                <CartItem
+                  product={config.data.product}
+                  key={config.key}
+                  index={i}
+                  userOptions={this.props.userOptions}
+                  removeItem={this.props.removeItem}
+                  updateQuantity={
+                    this.props.updateQuantity //can put this in CartItem instead
+                  }
+                  style={{ ...config.style }}
+                />
+              );
+            })}
+          </div>
+        )}
+      </TransitionMotion>
+    );
+
+    let GridContainer;
+    if (subComponent) {
+      GridContainer = React.Fragment;
+    } else {
+      GridContainer = Grid;
+    }
+
+    const isCartPage = location.pathname.split("/")[1];
+
+    return (
+      <GridContainer>
+        {!cart.length ? (
+          <CartEmpty />
+        ) : (
+          <Cart_Checkout_Styled>
+            <CartItemsContainer>{cartComponents}</CartItemsContainer>
+            <OrderSummary
+              includeButtons={isCartPage === "cart"}
+              id="order-summary"
+              orderData={orderData}
+              customerInfo={customerInfo}
+            />
+          </Cart_Checkout_Styled>
+        )}
+      </GridContainer>
+    );
+  }
+}
 
 export default withRouter(ShoppingCart);
 
@@ -281,13 +328,20 @@ const CartItemsContainer = styled.div`
 `;
 
 export const Cart_Checkout_Styled = styled.div`
-  grid-column: col-start 2 / full-end;
+  grid-column: col-start 3 / full-end;
   /* grid-column: full; */
   display: grid;
-  grid-template-columns: minmax(max-content, 1fr) 45rem;
+  grid-template-columns: minmax(max-content, 1fr) auto;
   grid-gap: 4rem;
-  /* justify-items: end; */
+
+  ${media.tabletSmall`grid-template-columns: 1fr;
+   justify-content: center; 
+   grid-gap: 2rem;
+   #order-summary {
+     grid-row: 1/2;
+   }
+  `} /* justify-items: end; */
   /* & > *:first-child {
     margin-right: 5rem;
-  }  */
+  }  */;
 `;

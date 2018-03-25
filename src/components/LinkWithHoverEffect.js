@@ -30,6 +30,7 @@ const Link_Styled = styled(NavLink)`
   color: ${theme.grey_6};
   font-size: ${props => `${(props.size / 6.1).toFixed(2)}rem`};
   display: inline-block;
+  animation: slideIn 1s ease;
 
 
   &:hover {
@@ -51,5 +52,18 @@ const Link_Styled = styled(NavLink)`
     transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
     margin-left: 0.8rem;
     display: inline-block;
+  }
+
+
+  @keyframes slideIn {
+    0% {
+      transform: translateY(3.5rem);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 `;

@@ -1,39 +1,15 @@
 import React, { Component } from "react";
 import ProductCard from "./ProductCard";
 import styled from "styled-components";
+import theme, {media} from '../theme';
 
 class ItemGrid extends Component {
   state = {
     items: this.props.products
   }
 
-  // saveRef = ref => (this.containerNode = ref);
-  // measure() {
-  //   const { clientWidth, clientHeight } = this.containerNode;
-  //   console.log(clientHeight);
-  // }
-
-  // componentDidMount() {
-  //   this.measure();
-  // }
-
   render() {
     const { position, items, displayText } = this.props;
-    // const bottomY = position + window.innerHeight;
-
-    function handleScroll() {
-      // if ($(".clothes-pics").offset().top < wScroll + $(window).height() * 0.8) {
-      //   $(".clothes-pics figure").each(function(i) {
-      //     setTimeout(function() {
-      //       $(".clothes-pics figure")
-      //         .eq(i)
-      //         .addClass("is-showing");
-      //     }, 150 * (i + 1));
-      //   });
-      // }
-      // console.log(this.containerNode);
-    }
-    // window.addEventListener("scroll", handleScroll());
 
     let productsArray = items.map((item, i) => (
         <ProductCard key={i} product={item} displayText={displayText} />
@@ -51,7 +27,9 @@ const Grid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 6rem;
   grid-row-gap: 7rem;
-  /* margin-bottom: 4rem; */
+
+  ${media.tabletLarge`grid-template-columns: repeat(2,1fr); grid-column-gap: 5rem`}
+  ${media.tabletExtraSmall`grid-template-columns: 1fr; grid-gap: 4rem`}
 
   & > * {
     transform: translateX(-3rem);

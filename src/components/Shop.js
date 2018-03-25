@@ -1,58 +1,77 @@
 import React from "react";
 import ItemGrid from "./ItemGrid";
-import theme, { Grid } from "../theme";
+import theme, { Grid, media } from "../theme";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import AnimatedLink from "./AnimatedLink";
+import Drawer from "react-motion-drawer";
+import * as Icon from "react-feather";
 
 class Shop extends React.Component {
   state = {
-    products: this.props.products,
-    currentCategory: "",
-    currentBrand: "" //default is empty string (all), could be Tees, Sweatshirts, etc..
+    openDrawer: false
   };
   viewAllText = "All";
   mainPath = this.props.match.path.split(":")[0]; // == /shop/
+  products = this.props.products;
+  itemGrid;
 
-  updateView(props) {
-    // if(this.match.params)
-    const params = props.match.params;
-    // console.log(this.match);
-    if (!params.category) {
-      this.setState({ currentCategory: "", currentBrand: "" });
-    } else if (!params.brand) {
-      this.setState({ currentCategory: params.category, currentBrand: "" });
-    } else {
-      //no category set, dont need to filter
-      this.setState({
-        currentCategory: params.category,
-        currentBrand: params.brand
-      });
-    }
+  checkParams(categoryName, brandName) {
+    // const { products } = this.state;
+    console.log(categoryName, brandName);
+    let category, brand;
+    if (categoryName) {
+      category = Object.keys(this.products).find(category => category === categoryName);
+      if (category) {
+        if (brandName) {
+          brand = this.products[category].find(product => product.brand === brandName);
+          console.log(brand);
+          if (brand) return;
+        } else return;
+      }
+    } else return; //returns if no categoryName param
+
+    console.log("redirect reached");
+    this.props.history.replace("/shop");
   }
 
   componentWillMount() {
-    this.updateView(this.props);
+    // const params = this.props.match.params;
+    // const {category, brand} = this.props.match.params;
+    this.updateParams(this.props);
+    this.checkParams(this.categoryFromParams, this.brandFromParams);
+    // this.checkParams(category, brand)
+    // this.checkParams(params.category, params.brand)
+
+    // this.updateView(this.props);
     window.scrollTo(0, 0);
   }
-  componentWillReceiveProps(nextProps) {
-    console.log("will receive props");
-    this.updateView(nextProps);
 
-    console.log(this.props);
-    console.log(nextProps);
+  updateParams(props) {
+    const { category, brand } = props.match.params;
+    this.categoryFromParams = category;
+    this.brandFromParams = brand;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // this.updateView(nextProps);
+    // const {category, brand} = nextProps.match.params;
+    this.updateParams(nextProps);
+    this.checkParams(this.categoryFromParams, this.brandFromParams);
+
     if (this.props.match.url !== nextProps.match.url) {
       window.scrollTo(0, 0);
     }
   }
 
   componentDidUpdate() {
-    console.table(this.state);
+    // this.updateView();
   }
 
   renderProductsDisplayed() {
     const { products } = this.props;
-    if (!this.state.currentCategory) {
+    console.log("function called");
+    if (!this.categoryFromParams) {
       // return Object.keys(products).map(category => <ItemGrid key={category} displayText items={products[category]} />);
       let productsDisplay = [];
       for (let category in products) {
@@ -64,26 +83,37 @@ class Shop extends React.Component {
           </React.Fragment>
         );
       }
-      console.log(productsDisplay);
       return <React.Fragment>{productsDisplay}</React.Fragment>;
-    } else if (!this.state.currentBrand) {
-      console.log("in no brand");
-      return <ItemGrid displayText items={products[this.state.currentCategory]} />;
+    } else if (!this.brandFromParams) {
+      return <ItemGrid displayText items={products[this.categoryFromParams]} />;
     } else {
-      const filteredBrands = products[this.state.currentCategory].filter(
-        product => product.brand === this.state.currentBrand
+      const filteredBrands = products[this.categoryFromParams].filter(
+        product => product.brand === this.brandFromParams
       );
-      console.log(filteredBrands);
       return <ItemGrid displayText items={filteredBrands} />;
     }
   }
 
   render() {
-    const { products, currentCategory, currentBrand } = this.state;
+    const { openDrawer } = this.state;
     const { match } = this.props;
+    const itemGrid = this.renderProductsDisplayed();
 
-    const categoryNavItems = Object.keys(products).map(categoryName => {
-      const filteredBrands = [...new Set(products[categoryName].map(product => product.brand))].sort((a, b) => a > b);
+    const style = {
+      background: "#fff",
+      boxShadow: "rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px"
+    };
+    const drawerProps = {
+      drawerStyle: style,
+      width: 250,
+      overlayColor: "rgba(0,0,0,.2)",
+      right: true
+    };
+
+    const categoryNavItems = Object.keys(this.products).map(categoryName => {
+      const filteredBrands = [...new Set(this.products[categoryName].map(product => product.brand))].sort(
+        (a, b) => a > b
+      );
 
       const brandLinks =
         match.params.category !== categoryName
@@ -102,18 +132,39 @@ class Shop extends React.Component {
       );
     });
 
+    const shopMenu = (
+      <React.Fragment>
+        <StyledLink exact to={this.mainPath}>
+          {this.viewAllText}
+        </StyledLink>
+        {categoryNavItems}
+      </React.Fragment>
+    );
+
     return (
       <Grid>
         <Styles>
-            <Sidebar>
-              <StyledLink exact to={this.mainPath}>
-                {this.viewAllText}
-              </StyledLink>
-              {categoryNavItems}
-            </Sidebar>
+          <DrawerIcon
+            style={{ fontSize: "40px", cursor: "pointer" }}
+            onClick={() =>
+              this.setState({
+                openDrawer: !openDrawer
+              })
+            }
+          >
+            <Icon.Menu size={30} />
+          </DrawerIcon>
+          <Drawer {...drawerProps} open={openDrawer} onChange={open => this.setState({ openDrawer: open })}>
+            <Styled_Drawer>{shopMenu}</Styled_Drawer>
+          </Drawer>
+          <Sidebar>
+          {shopMenu} 
+          </Sidebar>
           <Main>
-            {currentCategory && <CategoryHeader>{currentBrand + " " + currentCategory}</CategoryHeader>}
-            {this.renderProductsDisplayed()}
+            {this.categoryFromParams && (
+              <CategoryHeader>{(this.brandFromParams || "") + " " + this.categoryFromParams}</CategoryHeader>
+            )}
+            {itemGrid}
           </Main>
         </Styles>
       </Grid>
@@ -123,6 +174,23 @@ class Shop extends React.Component {
 
 export default Shop;
 
+const DrawerIcon = styled.div`
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 1rem;
+  /* margin-bottom: -rem; */
+  padding: 0.3rem 1rem;
+  display: none;
+  ${media.phone`display: inline-block;`};
+`;
+
+const Styled_Drawer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8rem 3rem 0 4rem;
+`;
+
 const Styles = styled.div`
   grid-column: full;
   /* display: flex;
@@ -130,7 +198,12 @@ const Styles = styled.div`
     margin-right: 5rem;
   } */
   display: grid;
-  grid-template-columns: 22rem 1fr; 
+  grid-template-columns: 22rem 1fr;
+  ${media.phone`
+  display: flex;
+  flex-direction: column;
+  margin-top: -2rem;
+  `};
 `;
 
 const CategoryHeader = styled.h1`
@@ -138,6 +211,10 @@ const CategoryHeader = styled.h1`
   font-weight: 400;
   margin-bottom: 4.5rem;
   margin-left: 1rem;
+  ${media.tabletSmall`margin-left: 0; margin-bottom: 2.5rem`};
+
+  ${media.phone`font-weight: 700;`};
+  ${media.phoneSmall`margin-left: -4rem; `};
 `;
 
 const Sidebar = styled.div`
@@ -146,6 +223,7 @@ const Sidebar = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 20rem;
+  ${media.phone`display: none;`}
 `;
 const Main = styled.div`
   grid-column: 2/3;
@@ -153,13 +231,15 @@ const Main = styled.div`
   .item-grid {
     margin-bottom: 12rem;
   }
+  ${media.phoneSmall`margin-left:2rem;`};
+  ${media.phone`  margin-left: 4rem;`};
 `;
 const activeClassName = "nav-item-active";
 const StyledLink = styled(NavLink).attrs({
   activeClassName
 })`
-  font-size: 2rem;
-  margin: 0.6rem 0;
+  font-size: 2.1rem;
+  margin: 0.8rem 0;
   width: 100%;
   transition: border 0.1s ease, color 0.3s ease, padding 0.3s ease;
   color: ${theme.black};
@@ -170,6 +250,7 @@ const StyledLink = styled(NavLink).attrs({
     border-left: 2px solid ${theme.primary};
     padding-left: 1rem;
   }
+  ${media.phone`font-size: 2.5rem; margin: 1.5rem 0`};
 `;
 
 const StyledSubLink = StyledLink.extend`
@@ -179,6 +260,7 @@ const StyledSubLink = StyledLink.extend`
   font-size: 1.6rem;
   white-space: no-wrap;
   margin: .5rem 0;
+  ${media.phone`font-size: 2rem; margin: 1rem 0`}
   
 
    &:hover {

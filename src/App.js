@@ -19,6 +19,7 @@ export default withRouter(App);
 
 const UtilityContainer = styled.div`
 
+  font-size: 62.5%;
   color: ${theme.black};
   margin-bottom: 4rem;
 
