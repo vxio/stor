@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import TextContent from "./TextContent";
 import styled from "styled-components";
 import theme, { media } from "../theme";
-import { Link } from "react-router-dom";
 import LinkWithHoverEffect from "./LinkWithHoverEffect";
 import image1 from "../images/Homepage/female_teal_jacket_carhartt.jpg";
 import image2 from "../images/Homepage/hooded_cropped.png";
@@ -106,7 +105,10 @@ const HomeContent = styled.div`
   .text-3 {
     margin-top: 28rem;
     grid-column: 8 / span 3;
-    ${media.laptop`grid-column-end: span 4;`};
+    ${media.laptop`grid-column-end:span 4;`};
+    ${media.tabletSmall`
+      margin-top: 10rem;
+    `}
   }
 `;
 

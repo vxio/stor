@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import theme, {media} from '../theme'
+import {media} from '../theme'
 import Icon from "./GeneralUI/Icon";
 import { ICONS } from "./GeneralUI/constants";
 import LinkWithHoverEffect from "./LinkWithHoverEffect";
 
 const EmptyCart = props => {
   return (
-    <EmptyCart_Styles>
+    <EmptyCartStyles>
       <Icon className="cart-svg" icon={ICONS.EMPTY_CART} size={140} />
       <div className="text">
         <h1>Your cart is empty!</h1>
@@ -15,13 +15,13 @@ const EmptyCart = props => {
           Continue shopping
         </LinkWithHoverEffect>
       </div>
-    </EmptyCart_Styles>
+    </EmptyCartStyles>
   );
 };
 
 export default EmptyCart;
 
-const EmptyCart_Styles = styled.div`
+const EmptyCartStyles = styled.div`
   grid-column: 1 / -1;
   margin: 2rem auto;
   display: grid;

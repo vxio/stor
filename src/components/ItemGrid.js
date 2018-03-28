@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import ProductCard from "./ProductCard";
 import styled from "styled-components";
-import theme, {media} from '../theme';
+// import theme, {media} from '../theme';
+import PropTypes from 'prop-types';
 
 class ItemGrid extends Component {
   state = {
@@ -9,7 +10,7 @@ class ItemGrid extends Component {
   }
 
   render() {
-    const { position, items, displayText } = this.props;
+    const { items, displayText } = this.props;
 
     let productsArray = items.map((item, i) => (
         <ProductCard key={i} product={item} displayText={displayText} />
@@ -19,13 +20,21 @@ class ItemGrid extends Component {
   }
 }
 
+export default ItemGrid;
+
+ItemGrid.propTypes = {
+  items: PropTypes.array.isRequired,
+  displayText: PropTypes.bool
+}
+
 const Grid = styled.div`
   grid-column: 2 / 4;
   justify-self: center;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   grid-column-gap: 6rem;
   grid-row-gap: 7rem;
+  margin-bottom: 8rem;
 
   & > * {
     transform: translateX(-3rem);
@@ -33,4 +42,3 @@ const Grid = styled.div`
 
 `;
 
-export default ItemGrid;

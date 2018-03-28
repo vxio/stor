@@ -1,36 +1,6 @@
 import createTheme from "styled-components-theme";
-import React from "react";
 import styled, { css } from "styled-components";
 import { injectGlobal } from "styled-components";
-
-// const primary = "rgb(12, 122, 192)";
-
-// const theme = {
-//   brandBlue: "rgb(12, 122, 192)",
-//   brandRed: "rgb(179, 32, 35)",
-//   brandYellow: "rgb(244, 167, 0)",
-//   brandGrey: "rgb(84, 106, 120)",
-//   primary: primary,
-//   secondary: "rgb(84, 106, 120)",
-//   warning: "rgb(244, 167, 0)",
-//   danger: "rgb(179, 32, 35)",
-//   fontMono: "'Courier', monospace",
-//   fontSans: "'Source Sans Pro', 'Arial', sans-serif",
-//   fontSerif: "'Bree Serif', 'Times', serif",
-//   baseFontColor: "rgb(84, 106, 120)",
-//   baseFontFamily: "'Source Sans Pro', 'Arial', sans-serif",
-//   baseFontSize: "16px",
-//   fontthin: 300,
-//   fontNormal: 400,
-//   fontSemibold: 600,
-//   fontBold: 700,
-//   baseLineHeight: 1.5,
-//   baseBorder: "1px solid rgb(84, 106, 120)",
-//   baseRadius: "0.25rem",
-//   baseBoxShadow: "rgba(42, 53, 60, 0.2) 0 0 5px"
-// };
-
-const baseSize = 16;
 
 export const variables = {
   baseFontFamily: "Source Sans Pro" /* Colors */,
@@ -49,6 +19,11 @@ export const variables = {
   grey_6: "#6a6d74",
   grey_7: "#5a5c62",
   white: "#F2F0EA",
+  boxShadow_border: "0 0px 4px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.15)",
+  boxShadow_1: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
+  boxShadow_1_hover: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
+  boxShadow_2: "0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)",
+  transition_hover: "all 0.3s cubic-bezier(.25,.8,.25,1)",
   black: "#282c37" /* Fonts */,
   baseFontSize: "1.6rem",
   p_extraSmall: "1.2rem",

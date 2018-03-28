@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import theme, { media } from "../theme";
+import { media } from "../theme";
 
 const baseTransitionTime = 1.4;
 const baseDelay = baseTransitionTime / 2.5;
@@ -36,10 +36,11 @@ const HeaderText = styled.h1`
   font-weight: 400;
   font-family: "Montserrat";
   font-size: 4rem;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   margin-bottom: 2rem;
 
-  ${media.phoneSmall`font-size:3.5rem;`};
+  ${media.tabletSmall`font-size: 3.5rem;`}
+  /* ${media.phoneSmall`font-size:3.5rem;`}; */
 `;
 
 const BodyText = styled.p`

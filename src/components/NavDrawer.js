@@ -1,5 +1,5 @@
 import React from "react";
-import theme, { Grid, media } from "../theme";
+import { media } from "../theme";
 import styled from "styled-components";
 import Drawer from "react-motion-drawer";
 import * as Icon from "react-feather";
@@ -36,7 +36,7 @@ class NavDrawer extends React.Component {
           <Icon.Menu size={30} />
         </DrawerIcon>
         <Drawer {...drawerProps} open={openDrawer} onChange={open => this.setState({ openDrawer: open })}>
-          <Styled_Drawer>{this.props.children}</Styled_Drawer>
+          <StyledDrawer>{this.props.children}</StyledDrawer>
         </Drawer>
       </React.Fragment>
     );
@@ -56,7 +56,7 @@ const DrawerIcon = styled.div`
   `};
 `;
 
-const Styled_Drawer = styled.div`
+const StyledDrawer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

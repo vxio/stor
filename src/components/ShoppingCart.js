@@ -1,22 +1,22 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { Link, withRouter } from "react-router-dom";
-import Button from "./GeneralUI/Button";
 import Select from "./GeneralUI/Select";
 import styled from "styled-components";
 import theme, { Grid, media, windowSizes } from "../theme";
-import { spring, TransitionMotion, presets } from "react-motion";
+import { spring, TransitionMotion } from "react-motion";
 import OrderSummary from "./OrderSummary";
-import X_Button from "./GeneralUI/X_Button";
-import EmptyCart from './EmptyCart';
+import XButton from "./GeneralUI/XButton";
+import EmptyCart from "./EmptyCart";
 
 const CartItem = props => {
-  const { product, index, removeItem, updateQuantity, userOptions } = props;
-  const { name, price, size, link, totalPrice, quantity, img, brand, color } = product;
+  const { product, removeItem, updateQuantity, userOptionsEnabled } = props;
+  const { name, size, link, totalPrice, quantity, img, brand, color } = product;
   let removeButton;
 
   return (
     <div style={props.style} ref={props.setRef}>
-      <CartItem_Styles>
+      <CartItemStyles>
         <Link className="image" to={link}>
           <img src={img} alt={name} />
         </Link>
@@ -39,13 +39,13 @@ const CartItem = props => {
           <div className="quantity-totalPrice">
             <div className="quantity">
               <p>quantity: </p>
-              {userOptions ? (
+              {userOptionsEnabled ? (
                 <Select
                   name={"quantity range"}
                   selectedOption={quantity}
                   min={1}
                   max={10}
-                  controlFunc={e => props.updateQuantity(e, product)}
+                  controlFunc={e => updateQuantity(e, product)}
                 />
               ) : (
                 <p style={{ marginLeft: ".5rem" }}> {quantity}</p>
@@ -53,30 +53,33 @@ const CartItem = props => {
             </div>
             <p>${totalPrice}</p>
           </div>
-          {userOptions && (
-            <X_Button
+          {userOptionsEnabled && (
+            <XButton
               setRef={buttonDOM => {
                 removeButton = buttonDOM;
               }}
               onClick={() => {
-                props.removeItem(product);
+                removeItem(product);
                 removeButton.setAttribute("disabled", "disabled");
               }}
             />
           )}
         </div>
-      </CartItem_Styles>
+      </CartItemStyles>
     </div>
   );
 };
 
-const CartItem_Styles = styled.div`
+const CartItemStyles = styled.div`
   display: grid;
   grid-template-columns: 16rem 1fr;
   grid-column-gap: 4rem;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2); */
+  box-shadow: ${theme.boxShadow_border};
   padding: 2.3rem;
   backface-visibility: hidden;
+  /* transition: ${theme.transition_hover}; */
+
 
   ${media.phone`
     grid-template-columns: 14rem 1fr;
@@ -168,7 +171,7 @@ class ShoppingCart extends React.Component {
   };
 
   render() {
-    const { orderData, cart, subComponent, location, customerInfo } = this.props;
+    const { orderData, cart, subComponent, location, customerInfo, removeItem, userOptionsEnabled, updateQuantity } = this.props;
     const { width } = this.state;
 
     //setting height during render when using react-motion's spring()
@@ -176,9 +179,9 @@ class ShoppingCart extends React.Component {
     if (width <= windowSizes.phone) {
       cartItemContainer_height = 160;
     } else if (width <= windowSizes.tabletLarge) {
-      cartItemContainer_height = 200;
-    } else if (width <= windowSizes.laptop) {
       cartItemContainer_height = 210;
+    } else if (width <= windowSizes.laptop) {
+      cartItemContainer_height = 220;
     } else if (width <= windowSizes.desktop) {
       cartItemContainer_height = 240;
     } else {
@@ -210,9 +213,9 @@ class ShoppingCart extends React.Component {
                   product={config.data.product}
                   key={config.key}
                   index={i}
-                  userOptions={this.props.userOptions}
-                  removeItem={this.props.removeItem}
-                  updateQuantity={this.props.updateQuantity}
+                  userOptionsEnabled={userOptionsEnabled}
+                  removeItem={removeItem}
+                  updateQuantity={updateQuantity}
                   style={{ ...config.style }}
                 />
               );
@@ -236,7 +239,7 @@ class ShoppingCart extends React.Component {
         {!cart.length ? (
           <EmptyCart />
         ) : (
-          <Cart_Checkout_Styled>
+          <CartCheckoutStyles>
             {cartComponents}
             <OrderSummary
               includeButtons={isCartPage === "cart"}
@@ -244,7 +247,7 @@ class ShoppingCart extends React.Component {
               orderData={orderData}
               customerInfo={customerInfo}
             />
-          </Cart_Checkout_Styled>
+          </CartCheckoutStyles>
         )}
       </GridContainer>
     );
@@ -253,13 +256,24 @@ class ShoppingCart extends React.Component {
 
 export default withRouter(ShoppingCart);
 
-export const Cart_Checkout_Styled = styled.div`
+ShoppingCart.propTypes = {
+  orderData: PropTypes.object.isRequired,
+  customerInfo: PropTypes.object,
+  removeItem: PropTypes.func.isRequired,
+  updateQuantity: PropTypes.func.isRequired,
+  cart: PropTypes.array.isRequired,
+  subComponent: PropTypes.bool,
+  userOptionsEnabled: PropTypes.bool
+};
+
+export const CartCheckoutStyles = styled.div`
   grid-column: col-start 3 / full-end;
   display: grid;
   grid-template-columns: minmax(max-content, 1fr) auto;
   grid-gap: 4rem;
 
   ${media.tabletSmall`
+   grid-column: full;
    grid-template-columns: 1fr;
    justify-content: center; 
    grid-gap: 2rem;

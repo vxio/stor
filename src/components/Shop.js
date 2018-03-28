@@ -4,6 +4,7 @@ import theme, { Grid, media } from "../theme";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import NavDrawer from "./NavDrawer";
+import PropTypes from 'prop-types';
 
 class Shop extends React.Component {
   viewAllText = "All";
@@ -38,7 +39,6 @@ class Shop extends React.Component {
 
   renderProductsDisplayed() {
     const { products } = this.props;
-    console.log("function called");
     if (!this.categoryFromParams) {
       let productsDisplay = [];
       for (let category in products) {
@@ -131,6 +131,10 @@ class Shop extends React.Component {
 }
 
 export default Shop;
+
+Shop.propTypes = {
+  products: PropTypes.object.isRequired
+}
 
 const Styles = styled.div`
   grid-column: full;

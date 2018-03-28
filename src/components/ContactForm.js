@@ -1,13 +1,13 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { TextInput, AddressInputs } from "./TextInput";
-import { Form, Field } from "react-final-form";
+import { Form } from "react-final-form";
 import styled from "styled-components";
-import { Grid_Styled } from "./ShoppingCart";
-import theme, { Grid, media } from "../theme";
-import OrderSummary from "./OrderSummary";
+import theme, {media } from "../theme";
 import Button from "./GeneralUI/Button";
 import Checkbox from "./GeneralUI/Checkbox";
 import * as validator from "./validators";
+import PropTypes from 'prop-types';
+
 
 class ContactForm extends React.Component {
   state = {
@@ -86,7 +86,15 @@ class ContactForm extends React.Component {
     );
   }
 }
+
 export default ContactForm;
+
+ContactForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  customerInfo: PropTypes.object.isRequired,
+  id: PropTypes.string
+};  
+
 
 const Styles = styled.div`
   grid-column: full;

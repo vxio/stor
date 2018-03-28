@@ -6,7 +6,7 @@ import { Field } from "react-final-form";
 const RadioInputs = props => {
   const { name, options, customOnChange, error } = props;
   return (
-    <Inputs_Styled error={error}>
+    <InputsStyled error={error}>
       {options.map((option, i) => (
         <Field key={i} name={name} component="input">
           {({ input, meta }) => {
@@ -29,18 +29,19 @@ const RadioInputs = props => {
           }}
         </Field>
       ))}
-    </Inputs_Styled>
+    </InputsStyled>
   );
 };
 
 export default RadioInputs;
 
-const Inputs_Styled = styled.div`
+const InputsStyled = styled.div`
   display: flex;
   margin-top: -5px;
   width: min-content;
   border: ${props => `1px solid ${(props.error && props.theme.danger) || "transparent"}`};
   border-radius: 3px;
+  padding: 3px 0;
   transition: all 0.2s;
 
   input {

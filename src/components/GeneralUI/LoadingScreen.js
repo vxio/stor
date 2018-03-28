@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import theme, {variables} from "../../theme";
+import {variables} from "../../theme";
 import { ClipLoader } from "react-spinners";
 
 const LoadingScreen = props => {
   return (
     <Styles>
-      <ClipLoader size="280" color={variables.primary}/>
+      <ClipLoader size={280} color={variables.primary}/>
     </Styles>
   );
 };

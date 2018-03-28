@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import OrderSummary from "./OrderSummary";
 import { Link, Redirect } from "react-router-dom";
 import theme, { Grid, media } from "../theme";
 import ShoppingCart from "./ShoppingCart";
 import Button from "./GeneralUI/Button";
 import { PulseLoader } from "react-spinners";
+import PropTypes from 'prop-types';
 
 class OrderConfirmation extends React.Component {
   state = {
@@ -26,7 +26,7 @@ class OrderConfirmation extends React.Component {
           {
             orderPlaced: true,
             itemsPurchased: [...this.props.cart],
-            orderData: this.props.orderData,
+            purchasedOrderData: this.props.orderData,
             submitLoading: false
           },
           () => {
@@ -71,7 +71,7 @@ class OrderConfirmation extends React.Component {
               </Button>
             )}
           </Header>
-          <CustomerInfo_Container>
+          <CustomerInfoContainer>
             <CustomerInfoText title="Account Info" info={customerInfo.main} />
             <CustomerInfoText title="Billing Address" isAddress info={customerInfo.billing} />
             <CustomerInfoText title="Shipping Address" isAddress info={customerInfo.shipping} />
@@ -80,13 +80,13 @@ class OrderConfirmation extends React.Component {
                 Edit
               </Link>
             )}
-          </CustomerInfo_Container>
+          </CustomerInfoContainer>
           <ShoppingCart
             subComponent
             cart={cart}
             orderData={orderData}
             removeItem={removeItem}
-            userOptions={!orderPlaced}
+            userOptionsEnabled={!orderPlaced}
             updateQuantity={updateQuantity}
           />
         </Container>
@@ -96,6 +96,14 @@ class OrderConfirmation extends React.Component {
 }
 
 export default OrderConfirmation;
+
+OrderConfirmation.propTypes = {
+  orderData: PropTypes.object.isRequired,
+  customerInfo: PropTypes.object.isRequired,
+  removeItem: PropTypes.func.isRequired,
+  updateQuantity: PropTypes.func.isRequired,
+  cart: PropTypes.array.isRequired
+}
 
 const Container = styled.div`
   grid-column: full;
@@ -139,12 +147,12 @@ const Header = styled.div`
     }
   }
 `;
-const CustomerInfo_Container = styled.div`
+const CustomerInfoContainer = styled.div`
   border-top: 6px solid ${theme.primary};
   display: grid;
   grid-template-columns: repeat(3, 1fr) max-content;
   grid-gap: 2rem;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: ${theme.boxShadow_border};
   padding: 2.5rem 3rem;
   margin-bottom: 3rem;
   position: relative;

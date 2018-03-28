@@ -8,12 +8,11 @@ const OrderSummary = props => {
   const { includeButtons, customerInfo } = props;
   const { subTotal, shipping, tax, total } = props.orderData;
   let linkToNextPage = "/checkout/account-info";
-  // debugger;
   if (customerInfo) {
     linkToNextPage = "/checkout/review-and-order";
   }
   return (
-    <OrderSummary_Container id={props.id}>
+    <OrderSummaryContainer id={props.id}>
       <div className="header">
         <h2>Order Summary</h2>
       </div>
@@ -31,19 +30,19 @@ const OrderSummary = props => {
           </Button>
         </Link>
       )}
-    </OrderSummary_Container>
+    </OrderSummaryContainer>
   );
 };
 
 export default OrderSummary;
 
-const OrderSummary_Container = styled.div`
+const OrderSummaryContainer = styled.div`
   display:grid;
   grid-template-columns: 1fr minmax(18rem, max-content) 1fr;
   grid-template-rows: repeat(3, max-content);
   grid-row-gap: 3rem;
   font-size: ${theme.p_large};
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: ${theme.boxShadow_border};
   margin-bottom: auto;
   width: 45rem;
 

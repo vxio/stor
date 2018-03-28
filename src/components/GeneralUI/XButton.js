@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const X_Button = props => {
+const XButton = props => {
   const { setRef, onClick } = props;
   return (
     <Button
@@ -34,4 +34,4 @@ const Button = styled.button`
   }
 `;
 
-export default X_Button;
+export default XButton;

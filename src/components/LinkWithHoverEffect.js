@@ -4,16 +4,17 @@ import styled from "styled-components";
 import Icon from "./GeneralUI/Icon";
 import { ICONS } from "./GeneralUI/constants";
 import theme from '../theme';
+import PropTypes from 'prop-types';
 
 const LinkWithHoverEffect = props => {
   //default values
   let {size, to, className, id} = props;
 
   return (
-    <Link_Styled to={to} size={size} className={className} id={id}>
+    <LinkStyled to={to} size={size} className={className} id={id}>
       <Icon fill="currentColor" size={size} icon={ICONS.CHEVRON_RIGHT} />
       <span>{props.children}</span>
-    </Link_Styled>
+    </LinkStyled>
   );
 };
 
@@ -21,10 +22,13 @@ LinkWithHoverEffect.defaultProps = {
   size: 15 
 };
 
+LinkWithHoverEffect.propTypes = {
+  to: PropTypes.string.isRequired,
+}
 
 export default LinkWithHoverEffect
 
-const Link_Styled = styled(NavLink)`
+const LinkStyled = styled(NavLink)`
   color: ${theme.grey_6};
   font-size: ${props => `${(props.size / 6.1).toFixed(2)}rem`};
   display: inline-block;

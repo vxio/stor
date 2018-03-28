@@ -34,8 +34,8 @@ const StyledNavItems = styled.div`
   display: flex;
   border-bottom: 1px solid transparent;
   z-index: 100;
-  box-shadow: 0 1px 4px rgba(76, 76, 75, 0.15);
-
+  box-shadow: 0 1px 4px rgba(76, 76, 75, .2);
+  /* border-bottom: 1px solid rgba(55, 56, 60, 0.1); */
   ${media.phone`
     font-size: 2.3rem;
     padding-right: 4rem;

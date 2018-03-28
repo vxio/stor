@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Route, Switch, Redirect, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 import styled from "styled-components";
-import theme from "../theme";
+// import theme from "../theme";
 import { Link, NavItems } from "./NavItems";
 import StoreFront from "./StoreFront";
 import Shop from "./Shop";
@@ -26,11 +26,11 @@ export class Store extends Component {
       subTotal: (userData && userData.subTotal) || 0,
       customerInfo: (userData && userData.customerInfo) || undefined
     };
-    this.products;
+    this.products = null;
     this.categorizedProducts = {};
     this.sizeOptions = {};
     this.total = 0;
-    this.orderData;
+    this.orderData = null;
 
     /*constants*/
     this.shipping = 10;
@@ -266,7 +266,7 @@ export class Store extends Component {
   }
 
   render() {
-    const { cart, totalCartItems, subTotal, shouldBounce, customerInfo, loading } = this.state;
+    const { cart, totalCartItems,  shouldBounce, customerInfo, loading } = this.state;
     if (loading) {
       return <LoadingScreen />;
     }
@@ -309,8 +309,9 @@ export class Store extends Component {
             cart={cart}
             orderData={this.orderData}
             removeItem={this.handleRemoveCartItem}
-            userOptions
+            userOptionsEnabled
             updateQuantity={this.handleUpdateQuantity}
+            customerInfo={customerInfo}
             component={ShoppingCart}
           />
           <RouteWithProps
@@ -343,14 +344,6 @@ export class Store extends Component {
 }
 
 export default withRouter(Store);
-
-const Styled = styled.div`
-  display: grid;
-  grid-template-columns:
-    minmax(4rem, 1fr) [full-start] repeat(8, [col-start] minmax(min-content, 30rem) [col-end])
-    [full-end] minmax(4rem, 1fr);
-  justify-content: center;
-`;
 
 const CountContainer = styled.div`
   position: relative;

@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { Form, Field } from "react-final-form";
+import { Field } from "react-final-form";
 import styled from "styled-components";
-import theme, { Grid, media } from "../theme";
+import theme from "../theme";
 import * as validator from "./validators";
 
 export const TextInput = ({

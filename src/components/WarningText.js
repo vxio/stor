@@ -12,7 +12,8 @@ const Warning = styled.p`
 `;
 
 const WarningText = props => {
-  const { success, warn, showUserInput, defaultText, children } = props;
+  const { warn, showUserInput, defaultText, children } = props;
+  // const {success} = props;
   //default text - showUserInput (same styling as defaultText but content of user input) - children
   const text = (!warn && !showUserInput && defaultText) || children;
   return <Warning className={props.className}{...props}>{text}</Warning>;

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import styled from "styled-components";
-import theme from "./theme";
+// import theme from "./theme";
 import Store from "./components/Store";
 
 class App extends Component {

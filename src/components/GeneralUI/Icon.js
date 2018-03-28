@@ -17,7 +17,7 @@ const Icon = props => {
   const pixels = convertRemToPixels(props.size/10);
 
   return (
-    <SVG_Styles
+    <SvgStyles
       className={props.className}
       style={styles.svg}
       width={`${pixels}px`}
@@ -26,7 +26,7 @@ const Icon = props => {
       fill={props.fill}
     >
       {icon}
-    </SVG_Styles>
+    </SvgStyles>
   );
 };
 
@@ -42,7 +42,7 @@ Icon.defaultProps = {
 
 export default Icon;
 
-const SVG_Styles = styled.svg`
+const SvgStyles = styled.svg`
   path {
     fill: ${props => props.fill || "inherit"};
   }

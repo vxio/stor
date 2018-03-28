@@ -4,7 +4,7 @@ import theme, { media } from "../theme";
 import { Link, withRouter } from "react-router-dom";
 
 const ProductCard = props => {
-  const { product, displayText, match } = props;
+  const { product, displayText } = props;
 
   return (
     <Container {...{ displayText }}>

@@ -1,13 +1,14 @@
-import React, { Component, Fragment } from "react";
+import React, { Component} from "react";
 import styled from "styled-components";
 import theme, { Grid, media } from "../theme";
 import WarningText from "./WarningText";
-import { Form, Field } from "react-final-form";
+import { Form} from "react-final-form";
 import { NavLink } from "react-router-dom";
 import Icon from "./GeneralUI/Icon";
 import { ICONS } from "./GeneralUI/constants";
 import Button from "./GeneralUI/Button";
 import RadioInputs from "./GeneralUI/RadioInputs";
+import PropTypes from 'prop-types';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class ProductPage extends Component {
     this.purchasedNotification = "Added to cart!";
     this.limitReachedNotification = "Quantity limit reached!";
     this.notificationTimer = 1000;
-    this.timeoutId;
+    this.timeoutId = null;
 
     this.state = {
       sizeLabel: "Select Size",
@@ -69,7 +70,7 @@ class ProductPage extends Component {
   }
 
   isQuantityLimitReached() {
-    const { productInCart, quantityLimitReached } = this.state;
+    const { productInCart } = this.state;
     if (productInCart.quantity === this.productLimit) {
       this.setState({
         quantityLimitReached: true
@@ -133,7 +134,7 @@ class ProductPage extends Component {
 
   handleImageError = () => {
     throw new Error("image source not found");
-    this.setState({ imageError: true });
+    // this.setState({ imageError: true });
   };
 
   componentWillMount() {
@@ -154,6 +155,10 @@ class ProductPage extends Component {
     }
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId);
+  }
+
   render() {
     const {
       quantityLimitReached,
@@ -161,7 +166,6 @@ class ProductPage extends Component {
       cartNotificationText,
       product,
       selectedSize,
-      productInCart,
       clickedSubmit
     } = this.state;
     const { pathname } = this.props.location;
@@ -230,6 +234,14 @@ class ProductPage extends Component {
 }
 
 export default ProductPage;
+
+ProductPage.propTypes = {
+  products: PropTypes.object.isRequired,
+  cart: PropTypes.array.isRequired,
+  sizeOptions: PropTypes.array.isRequired,
+  addToCart: PropTypes.func.isRequired,
+  productLimit: PropTypes.number.isRequired
+}
 
 const Styled = styled.div`
   grid-column: col-start 2 / full-end;
