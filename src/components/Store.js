@@ -42,7 +42,7 @@ export class Store extends Component {
 
   getProductsFromDatabase() {
     //use this url for localhost. May need to use a different url in production
-    // axios.defaults.baseURL = "/";
+    axios.defaults.baseURL = "/";
     const url = "/product_data.json";
     return axios.get(url).then(response => {
       this.products = response.data.productData;
