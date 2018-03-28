@@ -1,5 +1,5 @@
 import React from "react";
-import { configure, mount, shallow, render } from "enzyme";
+import { configure, shallow  } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 import sinon from "sinon";
 import { Store } from "./Store";
@@ -7,10 +7,6 @@ import productData from "../../public/product_data.json";
 import axios from "axios";
 
 configure({ adapter: new Adapter() });
-
-/*** Test Ideas ***/
-/*
-*/
 
 //set baseURL for development
 axios.defaults.baseURL = "http://localhost:3000";
@@ -33,7 +29,7 @@ describe("Store", () => {
 
   beforeAll(() => {
     wrapperInstance = shallow(<Store />).instance();
-    return wrapperInstance.getProducts().then(result => {
+    return wrapperInstance.getProductsFromDatabase().then(result => {
       categorizedProducts = wrapperInstance.categorizedProducts;
     });
   });
@@ -42,10 +38,6 @@ describe("Store", () => {
     products.push(wrapperInstance.generateRandomProduct());
     product = products[0];
     product.size = size;
-    // const otherProps = destructureProduct(product);
-    // props = {
-    // };
-
     //reset
     wrapper = shallow(<Store />);
     wrapperInstance = wrapper.instance();
@@ -55,7 +47,6 @@ describe("Store", () => {
 
   //action done in 'beforeAll()
   it("should get products from sample database and stored in <Store />", () => {
-    // console.log(wrapperInstance);
     expect(Object.keys(wrapperInstance.categorizedProducts).length).toBeGreaterThan(0);
   });
 
@@ -98,7 +89,7 @@ describe("Store", () => {
     wrapperInstance.handleAddToCart(newProduct_1);
     wrapperInstance.handleAddToCart(newProduct_2);
     wrapperInstance.handleAddToCart(productToBeRemoved);
-    wrapperInstance.handleRemoveItem(productToBeRemoved);
+    wrapperInstance.handleRemoveCartItem(productToBeRemoved);
     let cart = wrapperInstance.state.cart;
     expect(cart.length).toEqual(3);
     //size should be equal to newProduct_2's size

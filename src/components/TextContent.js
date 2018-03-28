@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import theme, { media } from "../theme";
 
-const baseTransitionTime = 1.6;
+const baseTransitionTime = 1.4;
 const baseDelay = baseTransitionTime / 2.5;
 
 const Styles = styled.div`
@@ -10,7 +10,6 @@ const Styles = styled.div`
     opacity: 0;
     animation: ${props => props.animation && `fadeInFromLeft ${baseTransitionTime}s ease`};
     animation-fill-mode: forwards;
-    /* animation: slideIn 1.6s ease; */
   }
 
   .header {
@@ -50,7 +49,6 @@ const BodyText = styled.p`
 
 class TextContent extends React.Component {
   render() {
-    // const { delay } = animation;
     return (
       <Styles
         animation={this.props.animation}

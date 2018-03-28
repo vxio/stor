@@ -76,7 +76,7 @@ export const windowSizes = {
   tabletSmall: 900,
   tabletExtraSmall: 750,
   phone: 600,
-  phoneSmall: 375 
+  phoneSmall: 375
 };
 
 // iterate through the sizes and create a media template
@@ -102,11 +102,21 @@ export const media = Object.keys(windowSizes).reduce((accumulator, label) => {
 
 injectGlobal`
   html {
-      overflow-x:hidden;
+    overflow-x:hidden;
     font-size: 62.5%;
     ${media.desktop`font-size: 75%;`}
     ${media.laptop`font-size: 56.25%;`}
     ${media.phone`font-size: 50%;`}
+  }
+  color: ${variables.black};
+
+
+  a {
+    text-decoration: none;
+
+    &:hover {
+      color: ${variables.primary};
+    }
   }
 `;
 

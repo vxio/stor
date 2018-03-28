@@ -1,14 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import Icon from "./Icon";
-import { ICONS } from "./constants";
+import Icon from "./GeneralUI/Icon";
+import { ICONS } from "./GeneralUI/constants";
 import theme from '../theme';
 
 const LinkWithHoverEffect = props => {
   //default values
   let {size, to, className, id} = props;
-  // !size && size = 20;
 
   return (
     <Link_Styled to={to} size={size} className={className} id={id}>
@@ -17,7 +16,6 @@ const LinkWithHoverEffect = props => {
     </Link_Styled>
   );
 };
-
 
 LinkWithHoverEffect.defaultProps = {
   size: 15 
@@ -32,9 +30,7 @@ const Link_Styled = styled(NavLink)`
   display: inline-block;
   animation: slideIn 1s ease;
 
-
   &:hover {
-
     svg {
       transform: translateX(-0.3em);
       fill: ${theme.primary};
@@ -53,7 +49,6 @@ const Link_Styled = styled(NavLink)`
     margin-left: 0.8rem;
     display: inline-block;
   }
-
 
   @keyframes slideIn {
     0% {

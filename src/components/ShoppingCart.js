@@ -1,58 +1,13 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Button from "./GeneralUI/Button";
-import Input from "./GeneralUI/Input";
 import Select from "./GeneralUI/Select";
 import styled from "styled-components";
 import theme, { Grid, media, windowSizes } from "../theme";
 import { spring, TransitionMotion, presets } from "react-motion";
-import Icon from "./Icon";
-import { ICONS } from "./constants";
 import OrderSummary from "./OrderSummary";
-import LinkWithHoverEffect from "./LinkWithHoverEffect";
-
-const CartEmpty = props => {
-  return (
-    <CartEmpty_Styles>
-      <Icon className="cart-svg" icon={ICONS.EMPTY_CART} size={140} />
-      <div className="text">
-        <h1>Your cart is empty!</h1>
-        <LinkWithHoverEffect id="linkToShop" to="/shop" size={18}>
-          Continue shopping
-        </LinkWithHoverEffect>
-      </div>
-    </CartEmpty_Styles>
-  );
-};
-const CartEmpty_Styles = styled.div`
-  grid-column: 1 / -1;
-  margin: 2rem auto;
-  /* padding: 0 2rem; */
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  ${media.phone`grid-auto-flow: row;`};
-  .cart-svg {
-    display: inline-block;
-    ${media.phone`grid-row: 2/3;`};
-  }
-  #linkToShop {
-    margin-left: 0.2rem;
-    margin-right: auto;
-  }
-  .text {
-    margin-left: 6rem;
-    display: flex;
-    flex-direction: column;
-    ${media.phone`margin: 0 0 7rem;`};
-
-    h1 {
-      font-size: 5rem;
-      margin-bottom: 2rem;
-      ${media.phone`font-size: 4rem`};
-    }
-  }
-`;
+import X_Button from "./GeneralUI/X_Button";
+import EmptyCart from './EmptyCart';
 
 const CartItem = props => {
   const { product, index, removeItem, updateQuantity, userOptions } = props;
@@ -84,7 +39,7 @@ const CartItem = props => {
           <div className="quantity-totalPrice">
             <div className="quantity">
               <p>quantity: </p>
-              {(userOptions && (
+              {userOptions ? (
                 <Select
                   name={"quantity range"}
                   selectedOption={quantity}
@@ -92,22 +47,22 @@ const CartItem = props => {
                   max={10}
                   controlFunc={e => props.updateQuantity(e, product)}
                 />
-              )) || <p style={{ marginLeft: ".5rem" }}> {quantity}</p>}
+              ) : (
+                <p style={{ marginLeft: ".5rem" }}> {quantity}</p>
+              )}
             </div>
             <p>${totalPrice}</p>
           </div>
           {userOptions && (
             <X_Button
-              innerRef={buttonDOM => {
+              setRef={buttonDOM => {
                 removeButton = buttonDOM;
               }}
               onClick={() => {
                 props.removeItem(product);
                 removeButton.setAttribute("disabled", "disabled");
               }}
-            >
-              ✖
-            </X_Button>
+            />
           )}
         </div>
       </CartItem_Styles>
@@ -115,49 +70,27 @@ const CartItem = props => {
   );
 };
 
-const X_Button = styled.button`
-  border: none;
-  background: none;
-  color: black;
-  cursor: pointer;
-  font-size: 1.4rem;
-  padding-left: 1rem;
-
-  position: absolute;
-  top: 0;
-  right: 0;
-  &:hover {
-    transition: all 0.2s;
-    color: rgba(0, 0, 0, 0.5);
-  }
-  &:focus {
-    outline: 0;
-  }
-`;
-
 const CartItem_Styles = styled.div`
   display: grid;
   grid-template-columns: 16rem 1fr;
   grid-column-gap: 4rem;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
-  padding: 2.3rem ;
+  padding: 2.3rem;
   backface-visibility: hidden;
+
   ${media.phone`
-  grid-template-columns: 14rem 1fr;
-  grid-column-gap: 2rem; 
-  padding: 1.5rem;
-  `}
-}
-  & > .image {
+    grid-template-columns: 14rem 1fr;
+    grid-column-gap: 2rem; 
+    padding: 1.5rem;
+  `} & > .image {
     grid-column: 1/2;
     img {
       width: 100%;
       height: auto;
       vertical-align: middle;
-      /* ${media.phone`width: 80%;`} */
     }
     &:hover ~ div .product-name-brand {
-        color: ${theme.primary};
+      color: ${theme.primary};
     }
   }
 
@@ -170,51 +103,47 @@ const CartItem_Styles = styled.div`
     position: relative;
 
     .product-name-brand {
-      /* width: max-content;  */
       font-size: 1.8rem;
       font-weight: 600;
       margin-bottom: 1.5rem;
       margin-right: 3.5rem;
-      transition: all .2s ease;
-        color: ${theme.black};
-        &:hover {
-          color: ${theme.primary};
-        }
+      transition: all 0.2s ease;
+      color: ${theme.black};
+      &:hover {
+        color: ${theme.primary};
+      }
       & > *:nth-child(2) {
-        /* font-size: 1.4rem; */
-        color: ${theme.grey_6}; 
+        color: ${theme.grey_6};
         font-weight: 400;
       }
-
-      ${media.phone`font-size: 1.6rem`}
+      ${media.phone`
+        font-size: 1.6rem;
+      `};
     }
 
     .color-size {
       margin-bottom: 2rem;
-}
-     }
-    .quantity-totalPrice {
-      display: flex;
-      margin-top: auto;
-      justify-content: space-between;
-
     }
+  }
 
-    .quantity {
-      display: flex;
-      select {
-        font-family: "Karla";
-        font-size: 1.6rem;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        margin-left: 0.6rem;
-        overflow: hidden;
+  .quantity-totalPrice {
+    display: flex;
+    margin-top: auto;
+    justify-content: space-between;
+  }
 
-        &:focus {
-          outline: none;
-        }
+  .quantity {
+    display: flex;
+    select {
+      font-family: "Karla";
+      font-size: 1.6rem;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin-left: 0.6rem;
+      overflow: hidden;
 
-        }
+      &:focus {
+        outline: none;
       }
     }
   }
@@ -242,6 +171,7 @@ class ShoppingCart extends React.Component {
     const { orderData, cart, subComponent, location, customerInfo } = this.props;
     const { width } = this.state;
 
+    //setting height during render when using react-motion's spring()
     let cartItemContainer_height;
     if (width <= windowSizes.phone) {
       cartItemContainer_height = 160;
@@ -257,7 +187,10 @@ class ShoppingCart extends React.Component {
     }
 
     function willLeave() {
-      return { height: spring(0, { stiffness: 150, damping: 39 }), opacity: spring(0, { stiffness: 210 }) };
+      return {
+        height: spring(0, { stiffness: 150, damping: 39 }),
+        opacity: spring(0, { stiffness: 210 })
+      };
     }
 
     const cartComponents = (
@@ -279,9 +212,7 @@ class ShoppingCart extends React.Component {
                   index={i}
                   userOptions={this.props.userOptions}
                   removeItem={this.props.removeItem}
-                  updateQuantity={
-                    this.props.updateQuantity //can put this in CartItem instead
-                  }
+                  updateQuantity={this.props.updateQuantity}
                   style={{ ...config.style }}
                 />
               );
@@ -303,10 +234,10 @@ class ShoppingCart extends React.Component {
     return (
       <GridContainer>
         {!cart.length ? (
-          <CartEmpty />
+          <EmptyCart />
         ) : (
           <Cart_Checkout_Styled>
-            <CartItemsContainer>{cartComponents}</CartItemsContainer>
+            {cartComponents}
             <OrderSummary
               includeButtons={isCartPage === "cart"}
               id="order-summary"
@@ -322,26 +253,18 @@ class ShoppingCart extends React.Component {
 
 export default withRouter(ShoppingCart);
 
-const CartItemsContainer = styled.div`
-  /* grid-column: col-start 1 / span 7; */
-  /* width: 100%; */
-`;
-
 export const Cart_Checkout_Styled = styled.div`
   grid-column: col-start 3 / full-end;
-  /* grid-column: full; */
   display: grid;
   grid-template-columns: minmax(max-content, 1fr) auto;
   grid-gap: 4rem;
 
-  ${media.tabletSmall`grid-template-columns: 1fr;
+  ${media.tabletSmall`
+   grid-template-columns: 1fr;
    justify-content: center; 
    grid-gap: 2rem;
    #order-summary {
      grid-row: 1/2;
    }
-  `} /* justify-items: end; */
-  /* & > *:first-child {
-    margin-right: 5rem;
-  }  */;
+  `};
 `;

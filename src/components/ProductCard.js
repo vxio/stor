@@ -3,7 +3,6 @@ import styled from "styled-components";
 import theme, { media } from "../theme";
 import { Link, withRouter } from "react-router-dom";
 
-//used for homepage and store page
 const ProductCard = props => {
   const { product, displayText, match } = props;
 
@@ -11,7 +10,7 @@ const ProductCard = props => {
     <Container {...{ displayText }}>
       <Link to={product.link}>
         <div className="overlay">
-          <img src={product.img} alt={product.img} />
+          <img src={product.img} alt={product.name} />
         </div>
 
         <ProductDetail>
@@ -38,6 +37,7 @@ const Container = styled.figure`
 
   .overlay {
     position: relative;
+
     &:after {
       content: "";
       position: absolute;
@@ -58,23 +58,20 @@ const Container = styled.figure`
       margin: auto;
     }
   }
-
-  &:hover {
-    /* box-shadow: 2px 8px 20px 0 rgba(31, 32, 68, 0.25); */
-  }
 `;
 
 const ProductDetail = styled.div`
-  width: 100%;
   display: flex;
   justify-content: space-between;
   font-size: 1.5rem;
   margin: 0.5rem 0 0;
 
-  ${media.tabletExtraSmall`font-size:2.4rem;`} div {
+  ${media.tabletExtraSmall`
+    font-size:2.4rem;
+  `};
+  div {
     p:first-child {
       /*name and brand*/
-      /* transition: all .2s; */
       margin-bottom: 0.3rem;
       color: ${theme.black};
     }
@@ -83,9 +80,6 @@ const ProductDetail = styled.div`
       color: ${theme.grey_5};
     }
   }
-  .name-brand {
-  }
-
   .color-price {
     text-align: right;
   }

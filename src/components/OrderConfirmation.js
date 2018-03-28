@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import OrderSummary from "./OrderSummary";
 import { Link, Redirect } from "react-router-dom";
-
 import theme, { Grid, media } from "../theme";
 import ShoppingCart from "./ShoppingCart";
 import Button from "./GeneralUI/Button";
@@ -11,14 +10,11 @@ import { PulseLoader } from "react-spinners";
 class OrderConfirmation extends React.Component {
   state = {
     orderPlaced: false,
-    itemsPurchased: null,
-    orderData: null,
+    itemsPurchased: undefined,
+    purchasedOrderData: undefined,
     submitLoading: false
   };
 
-  // componentWillUnmount() {
-  //   this.state.orderPlaced && this.props.clearCart();
-  // }
   generateOrderNumber = () => {
     return Math.floor(100000 + Math.random() * 900000);
   };
@@ -44,18 +40,18 @@ class OrderConfirmation extends React.Component {
 
   render() {
     let { orderData, customerInfo, removeItem, updateQuantity, cart } = this.props;
-    const { orderPlaced, submitLoading } = this.state;
+    const { orderPlaced, submitLoading, itemsPurchased, purchasedOrderData } = this.state;
+
     if (!cart.length && !orderPlaced) {
       return <Redirect to="/cart" />;
-    } else if (!customerInfo) {
+    }
+    if (!customerInfo) {
       return <Redirect to="/checkout/account-info" />;
     }
     if (orderPlaced) {
-      cart = this.state.itemsPurchased;
-      orderData = this.state.orderData;
+      cart = itemsPurchased;
+      orderData = purchasedOrderData;
     }
-
-    const orderNumber = this.generateOrderNumber();
 
     return (
       <Grid>
@@ -65,7 +61,7 @@ class OrderConfirmation extends React.Component {
               <h1 className="title">{orderPlaced ? "Thank you for your order" : "Review and Place Your Order"}</h1>
               {orderPlaced && (
                 <span id="order-submitted-msg">
-                  Your order has been received<br />Order number: <strong>#{orderNumber}</strong>
+                  Your order has been received<br />Order number: <strong>#{this.generateOrderNumber()}</strong>
                 </span>
               )}
             </div>
@@ -108,7 +104,6 @@ const Container = styled.div`
   #order-submitted-msg {
     display: inline-block;
     font-size: ${theme.h1_extraSmall};
-    /* margin: 1rem 0 3rem; */
     margin-top: 1.5rem;
     ${media.phone`margin-top: -1rem;`};
   }
@@ -119,14 +114,14 @@ const Header = styled.div`
   justify-content: space-between;
   margin-bottom: 4rem;
   ${media.phone`
-  flex-direction: column;
+    flex-direction: column;
   `};
 
   .title {
     font-size: ${theme.h1_medium};
     ${media.phone`
-    font-size: ${theme.h1_small};
-    margin-bottom: 4rem;
+      font-size: ${theme.h1_small};
+      margin-bottom: 4rem;
     `};
   }
 
@@ -135,8 +130,8 @@ const Header = styled.div`
     margin-right: 0;
     height: 5.4rem;
     ${media.phone`
-    width: 75%;
-    margin: 0 auto;
+      width: 75%;
+      margin: 0 auto;
     `};
     div {
       /*spinner */
@@ -154,7 +149,7 @@ const CustomerInfo_Container = styled.div`
   margin-bottom: 3rem;
   position: relative;
   ${media.phone`
-   grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   `};
   #edit-link {
     font-size: 2rem;
@@ -162,14 +157,16 @@ const CustomerInfo_Container = styled.div`
     margin-bottom: auto;
     transition: all 0.2s;
     ${media.phone`
-    grid-row: 1/2;
-    margin-left: auto;
-    margin-right: 2rem;
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 1rem;
-    `} &:hover {
+      grid-row: 1/2;
+      margin-left: auto;
+      margin-right: 2rem;
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 1rem;
+    `};
+
+    &:hover {
       color: ${theme.link_blue.lighten(0.3)};
     }
   }
@@ -177,7 +174,6 @@ const CustomerInfo_Container = styled.div`
 
 const CustomerInfoText = props => {
   const { title, isAddress, info } = props;
-  // let output;
   const { firstName, lastName, email, street, city, state, zipcode } = info;
 
   return (

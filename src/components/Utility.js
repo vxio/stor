@@ -1,9 +1,33 @@
+import React, {Component} from 'react';
+import {Route} from 'react-router-dom';
+
+
+export const RouteWithProps = ({ path, exact, strict, component: Component, location, ...rest }) => (
+  <Route
+    path={path}
+    exact={exact}
+    strict={strict}
+    location={location}
+    render={props => <Component {...props} {...rest} />}
+  />
+);
+
+export function generateRandom(maxNumber) {
+  return Math.floor(Math.random() * maxNumber);
+}
+
 export const updateObject = (oldObject, updatedProperties) => {
   return {
     ...oldObject,
     ...updatedProperties
   };
 };
+
+
+export const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD"
+  });
 
 export const checkValidity = (value, rules) => {
   let isValid = true;

@@ -2,130 +2,45 @@ import React, { Component } from "react";
 import { Route, Switch, Redirect, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import theme from "../theme";
-import { NavItem, NavItems } from "./NavItems";
+import { Link, NavItems } from "./NavItems";
 import StoreFront from "./StoreFront";
 import Shop from "./Shop";
 import ProductPage from "./ProductPage";
 import ShoppingCart from "./ShoppingCart";
 import Checkout from "./Checkout";
-import OrderSummary from "./OrderSummary";
 import OrderConfirmation from "./OrderConfirmation";
 import axios from "axios";
 import * as Icon from "react-feather";
+import LoadingScreen from "./GeneralUI/LoadingScreen";
+import { generateRandom, formatter, RouteWithProps } from "./Utility";
 
 export class Store extends Component {
-  state = {
-    loading: true,
-    totalCartItems: 0,
-    cart: [],
-    shouldBounce: false,
-    subTotal: 0,
-    customerInfo: undefined
-  };
-
-  products;
-  categorizedProducts = {};
-  sizeOptions = {};
-
-  shipping = 10;
-  taxRate = 0.1;
-  tax = 0;
-  total = 0;
-  productLimit = 10;
-  formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD"
-  });
-
-  orderData;
-
-  insertDataForDevelopment() {
-    this.insertSpecificCartItem(1, "medium", 9);
-    this.insertSpecificCartItem(1, "small", 8);
-    this.insertRandomCartItems(5);
-    const customerInfo = {
-      main: {
-        firstName: "Vincent",
-        lastName: "Xiao",
-        email: "vince@gmail.com"
-      },
-      billing: {
-        street: "555 Ace Street",
-        city: "West Covina",
-        state: "California",
-        zipcode: "99923"
-      },
-      shipping: {
-        street: "555 Ace Street",
-        city: "West Covina",
-        state: "California",
-        zipcode: "99923"
-      }
+  constructor(props) {
+    super(props);
+    const userData = !localStorage.isMock && JSON.parse(localStorage.getItem("locallyStoredUserData"));
+    this.state = {
+      loading: true,
+      totalCartItems: (userData && userData.totalCartItems) || 0,
+      cart: (userData && userData.cart) || [],
+      shouldBounce: false,
+      subTotal: (userData && userData.subTotal) || 0,
+      customerInfo: (userData && userData.customerInfo) || undefined
     };
-    this.setState({customerInfo})
+    this.products;
+    this.categorizedProducts = {};
+    this.sizeOptions = {};
+    this.total = 0;
+    this.orderData;
+
+    /*constants*/
+    this.shipping = 10;
+    this.taxRate = 0.1;
+    this.tax = 0;
+    this.productLimit = 10;
+
   }
 
-  handleOnSubmit = values => {
-    // await sleep(300);
-    console.log("handleSubmit");
-    // window.alert(JSON.stringify(values, 0, 2));
-    // this.setState({ customerInfo: values });
-    // this.customerInfo = values;
-    this.setState({ customerInfo: values }, () => {
-      this.props.history.push("/checkout/review-and-order");
-    });
-
-    // this.props.clearCart();
-  };
-
-  generateRandom(number) {
-    return Math.floor(Math.random() * number);
-  }
-
-  generateRandomProduct() {
-    const product_keys = Object.keys(this.categorizedProducts);
-    const randomCategoryNum = this.generateRandom(product_keys.length);
-    const category = this.categorizedProducts[product_keys[randomCategoryNum]]; //array of products
-    const product = category[this.generateRandom(category.length)];
-    return product;
-  }
-
-  insertRandomCartItems(numOfCartItems) {
-    let cartItemsInserted = 0;
-    let newCart = [];
-    while (cartItemsInserted < numOfCartItems) {
-      const product = this.generateRandomProduct();
-      const randomSize = this.sizeOptions[this.generateRandom(Object.keys(this.sizeOptions).length)].value;
-      const randomQuantity = this.generateRandom(this.productLimit) + 1;
-      const newProduct = {
-        ...product,
-        quantity: randomQuantity,
-        totalPrice: randomQuantity * product.price,
-        size: randomSize,
-        testing: true
-      };
-      this.handleAddToCart(newProduct);
-      cartItemsInserted++;
-    }
-    // this.setState({ cart: newCart });
-    // debugger;
-  }
-
-  insertSpecificCartItem(id, size, quantity) {
-    const productToInsert = this.products.find(product => product.id === id);
-    const newProduct = {
-      ...productToInsert,
-      quantity: quantity,
-      totalPrice: quantity * productToInsert.price,
-      size: size,
-      testing: true
-    };
-
-    // console.log(newProduct);
-    this.handleAddToCart(newProduct);
-  }
-
-  getProducts() {
+  getProductsFromDatabase() {
     //use this url for localhost. May need to use a different url in production
     // axios.defaults.baseURL = "/";
     const url = "/product_data.json";
@@ -141,7 +56,6 @@ export class Store extends Component {
         category =>
           (this.categorizedProducts[category] = this.products.filter(product => product.category === category))
       );
-
       this.setState({
         loading: false
       });
@@ -149,78 +63,53 @@ export class Store extends Component {
   }
 
   componentWillMount() {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
+    //stops browser (Google Chrome) from scrolling back down the page on refresh
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
     }
   }
 
   componentDidMount() {
-    this.getProducts().then(() => {
-      this.insertDataForDevelopment();
+    this.getProductsFromDatabase().then(() => {
+      // this.insertDataForDevelopment(); //used for testing in development
     });
-
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    localStorage.setItem("cart", JSON.stringify(this.state.cart));
-    // console.log(JSON.parse(localStorage.cart));
   }
 
   componentDidUpdate(prevProps) {
-    const {pathname} = this.props.location;
+    const { pathname } = this.props.location;
     const pathnameArray = pathname.split("/");
-    const onProductPage = pathnameArray[1] === 'shop' && pathnameArray[4];
+    const notOnProductPage = !(pathnameArray[1] === "shop" && pathnameArray[4]); //stops window from scrolling to top when user clicks between color options
 
-    if (pathname !== prevProps.location.pathname && !onProductPage) {
+    if (pathname !== prevProps.location.pathname && notOnProductPage) {
       window.scrollTo(0, 0);
     }
+    //persist data through local storage
+    const { cart, totalCartItems, subTotal, customerInfo } = this.state;
+    const locallyStoredUserData = { cart, totalCartItems, subTotal, customerInfo };
+    localStorage.setItem("locallyStoredUserData", JSON.stringify(locallyStoredUserData));
   }
-  updateTotal() {
-    this.tax = +(this.state.subTotal * this.taxRate).toFixed(2);
-    this.total = +(this.state.subTotal + this.tax + this.shipping).toFixed(2);
-
-    //checks if cart is empty
-    if (this.state.cart.length === 0) this.total = 0;
-  }
-
-  handleGetOrderData = () => {
-    const { totalCartItems, subTotal } = this.state;
-    const { shipping, tax, total } = this;
-    const orderInfo = {
-      totalCartItems,
-      subTotal: this.formatter.format(subTotal),
-      shipping: this.formatter.format(shipping),
-      tax: this.formatter.format(tax),
-      total: this.formatter.format(total)
-    };
-    return orderInfo;
-  };
 
   handleAddToCart = (product, callback) => {
-    // e.preventDefault();
-    if (!product.size) {
-      return;
+    const { cart, totalCartItems } = this.state;
+
+    //bounce animation
+    if (totalCartItems > 0) {
+      let animationName = `animation${totalCartItems}`;
+      this.setState({ shouldBounce: animationName });
     }
-    if (this.state.totalCartItems > 0) {
-      this.setState({ shouldBounce: true }, () => {
-        setTimeout(() => this.setState({ shouldBounce: false }), 400);
-      });
-    }
-    //if id of productpage matches any id in shopping cart, increase quantity by 1,
     // else add the item as a new item
-    const index = this.state.cart.findIndex(cartItem => {
+    const index = cart.findIndex(cartItem => {
       return cartItem.size === product.size && cartItem.id === product.id;
     });
-    // console.log(product.size);
-    // console.log(index);
     //checks if we've already purchased the product in a certain size
 
+    //if product (id and size) is already in cart, increase quantity of product in cart by 1
     if (index > -1) {
-      const productClone = { ...this.state.cart[index] };
+      const productClone = { ...cart[index] };
       if (productClone.quantity === this.productLimit) return;
       productClone.quantity++;
       productClone.totalPrice = productClone.quantity * productClone.price;
-      const cartClone = [...this.state.cart];
+      const cartClone = [...cart];
       cartClone[index] = productClone;
       this.setState(
         prevState => ({
@@ -233,32 +122,30 @@ export class Store extends Component {
       //Add the new product
     } else {
       if (!product.testing) {
+        //used for testing in development
         product.quantity = 1;
         product.totalPrice = product.price;
       }
       this.setState(
         prevState => ({
-          cart: [...this.state.cart, product],
+          cart: [...cart, product],
           totalCartItems: prevState.totalCartItems + product.quantity,
-          subTotal: prevState.subTotal + (product.testing ? product.totalPrice : product.price) //use totalPrice here for inserting cart items manually
+          subTotal: prevState.subTotal + (product.testing ? product.totalPrice : product.price) //using totalPrice here for inserting cart items manually
         }),
         callback
       );
     }
   };
 
-  handleRemoveItem = product => {
+  handleRemoveCartItem = product => {
     const { id, size, quantity, totalPrice } = product;
     const cartClone = this.state.cart.filter(cartItem => cartItem.id !== id || cartItem.size !== size);
 
-    this.setState(
-      prevState => ({
-        cart: cartClone,
-        totalCartItems: prevState.totalCartItems - quantity,
-        subTotal: prevState.subTotal - totalPrice
-      }),
-      function() {}
-    );
+    this.setState(prevState => ({
+      cart: cartClone,
+      totalCartItems: prevState.totalCartItems - quantity,
+      subTotal: prevState.subTotal - totalPrice
+    }));
   };
 
   handleClearCart = () => {
@@ -286,28 +173,122 @@ export class Store extends Component {
     });
   };
 
+  updateCartTotal() {
+    this.tax = +(this.state.subTotal * this.taxRate).toFixed(2);
+    this.total = +(this.state.subTotal + this.tax + this.shipping).toFixed(2);
+    //checks if cart is empty
+    if (this.state.cart.length === 0) {
+      this.total = 0;
+    }
+  }
+
+  handleGetOrderData = () => {
+    const { totalCartItems, subTotal } = this.state;
+    const { shipping, tax, total } = this;
+    const orderInfo = {
+      totalCartItems,
+      subTotal: formatter.format(subTotal),
+      shipping: formatter.format(shipping),
+      tax: formatter.format(tax),
+      total: formatter.format(total)
+    };
+    return orderInfo;
+  };
+
+  handleOnSubmit = values => {
+    this.setState({ customerInfo: values }, () => {
+      this.props.history.push("/checkout/review-and-order");
+    });
+  };
+
+  /*** functions used for testing in development ***/
+  generateRandomProduct() {
+    const product_keys = Object.keys(this.categorizedProducts);
+    const randomCategory = this.categorizedProducts[product_keys[generateRandom(product_keys.length)]]; //array of products
+    const randomProduct = randomCategory[generateRandom(randomCategory.length)];
+    return randomProduct;
+  }
+
+  insertRandomCartItems(numberOfCartItems) {
+    let cartItemsInserted = 0;
+    while (cartItemsInserted < numberOfCartItems) {
+      const product = this.generateRandomProduct();
+      const randomSize = this.sizeOptions[generateRandom(Object.keys(this.sizeOptions).length)].value;
+      const randomQuantity = generateRandom(this.productLimit) + 1;
+      const newProduct = {
+        ...product,
+        quantity: randomQuantity,
+        totalPrice: randomQuantity * product.price,
+        size: randomSize,
+        testing: true //set to true if product inserted is used only for testing development
+      };
+      this.handleAddToCart(newProduct);
+      cartItemsInserted++;
+    }
+  }
+
+  insertSpecificCartItem(id, size, quantity) {
+    const specificProduct = this.products.find(product => product.id === id);
+    const newProduct = {
+      ...specificProduct,
+      quantity: quantity,
+      totalPrice: quantity * specificProduct.price,
+      size: size,
+      testing: true
+    };
+    this.handleAddToCart(newProduct);
+  }
+
+  insertDataForDevelopment() {
+    this.insertSpecificCartItem(1, "medium", 9);
+    this.insertSpecificCartItem(1, "small", 8);
+    this.insertRandomCartItems(5);
+    // const customerInfo = {
+    //   main: {
+    //     firstName: "Vincent",
+    //     lastName: "Xiao",
+    //     email: "vince@gmail.com"
+    //   },
+    //   billing: {
+    //     street: "555 Ace Street",
+    //     city: "West Covina",
+    //     state: "California",
+    //     zipcode: "99923"
+    //   },
+    //   shipping: {
+    //     street: "555 Ace Street",
+    //     city: "West Covina",
+    //     state: "California",
+    //     zipcode: "99923"
+    //   }
+    // };
+    // this.setState({ customerInfo });
+  }
+
   render() {
-    if (this.state.loading) return <div>Loading sir</div>;
-    const { cart, totalCartItems, subTotal, shouldBounce, customerInfo } = this.state;
+    const { cart, totalCartItems, subTotal, shouldBounce, customerInfo, loading } = this.state;
+    if (loading) {
+      return <LoadingScreen />;
+    }
     let cartLink = totalCartItems ? totalCartItems + " item" : undefined;
     if (totalCartItems > 1) cartLink += "s";
 
-    if (this.state.cart.length) {
-      this.updateTotal();
+    if (cart.length) {
+      this.updateCartTotal();
       this.orderData = this.handleGetOrderData();
     }
 
     return (
       <React.Fragment>
         <NavItems>
-          <NavItem to="/">home</NavItem>
-          <NavItem to="/shop">shop</NavItem>
-          <NavItem to="/cart">
+          <Link to="/">home</Link>
+          <Link to="/shop">shop</Link>
+          <Link to="/cart">
             <CountContainer notEmpty={cartLink} shouldBounce={shouldBounce} totalCartItems={totalCartItems}>
               <Icon.ShoppingBag />
               <span>{cartLink}</span>
             </CountContainer>
-          </NavItem>
+          </Link>
         </NavItems>
         <Switch>
           <RouteWithProps path="/shop/:category?/:brand?" exact products={this.categorizedProducts} component={Shop} />
@@ -325,22 +306,19 @@ export class Store extends Component {
           <RouteWithProps
             path="/cart"
             exact
-            cart={this.state.cart}
+            cart={cart}
             orderData={this.orderData}
-            removeItem={this.handleRemoveItem}
+            removeItem={this.handleRemoveCartItem}
             userOptions
             updateQuantity={this.handleUpdateQuantity}
-            customerInfo={customerInfo}
             component={ShoppingCart}
           />
           <RouteWithProps
             path="/checkout/account-info"
-            // clearCart={this.handleClearCart}
-            // orderData={this.orderData}
             onSubmit={this.handleOnSubmit}
             customerInfo={customerInfo}
             exact
-            cart={cart}
+            isCartEmpty={!cart.length}
             component={Checkout}
           />
 
@@ -348,8 +326,8 @@ export class Store extends Component {
             path="/checkout/(review-and-order|order-confirmation)"
             customerInfo={customerInfo}
             orderData={this.orderData}
-            cart={this.state.cart}
-            removeItem={this.handleRemoveItem}
+            cart={cart}
+            removeItem={this.handleRemoveCartItem}
             updateQuantity={this.handleUpdateQuantity}
             clearCart={this.handleClearCart}
             exact
@@ -357,7 +335,7 @@ export class Store extends Component {
           />
 
           <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
-          <Redirect to="/" />
+          {/* <Redirect to="/" /> */}
         </Switch>
       </React.Fragment>
     );
@@ -366,25 +344,12 @@ export class Store extends Component {
 
 export default withRouter(Store);
 
-const RouteWithProps = ({ path, exact, strict, component: Component, location, ...rest }) => (
-  <Route
-    path={path}
-    exact={exact}
-    strict={strict}
-    location={location}
-    render={props => <Component {...props} {...rest} />}
-  />
-);
-
 const Styled = styled.div`
   display: grid;
-  /* grid-template-rows:auto; */
   grid-template-columns:
-    minmax(4rem,1fr) [full-start] repeat(8, [col-start] minmax(min-content, 30rem) [col-end])
+    minmax(4rem, 1fr) [full-start] repeat(8, [col-start] minmax(min-content, 30rem) [col-end])
     [full-end] minmax(4rem, 1fr);
   justify-content: center;
-  /* border-top: 2.5px solid ${theme.primary_dark}; */
-  /* background-color: ${theme.white}; */
 `;
 
 const CountContainer = styled.div`
@@ -395,21 +360,18 @@ const CountContainer = styled.div`
   }
   & svg {
     stroke-width: 1.5;
-    /* transition: translation-duration .3s ease-in; */
-    /* transition-duration: .3s; */
     font-weight: 300;
     transform: ${props => props.notEmpty && `translateX(-1rem)`};
-    animation: ${props => props.shouldBounce && `bounce .5s`};
+    animation: ${props => `${props.shouldBounce} .5s`};
   }
   & span {
     position: absolute;
-    /* display: inline-block; */
     margin-left: -0.5rem;
     white-space: nowrap;
-    animation: ${props => props.notEmpty && `color-me-in 0.4s cubic-bezier(1,.01,1,1)`};
+    animation: ${props => props.notEmpty && `fadeIn 0.4s cubic-bezier(1,.01,1,1)`};
   }
 
-  @keyframes color-me-in {
+  @keyframes fadeIn {
     0% {
       opacity: 0;
     }
@@ -418,7 +380,7 @@ const CountContainer = styled.div`
     }
   }
 
-  @keyframes bounce {
+  @keyframes ${props => props.shouldBounce} {
     0% {
       transform: translate(-1rem, 0);
     }

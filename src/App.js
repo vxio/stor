@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import theme from "./theme";
 import Store from "./components/Store";
-// import { StripeProvider } from "react-stripe-elements";
 
 class App extends Component {
   render() {
@@ -16,25 +15,8 @@ class App extends Component {
 }
 
 export default withRouter(App);
-
 const UtilityContainer = styled.div`
-
-  font-size: 62.5%;
-  color: ${theme.black};
-  margin-bottom: 4rem;
-
-  a {
-    text-decoration: none;
-    /* color: ${theme.black}; */
-
-    &:hover {
-      color: ${theme.primary};
-    }
-
-    &:not(:hover) {
-      /* color: inherit; */
-    }
-  }
+  margin-bottom:4rem;
 
   .u-center-text {
     text-align: center !important;

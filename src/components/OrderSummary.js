@@ -25,7 +25,7 @@ const OrderSummary = props => {
         <PriceText topBorder className="total" name="Total" price={total} />
       </div>
       {includeButtons && (
-        <Link to={linkToNextPage}>
+        <Link to={linkToNextPage} className="proceed-link">
           <Button large color="primary">
             Checkout
           </Button>
@@ -42,27 +42,22 @@ const OrderSummary_Container = styled.div`
   grid-template-columns: 1fr minmax(18rem, max-content) 1fr;
   grid-template-rows: repeat(3, max-content);
   grid-row-gap: 3rem;
-
-
   font-size: ${theme.p_large};
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   margin-bottom: auto;
-
   width: 45rem;
 
-  ${media.tabletLarge`width:35rem`};
-  ${media.tabletSmall`width: 100%;`}
+  ${media.tabletLarge`
+    width:35rem
+  `};
+  ${media.tabletSmall`
+    width: 100%;
+  `}
   
   & > * {
     grid-column: 2/3;
   }
   
-  a {
-    /* display: inline-block; */
-    /* margin: auto; */
-    margin-bottom: 3rem;
-  }
-
   .header {
     grid-column: 1/ -1;
     border-top: 6px solid ${theme.primary};
@@ -73,13 +68,14 @@ const OrderSummary_Container = styled.div`
       font-size: ${theme.h1_small};
       margin-top: 2.5rem;
       ${media.phone`
-      font-size: ${theme.h1_extraSmall};
+        font-size: ${theme.h1_extraSmall};
       `}
-      
     }
-
   }
 
+  .proceed-link {
+    margin-bottom: 3rem;
+  }
 }
 `;
 
@@ -93,6 +89,7 @@ const PriceText = props => {
     </Styles>
   );
 };
+
 const Styles = styled.div`
   display: flex;
   align-items: center;
@@ -103,12 +100,9 @@ const Styles = styled.div`
     color: ${theme.grey_7};
     text-align:right;
     margin-right: 2rem;
-    /* margin-left: auto; */
-    /* color: ${props => props.importantName && props.theme.black}; */
   }
   .price {
     letter-spacing: .03rem;
-    
     margin-left: auto;
   }
 `;

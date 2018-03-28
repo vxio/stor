@@ -12,8 +12,9 @@ const Select = props => {
     return options;
   };
 
-  if (props.min && props.max) buildOptions(props.min, props.max);
-  else {
+  if (props.min && props.max) {
+    buildOptions(props.min, props.max);
+  } else {
     options = props.options;
   }
 

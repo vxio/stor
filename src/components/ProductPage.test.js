@@ -1,15 +1,12 @@
 import React from "react";
-import { configure, mount, shallow, render } from "enzyme";
+import { configure, shallow } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
-import { MemoryRouter, StaticRouter, withRouter } from "react-router-dom";
-import sinon from "sinon";
 import { Store } from "./Store";
 import ShoppingCart from "./ShoppingCart";
 import productData from "../../public/product_data.json";
 import axios from "axios";
 import { Form } from "react-final-form";
-import {variables} from '../theme';
-
+import { variables } from "../theme";
 import ProductPage from "./ProductPage";
 
 configure({ adapter: new Adapter() });
@@ -18,8 +15,8 @@ configure({ adapter: new Adapter() });
 /*
 - stay on selected size after switching colors
 
-
 */
+
 //set baseURL for development
 axios.defaults.baseURL = "http://localhost:3000";
 
@@ -29,7 +26,7 @@ describe("ProductPage", () => {
   let storeInstance;
   let categorizedProducts;
   let wrapper;
-  let size = 'medium';
+  let size = "medium";
   const productPage = () => {
     return shallow(<ProductPage {...props} />);
   };
@@ -51,7 +48,7 @@ describe("ProductPage", () => {
 
   beforeAll(() => {
     storeInstance = getStoreInstance();
-    return storeInstance.getProducts().then(result => {
+    return storeInstance.getProductsFromDatabase().then(result => {
       categorizedProducts = storeInstance.categorizedProducts;
       product = storeInstance.generateRandomProduct();
     });
@@ -61,7 +58,6 @@ describe("ProductPage", () => {
     storeInstance = getStoreInstance();
     storeInstance.categorizedProducts = categorizedProducts;
     product = storeInstance.generateRandomProduct();
-
     const otherProps = destructureProduct(product);
 
     props = {
@@ -78,7 +74,7 @@ describe("ProductPage", () => {
   });
 
   it("should render all colors options for the product", () => {
-    const expected = wrapper.instance().sameProducts.length;
+    const expected = wrapper.instance().sameProductsWithDifferentColors.length;
     const colorElements = wrapper.find("Color");
     const actual = colorElements.length;
     expect(actual).toEqual(expected);
@@ -87,13 +83,13 @@ describe("ProductPage", () => {
   it("should add the item to the shopping cart given the selected color and size", () => {
     product.size = size;
     wrapper.setState({ product: product, selectedSize: size });
-    // wrapper.instance().props.addToCart(product);
+
     const button = wrapper
       .find(Form)
       .dive()
       .find("form")
       .simulate("submit");
-    // 
+    //
   });
 
   it("should disable purchase button and display notification when the quantity limit is reached for the item and size", () => {
@@ -104,14 +100,12 @@ describe("ProductPage", () => {
     for (let i = 0; i < wrapper.instance().props.productLimit; i++) {
       formElement.simulate("submit");
     }
-    //  //item in cart with quantity === 10
     wrapper.setProps({ cart: storeInstance.state.cart });
     const wrapperInstance = wrapper.instance();
-    wrapperInstance.checkProductInCart();
+    wrapperInstance.isProductInCart();
     wrapper.update();
-    //need to reset formWrapper after update()
     formWrapper = getFormFromComponent(wrapper);
-    const button = formWrapper.find('Button');
+    const button = formWrapper.find("Button");
     expect(button.prop("disabled")).toEqual(true);
   });
 
@@ -122,12 +116,8 @@ describe("ProductPage", () => {
     formElement.simulate("submit");
     wrapper.update();
     formWrapper = getFormFromComponent(wrapper);
-    expect(
-      formWrapper
-        .find("#size-text")
-        .children()
-        .text()
-    ).toEqual(wrapper.instance().state.sizeText);
+    console.log(formWrapper.debug());
+    expect(formWrapper.find("#size-text").children().text()).toEqual(wrapper.instance().state.sizeLabel);
     expect(storeInstance.state.cart.length).toEqual(0);
   });
 
@@ -147,31 +137,13 @@ describe("ProductPage", () => {
     wrapper.update();
     formWrapper = getFormFromComponent(wrapper);
 
-    const otherProduct = wrapper.instance().sameProducts[1];
+    const otherProduct = wrapper.instance().sameProductsWithDifferentColors[1];
     otherProps = destructureProduct(otherProduct);
     props = {
       ...props,
       ...otherProps
     };
     wrapper.setProps({ ...props });
-    expect(wrapper.instance().state.sizeText).toEqual('');
-
+    expect(wrapper.instance().state.sizeLabel).toEqual("Select Size");
   });
-
-  //use this method to test 'Shop' page
-  // it("renders an image", () => {
-  //   const wrapper = productPage();
-  //   // wrapper.setState({ product: { ...product, img: "xx.png" } }, () => {
-  //     wrapper.find('img').prop('onError')();
-  //     wrapper.update();
-  //     expect(false).toEqual(wrapper.instance().state.imageError);
-  //   // });
-  // });
-
-  // it("color options render the correct link", () => {
-  //   const divs = productPage().find('StyledColor');
-  //   expect(divs.length).toEqual(productPage().instance().sameProducts.length)
-  // });
-
-  // All tests will go here
 });

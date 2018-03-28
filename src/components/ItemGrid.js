@@ -22,23 +22,15 @@ class ItemGrid extends Component {
 const Grid = styled.div`
   grid-column: 2 / 4;
   justify-self: center;
-
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-column-gap: 6rem;
   grid-row-gap: 7rem;
 
-  ${media.tabletLarge`grid-template-columns: repeat(2,1fr); grid-column-gap: 5rem`}
-  ${media.tabletExtraSmall`grid-template-columns: 1fr; grid-gap: 4rem`}
-
   & > * {
     transform: translateX(-3rem);
-    /* border: 1px solid red; */
   }
 
-  .is-showing {
-    border: 1px solid red;
-  }
 `;
 
 export default ItemGrid;
