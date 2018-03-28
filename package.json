@@ -2,11 +2,13 @@
   "name": "my-store",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://xiao-vincent.github.io/online-store",
   "dependencies": {
     "axios": "^0.17.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "final-form": "^4.0.3",
+    "gh-pages": "^1.1.0",
     "query-string": "^5.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -14,7 +16,6 @@
     "react-final-form": "^3.0.4",
     "react-fontawesome": "^1.6.1",
     "react-image-magnify": "^2.3.3",
-    "react-ionicons": "^2.1.6",
     "react-motion": "^0.5.2",
     "react-motion-drawer": "^2.1.7",
     "react-motion-ui-pack": "^0.10.3",
@@ -36,7 +37,9 @@
     "now-start": "serve --single ./build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "raw-loader": "^0.5.1",
