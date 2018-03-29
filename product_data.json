@@ -8,7 +8,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 22,
-      "img": "/images/clothes/Tees/bb_black.png"
+      "img": "./images/clothes/Tees/bb_black.png"
     },
     {
       "id": 2,
