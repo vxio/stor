@@ -41,6 +41,8 @@ export class Store extends Component {
   }
 
   getProductsFromDatabase() {
+    axios.defaults.baseURL = process.env.PUBLIC_URL;
+    console.log(process.env.PUBLIC_URL);
     const url = "/product_data.json";
     return axios.get(url).then(response => {
       this.products = response.data.productData;
