@@ -8,7 +8,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 22,
-      "img": "/images/clothes/Tees/bb_black.png"
+      "img": "images/clothes/Tees/bb_black.png"
     },
     {
       "id": 2,
@@ -18,7 +18,7 @@
       "color": "Red",
       "colorCode": "#E21E35",
       "price": 22,
-      "img": "/images/clothes/Tees/bb_red.png"
+      "img": "images/clothes/Tees/bb_red.png"
     },
     {
       "id": 3,
@@ -28,7 +28,7 @@
       "color": "Light Pink",
       "colorCode": "#F6E1E6",
       "price": 22,
-      "img": "/images/clothes/Tees/Astro Tee_Light Pink.png"
+      "img": "images/clothes/Tees/Astro Tee_Light Pink.png"
     },
     {
       "id": 4,
@@ -38,7 +38,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 19,
-      "img": "/images/clothes/Tees/carhartt_logo_black.png"
+      "img": "images/clothes/Tees/carhartt_logo_black.png"
     },
     {
       "id": 5,
@@ -48,7 +48,7 @@
       "color": "Navy",
       "colorCode": "#374A65",
       "price": 19,
-      "img": "/images/clothes/Tees/carhartt_logo_navy.png"
+      "img": "images/clothes/Tees/carhartt_logo_navy.png"
     },
     {
       "id": 6,
@@ -58,7 +58,7 @@
       "color": "Pink",
       "colorCode": "#FDEBEA",
       "price": 19,
-      "img": "/images/clothes/Tees/carhartt_logo_pink.png"
+      "img": "images/clothes/Tees/carhartt_logo_pink.png"
     },
     {
       "id": 7,
@@ -68,7 +68,7 @@
       "color": "Blue",
       "colorCode": "#CEDCEA",
       "price": 15,
-      "img": "/images/clothes/Tees/folk_blue.png"
+      "img": "images/clothes/Tees/folk_blue.png"
     },
     {
       "id": 8,
@@ -78,7 +78,7 @@
       "color": "Soft Grey",
       "colorCode": "#CCCACB",
       "price": 15,
-      "img": "/images/clothes/Tees/folk_soft-grey.png"
+      "img": "images/clothes/Tees/folk_soft-grey.png"
     },
     {
       "id": 9,
@@ -88,7 +88,7 @@
       "color": "Navy",
       "colorCode": "#232033",
       "price": 22,
-      "img": "/images/clothes/Tees/folk_stripe_navy.png"
+      "img": "images/clothes/Tees/folk_stripe_navy.png"
     },
     {
       "id": 10,
@@ -98,7 +98,7 @@
       "color": "Red",
       "colorCode": "#B54032",
       "price": 22,
-      "img": "/images/clothes/Tees/folk_stripe_red.png"
+      "img": "images/clothes/Tees/folk_stripe_red.png"
     },
     {
       "id": 11,
@@ -108,7 +108,7 @@
       "color": "Pink",
       "colorCode": "#E7DDDE",
       "price": 25,
-      "img": "/images/clothes/Tees/mki_box_pink.png"
+      "img": "images/clothes/Tees/mki_box_pink.png"
     },
     {
       "id": 12,
@@ -118,7 +118,7 @@
       "color": "White",
       "colorCode": "#fff",
       "price": 25,
-      "img": "/images/clothes/Tees/mki_box_white.png"
+      "img": "images/clothes/Tees/mki_box_white.png"
     },
     {
       "id": 13,
@@ -128,7 +128,7 @@
       "color": "Light Blue",
       "colorCode": "#CEDAEB",
       "price": 15,
-      "img": "/images/clothes/Tees/mki_light-blue.png"
+      "img": "images/clothes/Tees/mki_light-blue.png"
     },
     {
       "id": 14,
@@ -138,7 +138,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 24,
-      "img": "/images/clothes/Tees/Neil Barrett/Hybrid Mugshot Tee_Black.png"
+      "img": "images/clothes/Tees/Neil Barrett/Hybrid Mugshot Tee_Black.png"
     },
     {
       "id": 15,
@@ -148,7 +148,7 @@
       "color": "White",
       "colorCode": "#fff",
       "price": 24,
-      "img": "/images/clothes/Tees/Neil Barrett/Hybrid MLK Tee_White.png"
+      "img": "images/clothes/Tees/Neil Barrett/Hybrid MLK Tee_White.png"
     },
     {
       "id": 16,
@@ -158,7 +158,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 24,
-      "img": "/images/clothes/Tees/Neil Barrett/Picasso Tee_Black.png"
+      "img": "images/clothes/Tees/Neil Barrett/Picasso Tee_Black.png"
     },
     {
       "id": 17,
@@ -168,7 +168,7 @@
       "color": "White",
       "colorCode": "#fff",
       "price": 24,
-      "img": "/images/clothes/Tees/Neil Barrett/A Kind of Red Tee_White.png"
+      "img": "images/clothes/Tees/Neil Barrett/A Kind of Red Tee_White.png"
     },
     {
       "id": 18,
@@ -178,7 +178,7 @@
       "color": "Light Grey",
       "colorCode": "#E3E0E1",
       "price": 55,
-      "img": "/images/clothes/Sweatshirts/Norse Projects/Ketel Crew Sweatshirt_Light Grey.png"
+      "img": "images/clothes/Sweatshirts/Norse Projects/Ketel Crew Sweatshirt_Light Grey.png"
     },
     {
       "id": 19,
@@ -188,7 +188,7 @@
       "color": "Navy",
       "colorCode": "#383C58",
       "price": 55,
-      "img": "/images/clothes/Sweatshirts/Norse Projects/Ketel Crew Sweatshirt_Navy.png"
+      "img": "images/clothes/Sweatshirts/Norse Projects/Ketel Crew Sweatshirt_Navy.png"
     },
     {
       "id": 20,
@@ -198,7 +198,7 @@
       "color": "Burgundy",
       "colorCode": "#5C3539",
       "price": 55,
-      "img": "/images/clothes/Sweatshirts/Norse Projects/Ketel Hoodie Sweatshirt_Burgundy.png"
+      "img": "images/clothes/Sweatshirts/Norse Projects/Ketel Hoodie Sweatshirt_Burgundy.png"
     },
     {
       "id": 21,
@@ -208,7 +208,7 @@
       "color": "Grey",
       "colorCode": "#BBBABD",
       "price": 45,
-      "img": "/images/clothes/Sweatshirts/Carhartt/Chase Crew Sweatshirt_Grey.png"
+      "img": "images/clothes/Sweatshirts/Carhartt/Chase Crew Sweatshirt_Grey.png"
     },
     {
       "id": 22,
@@ -218,7 +218,7 @@
       "color": "Pink",
       "colorCode": "#FFCFCF",
       "price": 45,
-      "img": "/images/clothes/Sweatshirts/Carhartt/Chase Hoodie Sweatshirt_Pink.png"
+      "img": "images/clothes/Sweatshirts/Carhartt/Chase Hoodie Sweatshirt_Pink.png"
     },
     {
       "id": 23,
@@ -228,7 +228,7 @@
       "color": "Grey",
       "colorCode": "#BBB9BA",
       "price": 38,
-      "img": "/images/clothes/Sweatshirts/Maison Kitsune/Foxhead Crew Sweatshirt_Grey.png"
+      "img": "images/clothes/Sweatshirts/Maison Kitsune/Foxhead Crew Sweatshirt_Grey.png"
     },
     {
       "id": 24,
@@ -238,7 +238,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 38,
-      "img": "/images/clothes/Sweatshirts/Maison Kitsune/Foxhead Crew Sweatshirt_Black.png"
+      "img": "images/clothes/Sweatshirts/Maison Kitsune/Foxhead Crew Sweatshirt_Black.png"
     },
     {
       "id": 25,
@@ -248,7 +248,7 @@
       "color": "Navy",
       "colorCode": "#2A2C47",
       "price": 38,
-      "img": "/images/clothes/Sweatshirts/Maison Kitsune/Foxhead Crew Sweatshirt_Navy.png"
+      "img": "images/clothes/Sweatshirts/Maison Kitsune/Foxhead Crew Sweatshirt_Navy.png"
     },
     {
       "id": 26,
@@ -258,7 +258,7 @@
       "color": "Pink",
       "colorCode": "#E6D8D6",
       "price": 65,
-      "img": "/images/clothes/Sweatshirts/Saint Laurent/Logo Crew Sweatshirt_Pink.png"
+      "img": "images/clothes/Sweatshirts/Saint Laurent/Logo Crew Sweatshirt_Pink.png"
     },
     {
       "id": 27,
@@ -268,7 +268,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 65,
-      "img": "/images/clothes/Sweatshirts/Saint Laurent/Logo Hoodie Sweatshirt_Black.png"
+      "img": "images/clothes/Sweatshirts/Saint Laurent/Logo Hoodie Sweatshirt_Black.png"
     },
     {
       "id": 28,
@@ -278,7 +278,7 @@
       "color": "Grey",
       "colorCode": "#BFBCC0",
       "price": 65,
-      "img": "/images/clothes/Sweatshirts/Saint Laurent/Logo Hoodie Sweatshirt_Grey.png"
+      "img": "images/clothes/Sweatshirts/Saint Laurent/Logo Hoodie Sweatshirt_Grey.png"
     },
     {
       "id": 29,
@@ -288,7 +288,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 48,
-      "img": "/images/clothes/Sweatshirts/Stussy/Reggae Logo Hoodie Sweatshirt_Black.png"
+      "img": "images/clothes/Sweatshirts/Stussy/Reggae Logo Hoodie Sweatshirt_Black.png"
     },
     {
       "id": 30,
@@ -298,7 +298,7 @@
       "color": "Pink",
       "colorCode": "#EBBEBB",
       "price": 48,
-      "img": "/images/clothes/Sweatshirts/Stussy/Reggae Logo Hoodie Sweatshirt_Pink.png"
+      "img": "images/clothes/Sweatshirts/Stussy/Reggae Logo Hoodie Sweatshirt_Pink.png"
     },
     {
       "id": 31,
@@ -308,7 +308,7 @@
       "color": "Light Grey",
       "colorCode": "#E1E0E5",
       "price": 48,
-      "img": "/images/clothes/Sweatshirts/Stussy/Reggae Logo Hoodie Sweatshirt_Light Grey.png"
+      "img": "images/clothes/Sweatshirts/Stussy/Reggae Logo Hoodie Sweatshirt_Light Grey.png"
     },
     {
       "id": 32,
@@ -318,7 +318,7 @@
       "color": "Forest",
       "colorCode": "#014421",
       "price": 48,
-      "img": "/images/clothes/Sweatshirts/Stussy/Logo Hoodie Sweatshirt_Forest.png"
+      "img": "images/clothes/Sweatshirts/Stussy/Logo Hoodie Sweatshirt_Forest.png"
     },
     {
       "id": 33,
@@ -328,7 +328,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 65,
-      "img": "/images/clothes/Outerwear/Stussy/Nylon Pop Over Jacket_Black.png"
+      "img": "images/clothes/Outerwear/Stussy/Nylon Pop Over Jacket_Black.png"
     },
     {
       "id": 34,
@@ -338,7 +338,7 @@
       "color": "Burgundy",
       "colorCode": "#7C2A31",
       "price": 65,
-      "img": "/images/clothes/Outerwear/Stussy/Cruise Coach Jacket_Burgundy.png"
+      "img": "images/clothes/Outerwear/Stussy/Cruise Coach Jacket_Burgundy.png"
     },
     {
       "id": 35,
@@ -348,7 +348,7 @@
       "color": "Blue",
       "colorCode": "#334168",
       "price": 70,
-      "img": "/images/clothes/Outerwear/Norse Projects/Ankerja Jacket_Blue.png"
+      "img": "images/clothes/Outerwear/Norse Projects/Ankerja Jacket_Blue.png"
     },
     {
       "id": 36,
@@ -358,7 +358,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 70,
-      "img": "/images/clothes/Outerwear/Norse Projects/Rokkvi Jacket_Black.png"
+      "img": "images/clothes/Outerwear/Norse Projects/Rokkvi Jacket_Black.png"
     },
     {
       "id": 37,
@@ -368,7 +368,7 @@
       "color": "Camel",
       "colorCode": "#BB8A69",
       "price": 95,
-      "img": "/images/clothes/Outerwear/Norse Projects/Sundsval Mohair Coat_Camel.png"
+      "img": "images/clothes/Outerwear/Norse Projects/Sundsval Mohair Coat_Camel.png"
     },
     {
       "id": 38,
@@ -378,7 +378,7 @@
       "color": "Navy",
       "colorCode": "#272936",
       "price": 95,
-      "img": "/images/clothes/Outerwear/Norse Projects/Sundsval Wool Coat_Navy.png"
+      "img": "images/clothes/Outerwear/Norse Projects/Sundsval Wool Coat_Navy.png"
     },
     {
       "id": 39,
@@ -388,7 +388,7 @@
       "color": "Olive",
       "colorCode": "#4C4636",
       "price": 64,
-      "img": "/images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Olive.png"
+      "img": "images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Olive.png"
     },
     {
       "id": 40,
@@ -398,7 +398,7 @@
       "color": "Navy",
       "colorCode": "#272936",
       "price": 64,
-      "img": "/images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Navy.png"
+      "img": "images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Navy.png"
     },
     {
       "id": 41,
@@ -408,7 +408,7 @@
       "color": "Light Blue",
       "colorCode": "#495772",
       "price": 64,
-      "img": "/images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Light Blue.png"
+      "img": "images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Light Blue.png"
     },
     {
       "id": 42,
@@ -418,7 +418,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 64,
-      "img": "/images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Black.png"
+      "img": "images/clothes/Outerwear/Carhartt/Nimbus Pullover Jacket_Black.png"
     },
     {
       "id": 43,
@@ -428,7 +428,7 @@
       "color": "Black",
       "colorCode": "#282c37",
       "price": 55,
-      "img": "/images/clothes/Outerwear/Carhartt/Beta Jacket_Black.png"
+      "img": "images/clothes/Outerwear/Carhartt/Beta Jacket_Black.png"
     }
   ],
   "sizeOptions": [

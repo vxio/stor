@@ -41,16 +41,19 @@ export class Store extends Component {
   }
 
   getProductsFromDatabase() {
-    //use this url for localhost. May need to use a different url in production
-    axios.defaults.baseURL = "/";
     const url = "/product_data.json";
     return axios.get(url).then(response => {
       this.products = response.data.productData;
       this.sizeOptions = response.data.sizeOptions;
       //attach links to products
       this.products.forEach(
-        product => (product.link = `/shop/${product.category}/${product.brand}/${product.name}/${product.color}`)
-      );
+        product => {
+          product.link = `/shop/${product.category}/${product.brand}/${product.name}/${product.color}`
+          product.img = `/${product.img}`
+          console.log(product.img)
+        }
+      )
+      
       const categories = [...new Set(this.products.map(product => product.category))];
       categories.map(
         category =>

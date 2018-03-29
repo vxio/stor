@@ -3,9 +3,17 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 // import theme from "./theme";
 import Store from "./components/Store";
+import axios from 'axios';
 
 class App extends Component {
+
+  componentWillMount() {
+       axios.defaults.baseURL = process.env.PUBLIC_URL;
+       console.log('PUBLIC_URL', process.env.PUBLIC_URL)
+  }
+
   render() {
+ 
     return (
       <UtilityContainer>
         <Store />

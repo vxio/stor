@@ -5,14 +5,13 @@ import App from "App";
 import registerServiceWorker from "./registerServiceWorker";
 import { ThemeProvider } from "styled-components";
 import {variables} from "theme";
-// import styled from "styled-components";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 
 const app = (
   <ThemeProvider theme={variables}>
-    <BrowserRouter>
+    <HashRouter >
       <App />
-    </BrowserRouter>
+    </HashRouter>
   </ThemeProvider>
 );
 
