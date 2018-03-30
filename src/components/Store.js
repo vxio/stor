@@ -336,7 +336,7 @@ export class Store extends Component {
             component={OrderConfirmation}
           />
 
-          <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
+          <RouteWithProps path="/" exact component={StoreFront}/>} />
           {/* <Redirect to="/" /> */}
         </Switch>
         <ContributionFooter link="https://github.com/xiao-vincent/stor"/>

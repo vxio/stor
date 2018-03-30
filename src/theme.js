@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 import { injectGlobal } from "styled-components";
 
 export const variables = {
+  appTitle: 'Stor',
   baseFontFamily: "Source Sans Pro" /* Colors */,
   primary: "#44c0b6",
   primary_light: "#6ACDC5",
