@@ -11,7 +11,7 @@ Features:
 * Browse products and filter by category and brand
 * Choose between colors and sizes on the product page
 * Add/update/remove products in the shopping cart
-* A simple checkout process 
+* Simple checkout process 
 
 ## Built With
 
