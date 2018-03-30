@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import theme, { media } from "../../theme";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 //component globals
 let baseFontSize;
@@ -21,16 +21,13 @@ const Button = styled.button`
   border: ${props => (props.inverted ? `1px solid ${props.theme.primary}` : "none")};
   cursor: ${props => (props.disabled ? "default" : "pointer")};
   border-radius: ${theme.baseRadius};
-  font-size: ${props => {
-    /* const { baseFontSize } = props.theme;
-    const baseFontSizeParsed = parseInt(baseFontSize, 10); */
-    return (
-      (props.small && theme.p_small) ||
-      (props.large && theme.p_large) ||
-      (props.extraLarge && theme.p_extraLarge) ||
-      baseFontSize
-    );
-  }};
+  font-size: ${props =>
+    (props.small && theme.p_small) ||
+    (props.large && theme.p_large) ||
+    (props.extraLarge && theme.p_extraLarge) ||
+    theme.baseFontSize}
+    
+  ;
   background-color: ${props => theme[color]};
 
   padding: .78em 1.5em;
@@ -79,4 +76,4 @@ Button.propTypes = {
   danger: PropTypes.bool,
   inverted: PropTypes.bool,
   color: PropTypes.string
-}
+};

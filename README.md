@@ -33,6 +33,7 @@ In the project directory, you can run:
 ## Todo
 
 * Browsing filter for brands. Currently, users can only filter by brands after filtering categories.
+* Add toast notification to the product page. The 'Added to Cart' button change is too subtle.
 * Order history page
 * User authentication
 

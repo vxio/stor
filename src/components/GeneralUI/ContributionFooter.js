@@ -10,7 +10,7 @@ export default ContributionFooter;
 
 const Styles = styled.a`
   color: ${theme.grey_5};
-  font-size: 14px;
+  font-size: 13px;
   width: 100%;
   padding: 1.5em;
   text-align: center;

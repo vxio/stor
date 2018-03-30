@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import styled from "styled-components";
 // import theme from "../theme";
 import { Link, NavItems } from "./NavItems";
@@ -335,9 +335,8 @@ export class Store extends Component {
             exact
             component={OrderConfirmation}
           />
-
           <RouteWithProps path="/" exact component={StoreFront}/>} />
-          {/* <Redirect to="/" /> */}
+          <Redirect to="/" />
         </Switch>
         <ContributionFooter link="https://github.com/xiao-vincent/stor"/>
       </AppContainer>
