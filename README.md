@@ -4,7 +4,7 @@ Stor is an online clothing store.
 
 [Live Demo](https://xiao-vincent.github.io/stor)
 
-![store-demo-gif](./store-demo.gif?raw=true)
+![store-demo-gif](./public/store-demo.gif?raw=true)
 
 Features: 
 
