@@ -30,8 +30,9 @@ const StyledNavItems = styled.div`
   font-size: 2rem;
   text-transform: capitalize;
   justify-content: center;
-  padding: 1.8rem 0 0.8rem 0;
+  padding: 1.8rem 0 .8rem;
   display: flex;
+  align-items: center;
   border-bottom: 1px solid transparent;
   z-index: 100;
   box-shadow: 0 1px 4px rgba(76, 76, 75, .2);

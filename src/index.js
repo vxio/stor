@@ -5,13 +5,13 @@ import App from "App";
 import registerServiceWorker from "./registerServiceWorker";
 import { ThemeProvider } from "styled-components";
 import {variables} from "theme";
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 const app = (
   <ThemeProvider theme={variables}>
-    <HashRouter >
+    <BrowserRouter basename={process.env.PUBLIC_URL} >
       <App />
-    </HashRouter>
+    </BrowserRouter>
   </ThemeProvider>
 );
 

@@ -55,7 +55,7 @@ export const TextInput = ({
 
 const FormGroup = styled.div`
 position: relative;
-margin: 0 1rem;
+margin: 2rem 1rem;
   .error-msg {
     line-height: 1.7;
     font-size: ${theme.p_small};

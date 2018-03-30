@@ -13,6 +13,7 @@ import axios from "axios";
 import * as Icon from "react-feather";
 import LoadingScreen from "./GeneralUI/LoadingScreen";
 import { generateRandom, formatter, RouteWithProps } from "./Utility";
+import ContributionFooter from "./GeneralUI/ContributionFooter";
 
 export class Store extends Component {
   constructor(props) {
@@ -37,25 +38,20 @@ export class Store extends Component {
     this.taxRate = 0.1;
     this.tax = 0;
     this.productLimit = 10;
-
   }
 
   getProductsFromDatabase() {
     axios.defaults.baseURL = process.env.PUBLIC_URL;
-    console.log(process.env.PUBLIC_URL);
     const url = "/product_data.json";
     return axios.get(url).then(response => {
       this.products = response.data.productData;
       this.sizeOptions = response.data.sizeOptions;
       //attach links to products
-      this.products.forEach(
-        product => {
-          product.link = `/shop/${product.category}/${product.brand}/${product.name}/${product.color}`
-          product.img = `/${product.img}`
-          console.log(product.img)
-        }
-      )
-      
+      this.products.forEach(product => {
+        product.link = `/shop/${product.category}/${product.brand}/${product.name}/${product.color}`;
+        product.img = process.env.PUBLIC_URL + "/" + product.img;
+      });
+
       const categories = [...new Set(this.products.map(product => product.category))];
       categories.map(
         category =>
@@ -271,7 +267,7 @@ export class Store extends Component {
   }
 
   render() {
-    const { cart, totalCartItems,  shouldBounce, customerInfo, loading } = this.state;
+    const { cart, totalCartItems, shouldBounce, customerInfo, loading } = this.state;
     if (loading) {
       return <LoadingScreen />;
     }
@@ -284,7 +280,7 @@ export class Store extends Component {
     }
 
     return (
-      <React.Fragment>
+      <AppContainer>
         <NavItems>
           <Link to="/">home</Link>
           <Link to="/shop">shop</Link>
@@ -343,12 +339,18 @@ export class Store extends Component {
           <Route path="/" exact render={() => <StoreFront products={this.state.products} />} />
           {/* <Redirect to="/" /> */}
         </Switch>
-      </React.Fragment>
+        <ContributionFooter link="https://github.com/xiao-vincent/stor"/>
+      </AppContainer>
     );
   }
 }
 
 export default withRouter(Store);
+
+const AppContainer = styled.div`
+  min-height: 100vh;
+  padding-bottom: 90px;
+`;
 
 const CountContainer = styled.div`
   position: relative;

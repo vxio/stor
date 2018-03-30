@@ -77,12 +77,24 @@ export const media = Object.keys(windowSizes).reduce((accumulator, label) => {
 
 injectGlobal`
   html {
+    /* height: 100%; */
     overflow-x:hidden;
     font-size: 62.5%;
     ${media.desktop`font-size: 75%;`}
     ${media.laptop`font-size: 56.25%;`}
     ${media.phone`font-size: 50%;`}
   }
+
+   body {
+position: relative;
+ height: fit-content;
+  }
+  /* html, body {
+    height:100%;
+    padding:0;
+    margin: 0;
+  } */
+
   color: ${variables.black};
 
 

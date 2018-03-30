@@ -18,7 +18,7 @@ class App extends Component {
 
 export default withRouter(App);
 const UtilityContainer = styled.div`
-  margin-bottom:4rem;
+  /* margin-bottom:4rem; */
 
   .u-center-text {
     text-align: center !important;
