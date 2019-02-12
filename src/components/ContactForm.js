@@ -8,7 +8,6 @@ import Checkbox from "./GeneralUI/Checkbox";
 import * as validator from "./validators";
 import PropTypes from 'prop-types';
 
-
 class ContactForm extends React.Component {
   state = {
     useSameAddress: this.props.customerInfo

@@ -6,7 +6,7 @@ import { ClipLoader } from "react-spinners";
 const LoadingScreen = props => {
   return (
     <Styles>
-      <ClipLoader size={280} color={variables.primary}/>
+      <ClipLoader size={100} color={variables.primary}/>
     </Styles>
   );
 };

@@ -1,46 +1,33 @@
 # Stor
+Stor is a e-commerce front-end app built with Javascript, React, and styled-components.
 
-Stor is an online clothing store.
+Features: 
+* browse products and filter by category and brand
+* featured product page 
+* manage your shopping cart
+* checkout page to review and submit orders  
+* responsive web design
 
 [Live Demo](https://xiao-vincent.github.io/stor)
 
 ![store-demo-gif](./public/store-demo.gif?raw=true)
 
-Features: 
-
-* Browse products and filter by category and brand
-* Choose between colors and sizes on the product page
-* Add/update/remove products in the shopping cart
-* Simple checkout process 
-
-## Built With
-
-* React
-* Styled Components
-* React Router
-* React Motion 
-
-## Setup
-
-In the project directory, you can run:
+## Setup Locally
+### Installation
+```shell
+ git clone https://github.com/xiao-vincent/stor.git
+ cd stor 
+```
+In the project directory, run
 
 `npm install` to install required dependencies.
 
-`npm start` to run the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-`npm run build` to build the app for production to the build folder.
-
-## Todo
-
-* Browsing filter for brands. Currently, users can only filter by brands after filtering categories.
-* Add toast notification to the product page. The 'Added to Cart' button change is too subtle.
-* Order history page
-* User authentication
+`npm start` to run the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view in the browser.
 
 ## Known Bugs
-
 * When using the navigation drawer on mobile Chrome, click events fire under the overlay. Issue is reported [here](https://github.com/stoeffel/react-motion-drawer/issues/24).
 
-## Additional Info
-
-This project was built with [Create React App](https://github.com/facebook/create-react-app/), which provides a simple way to start React projects with no build configuration.
+## Built With 
+- [create-react-app](https://github.com/facebook/create-react-app/)
+- [styled components](https://www.styled-components.com/)
+- flexbox and css grid

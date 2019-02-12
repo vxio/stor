@@ -20,7 +20,7 @@ export const RouteWithProps = ({ path, exact, strict, component: Component, loca
 
 export function generateRandom(maxNumber) {
   return Math.floor(Math.random() * maxNumber);
-}
+  }
 
 export const updateObject = (oldObject, updatedProperties) => {
   return {

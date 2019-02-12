@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { media } from "../theme";
 
-const baseTransitionTime = 1.4;
-const baseDelay = baseTransitionTime / 2.5;
+const baseTransitionTime = 1;
+const baseDelay = baseTransitionTime / 3;
 
 const Styles = styled.div`
   & > * {

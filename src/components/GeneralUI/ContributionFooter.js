@@ -1,16 +1,17 @@
-import React from "react";
-import styled from "styled-components";
-import theme, {media} from "../../theme";
+import React from 'react'
+import styled from 'styled-components'
+import theme from '../../theme'
 
 const ContributionFooter = props => {
-  return <Styles href={props.link}>Made by Vincent Xiao <span>&#8226;</span> View on GitHub</Styles>;
-};
+  return <Styles href={props.link}>Made by Vincent
+    Xiao <span>&#8226;</span> View on GitHub</Styles>
+}
 
-export default ContributionFooter;
+export default ContributionFooter
 
 const Styles = styled.a`
-  color: ${theme.grey_5};
-  font-size: 13px;
+  color: ${theme.grey_2};
+  font-size: 10px;
   width: 100%;
   padding: 1.5em;
   text-align: center;
@@ -24,4 +25,4 @@ const Styles = styled.a`
   span {
       margin: 0 .5em;
   }
-`;
+`

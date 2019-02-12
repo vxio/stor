@@ -9,9 +9,6 @@ import { BrowserRouter, HashRouter } from "react-router-dom";
 
 const app = (
   <ThemeProvider theme={variables}>
-    {/* <BrowserRouter basename={process.env.PUBLIC_URL} >
-      <App />
-    </BrowserRouter> */}
     <HashRouter>
       <App/>
     </HashRouter>

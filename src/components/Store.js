@@ -344,6 +344,8 @@ export class Store extends Component {
   }
 }
 
+
+
 export default withRouter(Store);
 
 const AppContainer = styled.div`
