@@ -1,7 +1,7 @@
 # Stor
 Stor is a e-commerce front-end app built with Javascript, React, and styled-components.
 
-*Features*: 
+**Features**: 
 * browse products and filter by category and brand
 * featured product page 
 * manage your shopping cart
