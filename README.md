@@ -8,8 +8,10 @@ Features:
 * checkout page to review and submit orders  
 * responsive web design
 
-[Live Demo](https://xiao-vincent.github.io/stor)
+## Demo
+### [Live Demo](https://xiao-vincent.github.io/stor)
 
+### Preview
 ![store-demo-gif](./public/store-demo.gif?raw=true)
 
 ## Setup Locally
