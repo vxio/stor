@@ -9,7 +9,7 @@ Features:
 * responsive web design
 
 ## Demo
-### [Live](https://xiao-vincent.github.io/stor)
+### [Live Demo](https://xiao-vincent.github.io/stor)
 
 ### Preview
 ![store-demo-gif](./public/store-demo.gif?raw=true)
