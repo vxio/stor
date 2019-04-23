@@ -1,5 +1,5 @@
 # Stor
-Stor is a e-commerce front-end app built with Javascript, React, and styled-components.
+Stor is an e-commerce front-end app built with Javascript, React, and styled-components.
 
 **Features**: 
 * browse products and filter by category and brand
