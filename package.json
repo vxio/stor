@@ -28,7 +28,7 @@
     "react-svg-inline": "^2.1.0",
     "react-test-renderer": "^16.2.0",
     "react-transition-group": "^2.2.1",
-    "serve": "^6.5.3",
+    "serve": "^10.1.2",
     "sinon": "^4.3.0",
     "styled-components": "^2.3.2",
     "styled-components-theme": "^1.0.5"
